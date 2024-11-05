@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5951f82e5bf44515875faf58d3dc30fd
+class ComposerStaticInitb59e2b1a95fa50b7c8355aa8eba917ae
 {
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
@@ -472,6 +472,7 @@ class ComposerStaticInit5951f82e5bf44515875faf58d3dc30fd
         'Vendidero\\Germanized\\Shipments\\Caches\\ShipmentOrderCache' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/Caches/ShipmentOrderCache.php',
         'Vendidero\\Germanized\\Shipments\\Caches\\ShippingProviderCache' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/Caches/ShippingProviderCache.php',
         'Vendidero\\Germanized\\Shipments\\Compatibility\\Bundles' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/Compatibility/Bundles.php',
+        'Vendidero\\Germanized\\Shipments\\Compatibility\\ShipmentTracking' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/Compatibility/ShipmentTracking.php',
         'Vendidero\\Germanized\\Shipments\\DataStores\\Label' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/DataStores/Label.php',
         'Vendidero\\Germanized\\Shipments\\DataStores\\Packaging' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/DataStores/Packaging.php',
         'Vendidero\\Germanized\\Shipments\\DataStores\\Shipment' => __DIR__ . '/../..' . '/packages/woocommerce-germanized-shipments/src/DataStores/Shipment.php',
@@ -636,9 +637,9 @@ class ComposerStaticInit5951f82e5bf44515875faf58d3dc30fd
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5951f82e5bf44515875faf58d3dc30fd::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5951f82e5bf44515875faf58d3dc30fd::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit5951f82e5bf44515875faf58d3dc30fd::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb59e2b1a95fa50b7c8355aa8eba917ae::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb59e2b1a95fa50b7c8355aa8eba917ae::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb59e2b1a95fa50b7c8355aa8eba917ae::$classMap;
 
         }, null, ClassLoader::class);
     }

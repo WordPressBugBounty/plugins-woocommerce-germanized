@@ -372,6 +372,7 @@ return array(
     'Vendidero\\Germanized\\Shipments\\Caches\\ShipmentOrderCache' => $baseDir . '/packages/woocommerce-germanized-shipments/src/Caches/ShipmentOrderCache.php',
     'Vendidero\\Germanized\\Shipments\\Caches\\ShippingProviderCache' => $baseDir . '/packages/woocommerce-germanized-shipments/src/Caches/ShippingProviderCache.php',
     'Vendidero\\Germanized\\Shipments\\Compatibility\\Bundles' => $baseDir . '/packages/woocommerce-germanized-shipments/src/Compatibility/Bundles.php',
+    'Vendidero\\Germanized\\Shipments\\Compatibility\\ShipmentTracking' => $baseDir . '/packages/woocommerce-germanized-shipments/src/Compatibility/ShipmentTracking.php',
     'Vendidero\\Germanized\\Shipments\\DataStores\\Label' => $baseDir . '/packages/woocommerce-germanized-shipments/src/DataStores/Label.php',
     'Vendidero\\Germanized\\Shipments\\DataStores\\Packaging' => $baseDir . '/packages/woocommerce-germanized-shipments/src/DataStores/Packaging.php',
     'Vendidero\\Germanized\\Shipments\\DataStores\\Shipment' => $baseDir . '/packages/woocommerce-germanized-shipments/src/DataStores/Shipment.php',

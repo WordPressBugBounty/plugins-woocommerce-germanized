@@ -132,12 +132,25 @@ final class Checkout {
 					if ( ! apply_filters( 'woocommerce_gzd_disable_checkout_block_adjustments', false ) ) {
 						$content = str_replace( 'wp-block-woocommerce-checkout ', 'wp-block-woocommerce-checkout wc-gzd-checkout ', $content );
 
-						// Find the last 2 closing divs of the checkout block and replace them with our custom submit wrap.
-						preg_match( '/<\/div>(\s*)<\/div>$/', $content, $matches );
+						preg_match( '/<\/div>(\s*)<div[^<]*?data-block-name="woocommerce\/checkout-fields-block"/', $content, $matches );
 
+						/**
+						 * Latest Woo Checkout Block version inserts the total blocks before checkout fields
+						 */
 						if ( ! empty( $matches ) ) {
-							$replacement = '<div class="wc-gzd-checkout-submit"><div data-block-name="woocommerce/checkout-order-summary-block" class="wp-block-woocommerce-checkout-order-summary-block"></div><div data-block-name="woocommerce/checkout-actions-block" class="wp-block-woocommerce-checkout-actions-block"></div></div></div></div>';
-							$content     = preg_replace( '/<\/div>(\s*)<\/div>$/', $replacement, $content );
+							$content     = str_replace( 'wc-gzd-checkout ', 'wc-gzd-checkout wc-gzd-checkout-v2 ', $content );
+							$replacement = '<div class="wc-gzd-checkout-submit"><div data-block-name="woocommerce/checkout-order-summary-block" class="wp-block-woocommerce-checkout-order-summary-block"></div><div data-block-name="woocommerce/checkout-actions-block" class="wp-block-woocommerce-checkout-actions-block"></div></div>' . $matches[0];
+							$content     = preg_replace( '/<\/div>(\s*)<div[^<]*?data-block-name="woocommerce\/checkout-fields-block"/', $replacement, $content );
+						} else {
+							/**
+							 * Older Woo versions used to insert the total block as last item
+							 */
+							preg_match( '/<\/div>(\s*)<\/div>$/', $content, $matches );
+
+							if ( ! empty( $matches ) ) {
+								$replacement = '<div class="wc-gzd-checkout-submit"><div data-block-name="woocommerce/checkout-order-summary-block" class="wp-block-woocommerce-checkout-order-summary-block"></div><div data-block-name="woocommerce/checkout-actions-block" class="wp-block-woocommerce-checkout-actions-block"></div></div></div></div>';
+								$content     = preg_replace( '/<\/div>(\s*)<\/div>$/', $replacement, $content );
+							}
 						}
 					}
 
@@ -270,7 +283,7 @@ final class Checkout {
 
 						if ( in_array( $country, $countries, true ) ) {
 							$address_parts = wc_gzd_split_shipment_street( $address_1 );
-							$is_valid      = empty( $address_parts['number'] ) ? false : true;
+							$is_valid      = '' === $address_parts['number'] ? false : true;
 						}
 
 						if ( ! apply_filters( 'woocommerce_gzd_checkout_is_valid_street_number', $is_valid, $fields ) ) {
@@ -286,6 +299,26 @@ final class Checkout {
 			},
 			10,
 			3
+		);
+
+		add_action(
+			'woocommerce_store_api_checkout_update_customer_from_request',
+			function ( $customer, $request ) {
+				if ( 'never' !== get_option( 'woocommerce_gzd_checkout_validate_street_number' ) ) {
+					$billing  = $request['billing_address'];
+					$shipping = $request['shipping_address'];
+
+					if ( ! empty( $billing['address_1'] ) ) {
+						$customer->set_billing_address_1( \WC_GZD_Checkout::instance()->format_address_1( $billing['address_1'] ) );
+					}
+
+					if ( ! empty( $shipping['address_1'] ) ) {
+						$customer->set_shipping_address_1( \WC_GZD_Checkout::instance()->format_address_1( $shipping['address_1'] ) );
+					}
+				}
+			},
+			10,
+			2
 		);
 
 		/**
