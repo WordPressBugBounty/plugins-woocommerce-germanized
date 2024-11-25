@@ -18,7 +18,7 @@ class Package {
 	 *
 	 * @var string
 	 */
-	const VERSION = '4.1.0';
+	const VERSION = '4.1.1';
 
 	public static $upload_dir_suffix = '';
 
@@ -60,7 +60,6 @@ class Package {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 10 );
 		add_action( 'init', array( __CLASS__, 'load_fallback_compatibility' ) );
 
-		add_action( 'woocommerce_gzd_wpml_compatibility_loaded', array( __CLASS__, 'load_wpml_compatibility' ), 10 );
 		add_filter( 'woocommerce_shipping_method_add_rate_args', array( __CLASS__, 'manipulate_shipping_rates' ), 1000, 2 );
 	}
 
@@ -129,6 +128,7 @@ class Package {
 			array(
 				'bundles'           => '\Vendidero\Germanized\Shipments\Compatibility\Bundles',
 				'shipment-tracking' => '\Vendidero\Germanized\Shipments\Compatibility\ShipmentTracking',
+				'wpml'              => '\Vendidero\Germanized\Shipments\Compatibility\WPML',
 			)
 		);
 
@@ -203,10 +203,6 @@ class Package {
 		$html .= wc_get_template_html( 'global/form-return-request.php', $args );
 
 		return $html;
-	}
-
-	public static function load_wpml_compatibility( $compatibility ) {
-		WPMLHelper::init( $compatibility );
 	}
 
 	public static function get_method_settings( $force_load_all = false ) {
@@ -828,6 +824,24 @@ class Package {
 		$woo_version = defined( 'WC_VERSION' ) ? WC_VERSION : '1.0.0';
 
 		return version_compare( $woo_version, '8.2.0', '>=' );
+	}
+
+	public static function register_script( $handle, $path, $dep = array(), $ver = '', $in_footer = array( 'strategy' => 'defer' ) ) {
+		global $wp_version;
+
+		if ( version_compare( $wp_version, '6.3', '<' ) ) {
+			$in_footer = true;
+		}
+
+		$ver = empty( $ver ) ? self::get_version() : $ver;
+
+		wp_register_script(
+			$handle,
+			self::get_assets_url( $path ),
+			$dep,
+			$ver,
+			$in_footer
+		);
 	}
 
 	public static function get_assets_url( $script_or_style ) {
