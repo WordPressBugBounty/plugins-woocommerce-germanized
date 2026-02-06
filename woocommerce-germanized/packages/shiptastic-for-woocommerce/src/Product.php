@@ -74,6 +74,20 @@ class Product {
 		return ! empty( $separate );
 	}
 
+	public function get_shipping_weight( $context = 'view' ) {
+		$weight = $this->get_product()->get_meta( '_shipping_weight', true, $context );
+
+		if ( 'view' === $context && '' === $weight ) {
+			$weight = $this->get_product()->get_weight();
+
+			if ( $this->is_variation() && '' === $weight ) {
+				$weight = wc_shiptastic_get_product( $this->get_forced_parent_product() )->get_shipping_weight( $context );
+			}
+		}
+
+		return $weight;
+	}
+
 	public function get_shipping_length( $context = 'view' ) {
 		$length = $this->get_product()->get_meta( '_shipping_length', true, $context );
 
@@ -139,19 +153,32 @@ class Product {
 		return $data;
 	}
 
-	public function get_manufacture_country( $context = 'view' ) {
-		$legacy_data = $this->get_forced_parent_product()->get_meta( '_dhl_manufacture_country', true, $context );
-		$data        = $this->get_forced_parent_product()->get_meta( '_manufacture_country', true, $context );
+	public function get_mid_code( $context = 'view' ) {
+		$data = $this->get_forced_parent_product()->get_meta( '_mid_code', true, $context );
 
 		if ( '' === $data && ! empty( $legacy_data ) ) {
 			$data = $legacy_data;
 		}
 
-		if ( '' === $data && 'view' === $context ) {
-			return Package::get_base_country();
+		return $data;
+	}
+
+	public function get_manufacture_country( $context = 'view' ) {
+		$legacy_data = $this->get_forced_parent_product()->get_meta( '_dhl_manufacture_country', true, $context );
+		$country     = $this->get_forced_parent_product()->get_meta( '_manufacture_country', true, $context );
+
+		if ( empty( $country ) && ! empty( $legacy_data ) ) {
+			$country = $legacy_data;
 		}
 
-		return $data;
+		if ( empty( $country ) && 'view' === $context ) {
+			$country = Package::get_base_country();
+		}
+
+		$country = substr( wc_strtoupper( $country ), 0, 2 );
+		$country = strlen( $country ) < 2 ? '' : $country;
+
+		return $country;
 	}
 
 	public function get_main_category() {
@@ -178,12 +205,23 @@ class Product {
 		$this->product->update_meta_data( '_hs_code', $code );
 	}
 
+	public function set_mid_code( $code ) {
+		$this->product->update_meta_data( '_mid_code', $code );
+	}
+
 	public function set_manufacture_country( $country ) {
-		$this->product->update_meta_data( '_manufacture_country', substr( wc_strtoupper( $country ), 0, 2 ) );
+		$country = substr( wc_strtoupper( $country ), 0, 2 );
+		$country = strlen( $country ) < 2 ? '' : $country;
+
+		$this->product->update_meta_data( '_manufacture_country', $country );
 	}
 
 	public function set_ship_separately_via( $shipping_provider ) {
 		$this->product->update_meta_data( '_ship_separately_via', $shipping_provider );
+	}
+
+	public function set_shipping_weight( $weight ) {
+		$this->product->update_meta_data( '_shipping_weight', wc_format_decimal( $weight ) );
 	}
 
 	public function set_shipping_length( $length ) {

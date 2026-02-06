@@ -60,6 +60,17 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 		return $features;
 	}
 
+	public function get_icon() {
+		$icon_file    = sanitize_file_name( "{$this->get_name()}.svg" );
+		$default_path = Package::get_path( "assets/icons/{$icon_file}" );
+
+		if ( file_exists( $default_path ) ) {
+			return Package::get_url( "assets/icons/{$icon_file}" );
+		}
+
+		return '';
+	}
+
 	public function get_logo_path() {
 		$logo_path    = sanitize_file_name( "{$this->get_name()}.svg" );
 		$default_path = Package::get_path( "assets/icons/{$logo_path}" );
@@ -76,6 +87,10 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 	}
 
 	protected function get_default_label_default_print_format() {
+		return '';
+	}
+
+	protected function get_default_label_incoterms() {
 		return '';
 	}
 
@@ -1151,6 +1166,27 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 			}
 		}
 
+		$available_incoterms = $this->get_available_incoterms();
+
+		if ( ! empty( $available_incoterms ) && 'shipping_provider' === $configuration_set->get_setting_type() && 'int' === $configuration_set->get_zone() ) {
+			$settings = array_merge(
+				$settings,
+				array(
+					array(
+						'title'    => _x( 'Default Incoterms', 'shipments', 'woocommerce-germanized' ),
+						'type'     => 'select',
+						'default'  => $this->get_default_label_incoterms(),
+						'id'       => 'label_default_incoterms',
+						'value'    => $this->get_setting( 'label_default_incoterms', $this->get_default_label_incoterms() ),
+						'desc'     => _x( 'Please select a default incoterms option.', 'shipments', 'woocommerce-germanized' ),
+						'desc_tip' => true,
+						'options'  => $available_incoterms,
+						'class'    => 'wc-enhanced-select',
+					),
+				)
+			);
+		}
+
 		return $settings;
 	}
 
@@ -1233,7 +1269,7 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 
 	public function get_label_service_fields( $shipment ) {
 		$service_fields = array();
-		$services       = $this->get_services( array( 'shipment' => $shipment ) );
+		$services       = $this->get_available_label_services( $shipment );
 		$default_props  = $this->get_default_label_props( $shipment );
 
 		if ( ! empty( $services ) ) {
@@ -1322,6 +1358,26 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 			);
 		}
 
+		if ( $shipment->is_shipping_international() ) {
+			$available_incoterms = $this->get_available_incoterms();
+
+			if ( ! empty( $available_incoterms ) ) {
+				$settings = array_merge(
+					$settings,
+					array(
+						array(
+							'id'          => 'incoterms',
+							'label'       => _x( 'Incoterms', 'shipments', 'woocommerce-germanized' ),
+							'description' => '',
+							'value'       => isset( $defaults['incoterms'] ) ? $defaults['incoterms'] : '',
+							'options'     => $this->get_available_incoterms(),
+							'type'        => 'select',
+						),
+					)
+				);
+			}
+		}
+
 		return $settings;
 	}
 
@@ -1365,12 +1421,15 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 		$dimensions = wc_stc_get_shipment_label_dimensions( $shipment );
 		$default    = array_merge( $default, $dimensions );
 
-		foreach ( $this->get_services(
-			array(
-				'shipment'   => $shipment,
-				'product_id' => $default['product_id'],
-			)
-		) as $service ) {
+		if ( $shipment->is_shipping_international() ) {
+			$available_incoterms = $this->get_available_incoterms();
+
+			if ( ! empty( $available_incoterms ) ) {
+				$default['incoterms'] = $this->get_default_incoterms( $shipment );
+			}
+		}
+
+		foreach ( $this->get_available_label_services( $shipment, $default['product_id'] ) as $service ) {
 			if ( $service->book_as_default( $shipment ) ) {
 				$default['services'][] = $service->get_id();
 
@@ -1450,10 +1509,10 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 			$shipment
 		);
 
-		/**
-		 * Neither allow invalid service configuration from automatic nor manual requests.
-		 */
-		foreach ( $this->get_services() as $service ) {
+		$available_services = $this->get_available_label_services( $shipment, $props['product_id'] );
+		$all_services       = $this->get_services();
+
+		foreach ( $available_services as $service ) {
 			$label_field_id = $service->get_label_field_id();
 
 			/**
@@ -1481,38 +1540,29 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 					}
 				}
 			}
+		}
 
-			/**
-			 * Remove services + service meta in case the service is not available or not booked.
-			 */
-			if ( ! $service->supports(
-				array(
-					'shipment' => $shipment,
-					'product'  => $props['product_id'],
-				)
-			) || ! in_array( $service->get_id(), $props['services'], true ) ) {
-				$props['services'] = array_diff( $props['services'], array( $service->get_id() ) );
+		foreach ( $props['services'] as $service_id ) {
+			$service = $available_services->get( $service_id );
 
-				foreach ( $service->get_label_fields( $shipment ) as $setting ) {
-					$setting_id = $setting['id'];
+			if ( ! $service ) {
+				$props['services'] = array_diff( $props['services'], array( $service_id ) );
 
-					if ( strstr( $setting_id, '[' ) ) {
-						$setting_parts = explode( '[', $setting_id );
-						$setting_id    = $setting_parts[0];
-					}
+				if ( $org_service = $all_services->get( $service_id ) ) {
+					foreach ( $org_service->get_label_fields( $shipment ) as $setting ) {
+						$setting_id = $setting['id'];
 
-					if ( array_key_exists( $setting_id, $props ) ) {
-						unset( $props[ $setting_id ] );
+						if ( strstr( $setting_id, '[' ) ) {
+							$setting_parts = explode( '[', $setting_id );
+							$setting_id    = $setting_parts[0];
+						}
+
+						if ( array_key_exists( $setting_id, $props ) ) {
+							unset( $props[ $setting_id ] );
+						}
 					}
 				}
-
-				if ( array_key_exists( $label_field_id, $props ) ) {
-					unset( $props[ $label_field_id ] );
-					continue;
-				}
-			}
-
-			if ( in_array( $service->get_id(), $props['services'], true ) ) {
+			} else {
 				$valid = $service->validate_label_request( $props, $shipment );
 
 				if ( is_wp_error( $valid ) ) {
@@ -1690,15 +1740,17 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 
 	/**
 	 * @param \Vendidero\Shiptastic\Shipment $shipment
+	 * @param string $product_id
+	 *
+	 * @return ServiceList
 	 */
-	public function get_available_label_services( $shipment ) {
-		$services = array();
-
-		foreach ( $this->get_services( array( 'shipment' => $shipment ) ) as $service ) {
-			$services[] = $service->get_id();
-		}
-
-		return $services;
+	public function get_available_label_services( $shipment, $product_id = '' ) {
+		return $this->get_services(
+			array(
+				'shipment'   => $shipment,
+				'product_id' => $product_id,
+			)
+		);
 	}
 
 	/**
@@ -1758,6 +1810,17 @@ abstract class Auto extends Simple implements ShippingProviderAuto {
 			return $this->get_label_print_format();
 		} else {
 			return $this->get_default_label_default_print_format();
+		}
+	}
+
+	/**
+	 * @param \Vendidero\Shiptastic\Shipment $shipment
+	 */
+	public function get_default_incoterms( $shipment ) {
+		if ( array_key_exists( $shipment->get_incoterms(), $this->get_available_incoterms() ) ) {
+			return $shipment->get_incoterms();
+		} else {
+			return $this->get_default_label_incoterms();
 		}
 	}
 

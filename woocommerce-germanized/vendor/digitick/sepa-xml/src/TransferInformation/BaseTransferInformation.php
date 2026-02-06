@@ -23,8 +23,9 @@
 namespace Digitick\Sepa\TransferInformation;
 
 use Digitick\Sepa\DomBuilder\DomBuilderInterface;
-use Digitick\Sepa\Exception\InvalidArgumentException;
-use Digitick\Sepa\Util\StringHelper;
+use Digitick\Sepa\Util\Sanitizer;
+use InvalidArgumentException;
+use Ramsey\Uuid\Uuid;
 
 class BaseTransferInformation implements TransferInformationInterface
 {
@@ -65,9 +66,21 @@ class BaseTransferInformation implements TransferInformationInterface
     protected $EndToEndIdentification;
 
     /**
+     * @var ?string $UUID
+     */
+    protected $UUID;
+
+    /**
      * @var string
      */
     protected $currency = 'EUR';
+
+    /**
+     * Purpose code for the transaction.
+     *
+     * @var string|null
+     */
+    protected $purposeCode;
 
     /**
      * Purpose of this transaction
@@ -138,6 +151,11 @@ class BaseTransferInformation implements TransferInformationInterface
     protected $buildingNumber;
 
     /**
+     * @var string|null
+     */
+    protected $floorNumber = null;
+
+    /**
      * Information that locates and identifies a specific address, as defined
      * by postal services, presented in free format text.
      *
@@ -158,8 +176,8 @@ class BaseTransferInformation implements TransferInformationInterface
 
         $this->transferAmount = $amount;
         $this->iban = $iban;
-        $this->name = StringHelper::sanitizeString($name);
-        $this->EndToEndIdentification = StringHelper::sanitizeString($identification);
+        $this->name = Sanitizer::sanitize($name);
+        $this->setEndToEndIdentification($identification);
     }
 
     public function accept(DomBuilderInterface $domBuilder): void
@@ -184,12 +202,22 @@ class BaseTransferInformation implements TransferInformationInterface
 
     public function setEndToEndIdentification(string $EndToEndIdentification): void
     {
-        $this->EndToEndIdentification = StringHelper::sanitizeString($EndToEndIdentification);
+        $this->EndToEndIdentification = Sanitizer::sanitize($EndToEndIdentification);
     }
 
     public function getEndToEndIdentification(): string
     {
         return $this->EndToEndIdentification;
+    }
+
+    public function setUUID(?string $UUID): void
+    {
+        $this->UUID = $UUID;
+    }
+
+    public function getUUID(): ?string
+    {
+        return $this->UUID;
     }
 
     public function setInstructionId(string $instructionId): void
@@ -219,7 +247,7 @@ class BaseTransferInformation implements TransferInformationInterface
 
     public function setCreditorReference(string $creditorReference): void
     {
-        $this->creditorReference = StringHelper::sanitizeString($creditorReference);
+        $this->creditorReference = Sanitizer::sanitize($creditorReference);
     }
 
     public function getCreditorReference(): ?string
@@ -229,7 +257,7 @@ class BaseTransferInformation implements TransferInformationInterface
 
     public function setCreditorReferenceType(string $creditorReferenceType): void
     {
-        $this->creditorReferenceType = StringHelper::sanitizeString($creditorReferenceType);
+        $this->creditorReferenceType = Sanitizer::sanitize($creditorReferenceType);
     }
 
     public function getCreditorReferenceType(): ?string
@@ -237,9 +265,19 @@ class BaseTransferInformation implements TransferInformationInterface
         return $this->creditorReferenceType;
     }
 
+    public function setPurposeCode(string $purposeCode): void
+    {
+        $this->purposeCode = $purposeCode;
+    }
+
+    public function getPurposeCode(): ?string
+    {
+        return $this->purposeCode;
+    }
+
     public function setRemittanceInformation(string $remittanceInformation): void
     {
-        $this->remittanceInformation = StringHelper::sanitizeString($remittanceInformation);
+        $this->remittanceInformation = Sanitizer::sanitize($remittanceInformation);
     }
 
     public function getRemittanceInformation(): ?string
@@ -276,11 +314,7 @@ class BaseTransferInformation implements TransferInformationInterface
      */
     public function setTownName(?string $townName): void
     {
-        if (null === $townName) {
-            $this->townName = null;
-        } else {
-            $this->townName = StringHelper::sanitizeString($townName);
-        }
+        $this->townName = !empty($townName) ? Sanitizer::sanitize($townName) : null;
     }
 
     /**
@@ -300,11 +334,7 @@ class BaseTransferInformation implements TransferInformationInterface
      */
     public function setPostCode(?string $postCode): void
     {
-        if (null === $postCode) {
-            $this->postCode = null;
-        } else {
-            $this->postCode = StringHelper::sanitizeString($postCode);
-        }
+        $this->postCode = !empty($postCode) ? Sanitizer::sanitize($postCode) : null;
     }
 
     /**
@@ -324,11 +354,8 @@ class BaseTransferInformation implements TransferInformationInterface
      */
     public function setStreetName(?string $streetName): void
     {
-        if (null === $streetName) {
-            $this->streetName = null;
-        } else {
-            $this->streetName = StringHelper::sanitizeString($streetName);
-        }
+        $this->streetName = !empty($streetName) ? Sanitizer::sanitize($streetName) : null;
+
     }
 
     /**
@@ -350,11 +377,28 @@ class BaseTransferInformation implements TransferInformationInterface
      */
     public function setBuildingNumber(?string $buildingNumber): void
     {
-        if (null === $buildingNumber) {
-            $this->buildingNumber = null;
-        } else {
-            $this->buildingNumber = StringHelper::sanitizeString($buildingNumber);
-        }
+        $this->buildingNumber = !empty($buildingNumber) ? Sanitizer::sanitize($buildingNumber) : null;
+
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = Sanitizer::sanitize($name);
+    }
+
+    public function getFloorNumber(): ?string
+    {
+        return $this->floorNumber;
+    }
+
+    public function setFloorNumber(?string $floorNumber): void
+    {
+        $this->floorNumber = !empty($floorNumber) ? Sanitizer::sanitize($floorNumber) : null;
     }
 
     /**
@@ -371,5 +415,14 @@ class BaseTransferInformation implements TransferInformationInterface
     public function setPostalAddress($postalAddress): void
     {
         $this->postalAddress = $postalAddress;
+    }
+
+    /**
+     * Wrapper for the getCreditorName() and getDebitorName()
+     * @return string
+     */
+    public function getCreditorOrDebitorName(): string
+    {
+        return $this->name;
     }
 }

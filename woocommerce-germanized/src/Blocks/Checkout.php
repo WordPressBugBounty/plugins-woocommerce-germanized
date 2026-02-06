@@ -256,7 +256,7 @@ final class Checkout {
 		add_action(
 			$hook_name,
 			function ( $errors, $fields, $group ) {
-				if ( 'never' !== get_option( 'woocommerce_gzd_checkout_validate_street_number' ) && function_exists( 'wc_gzd_split_shipment_street' ) ) {
+				if ( 'never' !== get_option( 'woocommerce_gzd_checkout_validate_street_number' ) && function_exists( 'wc_stc_split_shipment_street' ) ) {
 					if ( 'billing' === $group && ! apply_filters( 'woocommerce_gzd_checkout_validate_billing_street_number', true ) ) {
 						return $errors;
 					}
@@ -287,7 +287,7 @@ final class Checkout {
 						$is_valid = true;
 
 						if ( in_array( $country, $countries, true ) ) {
-							$address_parts = wc_gzd_split_shipment_street( $address_1 );
+							$address_parts = wc_stc_split_shipment_street( $address_1 );
 							$is_valid      = '' === $address_parts['number'] ? false : true;
 						}
 
@@ -486,7 +486,7 @@ final class Checkout {
 				'label'                    => $checkbox->get_label(),
 				'wrapper_classes'          => array_diff( $checkbox->get_html_wrapper_classes(), array( 'validate-required', 'form-row' ) ),
 				'custom_styles'            => $checkbox->get_html_style(),
-				'error_message'            => $checkbox->get_error_message( true ),
+				'error_message'            => apply_filters( 'woocommerce_gzd_checkout_block_checkbox_show_inline_error_message', true, $checkbox ) ? $checkbox->get_error_message() : '',
 				'html_id'                  => $checkbox->get_html_id(),
 				'has_checkbox'             => ! $checkbox->hide_input(),
 				'show_for_payment_methods' => $checkbox->get_show_for_payment_methods(),

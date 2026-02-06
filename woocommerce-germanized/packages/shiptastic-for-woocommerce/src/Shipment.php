@@ -155,8 +155,12 @@ abstract class Shipment extends WC_Data {
 		'dimension_unit'                  => '',
 		'country'                         => '',
 		'address'                         => array(),
+		'billing_address'                 => array(),
 		'tracking_id'                     => '',
+		'tracking_url'                    => '',
+		'tracking_instruction'            => '',
 		'shipping_provider'               => '',
+		'shipping_provider_title'         => '',
 		'shipping_method'                 => '',
 		'pickup_location_code'            => '',
 		'pickup_location_customer_number' => '',
@@ -168,6 +172,8 @@ abstract class Shipment extends WC_Data {
 		'est_delivery_date'               => null,
 		'packaging_id'                    => 0,
 		'version'                         => '',
+		'packing_slip_path'               => '',
+		'commercial_invoice_path'         => '',
 	);
 
 	/**
@@ -827,9 +833,55 @@ abstract class Shipment extends WC_Data {
 			if ( $customer_number = $this->get_pickup_location_customer_number() ) {
 				$address['pickup_location_customer_number'] = $customer_number;
 			}
+
+			$address = wp_parse_args( $address, $this->get_default_address_fields() );
 		}
 
 		return $address;
+	}
+
+	protected function get_default_address_fields( $type = 'default' ) {
+		return array(
+			'first_name'               => '',
+			'last_name'                => '',
+			'company'                  => '',
+			'address_1'                => '',
+			'address_2'                => '',
+			'city'                     => '',
+			'state'                    => '',
+			'postcode'                 => '',
+			'country'                  => '',
+			'phone'                    => '',
+			'email'                    => '',
+			'customs_reference_number' => '',
+			'vat_id'                   => '',
+		);
+	}
+
+	/**
+	 * Returns the billing address properties.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string[]
+	 */
+	public function get_billing_address( $context = 'view' ) {
+		$address = (array) $this->get_prop( 'billing_address', $context );
+
+		if ( 'view' === $context ) {
+			if ( empty( $address['country'] ) ) {
+				$address = $this->get_address( $context );
+			}
+
+			$address = wp_parse_args( $address, $this->get_default_address_fields( 'billing' ) );
+		}
+
+		return $address;
+	}
+
+	public function has_alternate_billing_address() {
+		$billing_address = $this->get_billing_address( 'edit' );
+
+		return ! empty( $billing_address );
 	}
 
 	/**
@@ -1053,27 +1105,31 @@ abstract class Shipment extends WC_Data {
 	 *
 	 * @return string
 	 */
-	public function get_tracking_url() {
-		$tracking_url = '';
+	public function get_tracking_url( $context = 'view' ) {
+		$tracking_url = $this->get_prop( 'tracking_url', $context );
 
-		if ( $provider = $this->get_shipping_provider_instance() ) {
-			$tracking_url = $provider->get_tracking_url( $this );
+		if ( 'view' === $context && empty( $tracking_url ) ) {
+			if ( $provider = $this->get_shipping_provider_instance() ) {
+				$tracking_url = $provider->get_tracking_url( $this );
+			}
+
+			/**
+			 * Filter to adjust a Shipment's tracking URL.
+			 *
+			 * The dynamic portion of this hook, `$this->get_hook_prefix()` is used to construct a
+			 * unique hook for a shipment type.
+			 *
+			 * Example hook name: woocommerce_shiptastic_shipment_get_tracking_url
+			 *
+			 * @param string   $tracking_url The tracking URL.
+			 * @param Shipment $shipment The shipment object.
+			 *
+			 * @package Vendidero/Shiptastic
+			 */
+			$tracking_url = apply_filters( "{$this->get_hook_prefix()}tracking_url", $tracking_url, $this );
 		}
 
-		/**
-		 * Filter to adjust a Shipment's tracking URL.
-		 *
-		 * The dynamic portion of this hook, `$this->get_hook_prefix()` is used to construct a
-		 * unique hook for a shipment type.
-		 *
-		 * Example hook name: woocommerce_shiptastic_shipment_get_tracking_url
-		 *
-		 * @param string   $tracking_url The tracking URL.
-		 * @param Shipment $shipment The shipment object.
-		 *
-		 * @package Vendidero/Shiptastic
-		 */
-		return apply_filters( "{$this->get_hook_prefix()}tracking_url", $tracking_url, $this );
+		return $tracking_url;
 	}
 
 	/**
@@ -1081,27 +1137,37 @@ abstract class Shipment extends WC_Data {
 	 *
 	 * @return string
 	 */
-	public function get_tracking_instruction( $plain = false ) {
-		$instruction = '';
+	public function get_tracking_instruction( $context = 'view' ) {
+		$instruction = $this->get_prop( 'tracking_instruction', $context );
 
-		if ( $provider = $this->get_shipping_provider_instance() ) {
-			$instruction = $provider->get_tracking_desc( $this, $plain );
+		if ( is_bool( $context ) ) {
+			$context = true === $context ? 'plain' : 'view';
 		}
 
-		/**
-		 * Filter to adjust a Shipment's tracking instruction.
-		 *
-		 * The dynamic portion of this hook, `$this->get_hook_prefix()` is used to construct a
-		 * unique hook for a shipment type.
-		 *
-		 * Example hook name: woocommerce_shiptastic_shipment_get_tracking_instruction
-		 *
-		 * @param string                                   $instruction The tracking instruction.
-		 * @param Shipment $this The shipment object.
-		 *
-		 * @package Vendidero/Shiptastic
-		 */
-		return apply_filters( "{$this->get_hook_prefix()}tracking_instruction", $instruction, $this );
+		if ( in_array( $context, array( 'view', 'plain' ), true ) && empty( $instruction ) ) {
+			if ( $provider = $this->get_shipping_provider_instance() ) {
+				$instruction = $provider->get_tracking_desc( $this, 'plain' === $context );
+			} elseif ( $provider_title = $this->get_shipping_provider_title() ) {
+				$instruction = sprintf( _x( 'Shipping via %s.', 'shipments-tracking-instruction', 'woocommerce-germanized' ), $provider_title );
+			}
+
+			/**
+			 * Filter to adjust a Shipment's tracking instruction.
+			 *
+			 * The dynamic portion of this hook, `$this->get_hook_prefix()` is used to construct a
+			 * unique hook for a shipment type.
+			 *
+			 * Example hook name: woocommerce_shiptastic_shipment_get_tracking_instruction
+			 *
+			 * @param string                                   $instruction The tracking instruction.
+			 * @param Shipment $this The shipment object.
+			 *
+			 * @package Vendidero/Shiptastic
+			 */
+			$instruction = apply_filters( "{$this->get_hook_prefix()}tracking_instruction", $instruction, $this );
+		}
+
+		return $instruction;
 	}
 
 	/**
@@ -1110,7 +1176,7 @@ abstract class Shipment extends WC_Data {
 	 * @return boolean
 	 */
 	public function has_tracking_instruction() {
-		$instruction = $this->get_tracking_instruction( true );
+		$instruction = $this->get_tracking_instruction( 'plain' );
 
 		return ( ! empty( $instruction ) ) ? true : false;
 	}
@@ -1125,12 +1191,16 @@ abstract class Shipment extends WC_Data {
 		return $this->get_prop( 'shipping_provider', $context );
 	}
 
-	public function get_shipping_provider_title() {
-		if ( $provider = $this->get_shipping_provider_instance() ) {
-			return $provider->get_title();
+	public function get_shipping_provider_title( $context = 'view' ) {
+		$title = $this->get_prop( 'shipping_provider_title', $context );
+
+		if ( 'view' === $context && empty( $title ) ) {
+			if ( $provider = $this->get_shipping_provider_instance() ) {
+				$title = $provider->get_title();
+			}
 		}
 
-		return '';
+		return $title;
 	}
 
 	public function get_shipping_provider_instance() {
@@ -1151,6 +1221,18 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function get_formatted_address( $empty_content = '' ) {
 		$address = WC()->countries->get_formatted_address( $this->get_address() );
+
+		return $address ? $address : $empty_content;
+	}
+
+	/**
+	 * Returns the formatted billing address.
+	 *
+	 * @param  string $empty_content Content to show if no address is present.
+	 * @return string
+	 */
+	public function get_formatted_billing_address( $empty_content = '' ) {
+		$address = WC()->countries->get_formatted_address( $this->get_billing_address() );
 
 		return $address ? $address : $empty_content;
 	}
@@ -1207,6 +1289,16 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Returns the shipment billing address phone number.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_phone( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'phone', $context );
+	}
+
+	/**
 	 * Returns the shipment address email.
 	 *
 	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -1214,6 +1306,16 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function get_email( $context = 'view' ) {
 		return $this->get_address_prop( 'email', $context );
+	}
+
+	/**
+	 * Returns the shipment billing address email.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_email( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'email', $context );
 	}
 
 	/**
@@ -1230,6 +1332,32 @@ abstract class Shipment extends WC_Data {
 				array(
 					'address_1' => $address_1,
 					'address_2' => $this->get_address_2( 'edit' ),
+				),
+				$this->get_country()
+			);
+
+			if ( $address_data['house_number_in_address_2'] ) {
+				$address_1 = $address_data['address_1'];
+			}
+		}
+
+		return $address_1;
+	}
+
+	/**
+	 * Returns the shipment billing address first line.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_address_1( $context = 'view' ) {
+		$address_1 = $this->get_billing_address_prop( 'address_1', $context );
+
+		if ( 'view' === $context && ! empty( $address_1 ) ) {
+			$address_data = wc_stc_get_formatted_address_data(
+				array(
+					'address_1' => $address_1,
+					'address_2' => $this->get_billing_address_2( 'edit' ),
 				),
 				$this->get_country()
 			);
@@ -1269,6 +1397,32 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Returns the shipment billing address second line.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_address_2( $context = 'view' ) {
+		$address_2 = $this->get_billing_address_prop( 'address_2', $context );
+
+		if ( 'view' === $context && ! empty( $address_2 ) ) {
+			$address_data = wc_stc_get_formatted_address_data(
+				array(
+					'address_1' => $this->get_billing_address_1( 'edit' ),
+					'address_2' => $address_2,
+				),
+				$this->get_country()
+			);
+
+			if ( $address_data['house_number_in_address_2'] ) {
+				$address_2 = $address_data['address_2'];
+			}
+		}
+
+		return $address_2;
+	}
+
+	/**
 	 * Returns the shipment address street number by splitting the address.
 	 *
 	 * @param  string $type The address type e.g. address_1 or address_2.
@@ -1287,6 +1441,27 @@ abstract class Shipment extends WC_Data {
 		 * @package Vendidero/Shiptastic
 		 */
 		return apply_filters( 'woocommerce_shiptastic_get_shipment_address_street_number', $split['number'], $this );
+	}
+
+	/**
+	 * Returns the shipment billing address street number by splitting the address.
+	 *
+	 * @param  string $type The address type e.g. address_1 or address_2.
+	 *
+	 * @return string
+	 */
+	public function get_billing_address_street_number( $type = 'address_1' ) {
+		$split = wc_stc_split_shipment_street( $this->{"get_billing_$type"}() );
+
+		/**
+		 * Filter to adjust the shipment address street number.
+		 *
+		 * @param string   $number The shipment address street number.
+		 * @param Shipment $shipment The shipment object.
+		 *
+		 * @package Vendidero/Shiptastic
+		 */
+		return apply_filters( 'woocommerce_shiptastic_get_shipment_billing_address_street_number', $split['number'], $this );
 	}
 
 	/**
@@ -1310,6 +1485,27 @@ abstract class Shipment extends WC_Data {
 		return apply_filters( 'woocommerce_shiptastic_get_shipment_address_street', $split['street'], $this );
 	}
 
+	/**
+	 * Returns the shipment billing address street without number by splitting the address.
+	 *
+	 * @param  string $type The address type e.g. address_1 or address_2.
+	 *
+	 * @return string
+	 */
+	public function get_billing_address_street( $type = 'address_1' ) {
+		$split = wc_stc_split_shipment_street( $this->{"get_billing_$type"}() );
+
+		/**
+		 * Filter to adjust the shipment billing address street.
+		 *
+		 * @param string   $street The shipment address street without street number.
+		 * @param Shipment $shipment The shipment object.
+		 *
+		 * @package Vendidero/Shiptastic
+		 */
+		return apply_filters( 'woocommerce_shiptastic_get_shipment_billing_address_street', $split['street'], $this );
+	}
+
 	public function get_address_street_addition( $type = 'address_1' ) {
 		$split = wc_stc_split_shipment_street( $this->{"get_$type"}() );
 
@@ -1322,6 +1518,20 @@ abstract class Shipment extends WC_Data {
 		 * @package Vendidero/Shiptastic
 		 */
 		return apply_filters( 'woocommerce_shiptastic_get_shipment_address_street_addition', $split['addition'], $this );
+	}
+
+	public function get_billing_address_street_addition( $type = 'address_1' ) {
+		$split = wc_stc_split_shipment_street( $this->{"get_billing_$type"}() );
+
+		/**
+		 * Filter to adjust the shipment billing address street addition.
+		 *
+		 * @param string   $addition The shipment address street addition e.g. EG14.
+		 * @param Shipment $shipment The shipment object.
+		 *
+		 * @package Vendidero/Shiptastic
+		 */
+		return apply_filters( 'woocommerce_shiptastic_get_shipment_billing_address_street_addition', $split['addition'], $this );
 	}
 
 	public function get_address_street_addition_2( $type = 'address_1' ) {
@@ -1338,6 +1548,20 @@ abstract class Shipment extends WC_Data {
 		return apply_filters( 'woocommerce_shiptastic_get_shipment_address_street_addition_2', $split['addition_2'], $this );
 	}
 
+	public function get_billing_address_street_addition_2( $type = 'address_1' ) {
+		$split = wc_stc_split_shipment_street( $this->{"get_billing_$type"}() );
+
+		/**
+		 * Filter to adjust the shipment billing address street addition.
+		 *
+		 * @param string   $addition The shipment address street addition e.g. EG14.
+		 * @param Shipment $shipment The shipment object.
+		 *
+		 * @package Vendidero/Shiptastic
+		 */
+		return apply_filters( 'woocommerce_shiptastic_get_shipment_billing_address_street_addition_2', $split['addition_2'], $this );
+	}
+
 	/**
 	 * Returns the shipment address company.
 	 *
@@ -1346,6 +1570,16 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function get_company( $context = 'view' ) {
 		return $this->get_address_prop( 'company', $context );
+	}
+
+	/**
+	 * Returns the shipment billing address company.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_company( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'company', $context );
 	}
 
 	/**
@@ -1359,6 +1593,16 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Returns the shipment billing address first name.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_first_name( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'first_name', $context );
+	}
+
+	/**
 	 * Returns the shipment address last name.
 	 *
 	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -1369,12 +1613,31 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Returns the shipment billing address last name.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_last_name( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'last_name', $context );
+	}
+
+	/**
 	 * Returns the shipment address formatted full name.
 	 *
 	 * @return string
 	 */
 	public function get_formatted_full_name() {
 		return sprintf( _x( '%1$s %2$s', 'full name', 'woocommerce-germanized' ), $this->get_first_name(), $this->get_last_name() );
+	}
+
+	/**
+	 * Returns the shipment address formatted full name.
+	 *
+	 * @return string
+	 */
+	public function get_formatted_billing_full_name() {
+		return sprintf( _x( '%1$s %2$s', 'full name', 'woocommerce-germanized' ), $this->get_billing_first_name(), $this->get_billing_last_name() );
 	}
 
 	/**
@@ -1388,6 +1651,16 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Returns the shipment billing address postcode.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_postcode( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'postcode', $context );
+	}
+
+	/**
 	 * Returns the shipment address city.
 	 *
 	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -1395,6 +1668,36 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function get_city( $context = 'view' ) {
 		return $this->get_address_prop( 'city', $context );
+	}
+
+	/**
+	 * Returns the shipment billing address city.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_city( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'city', $context );
+	}
+
+	/**
+	 * Returns the shipment address vat id.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_vat_id( $context = 'view' ) {
+		return $this->get_address_prop( 'vat_id', $context ) ? $this->get_address_prop( 'vat_id', $context ) : '';
+	}
+
+	/**
+	 * Returns the shipment billing address vat id.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_vat_id( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'vat_id', $context ) ? $this->get_billing_address_prop( 'vat_id', $context ) : '';
 	}
 
 	/**
@@ -1407,12 +1710,30 @@ abstract class Shipment extends WC_Data {
 		return $this->get_address_prop( 'state', $context );
 	}
 
+	/**
+	 * Returns the shipment address billing state.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_state( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'state', $context );
+	}
+
 	public function get_formatted_state() {
 		if ( '' === $this->get_state() || '' === $this->get_country() ) {
 			return '';
 		}
 
 		return wc_stc_get_formatted_state( $this->get_state(), $this->get_country() );
+	}
+
+	public function get_formatted_billing_state() {
+		if ( '' === $this->get_billing_state() || '' === $this->get_billing_country() ) {
+			return '';
+		}
+
+		return wc_stc_get_formatted_state( $this->get_billing_state(), $this->get_billing_country() );
 	}
 
 	/**
@@ -1423,6 +1744,16 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function get_country( $context = 'view' ) {
 		return $this->get_address_prop( 'country', $context ) ? $this->get_address_prop( 'country', $context ) : '';
+	}
+
+	/**
+	 * Returns the shipment billing address country.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_billing_country( $context = 'view' ) {
+		return $this->get_billing_address_prop( 'country', $context ) ? $this->get_billing_address_prop( 'country', $context ) : '';
 	}
 
 	/**
@@ -1503,15 +1834,19 @@ abstract class Shipment extends WC_Data {
 		return apply_filters(
 			"{$this->get_hook_prefix()}sender_address",
 			array(
-				'company'    => $this->get_sender_company( $context ),
-				'first_name' => $this->get_sender_first_name( $context ),
-				'last_name'  => $this->get_sender_last_name( $context ),
-				'address_1'  => $this->get_sender_address_1( $context ),
-				'address_2'  => $this->get_sender_address_2( $context ),
-				'postcode'   => $this->get_sender_postcode( $context ),
-				'city'       => $this->get_sender_city( $context ),
-				'country'    => $this->get_sender_country( $context ),
-				'state'      => $this->get_sender_state( $context ),
+				'company'                  => $this->get_sender_company( $context ),
+				'first_name'               => $this->get_sender_first_name( $context ),
+				'last_name'                => $this->get_sender_last_name( $context ),
+				'address_1'                => $this->get_sender_address_1( $context ),
+				'address_2'                => $this->get_sender_address_2( $context ),
+				'postcode'                 => $this->get_sender_postcode( $context ),
+				'city'                     => $this->get_sender_city( $context ),
+				'country'                  => $this->get_sender_country( $context ),
+				'state'                    => $this->get_sender_state( $context ),
+				'email'                    => $this->get_sender_email( $context ),
+				'phone'                    => $this->get_sender_phone( $context ),
+				'customs_reference_number' => $this->get_sender_customs_reference_number( $context ),
+				'vat_id'                   => $this->get_sender_vat_id( $context ),
 			),
 			$this
 		);
@@ -1691,6 +2026,16 @@ abstract class Shipment extends WC_Data {
 		return $this->get_sender_address_prop( 'customs_uk_vat_id', $context ) ? $this->get_sender_address_prop( 'customs_uk_vat_id', $context ) : '';
 	}
 
+	/**
+	 * Returns the sender address vat id.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_sender_vat_id( $context = 'view' ) {
+		return $this->get_sender_address_prop( 'vat_id', $context ) ? $this->get_sender_address_prop( 'vat_id', $context ) : '';
+	}
+
 	public function get_formatted_sender_state() {
 		if ( '' === $this->get_sender_state() || '' === $this->get_sender_country() ) {
 			return '';
@@ -1751,6 +2096,14 @@ abstract class Shipment extends WC_Data {
 		return apply_filters( 'woocommerce_shiptastic_shipment_send_to_external_pickup', $has_pickup, $types, $this );
 	}
 
+	protected function get_address_prop( $prop, $context = 'view' ) {
+		return $this->get_address_prop_by_type( $prop, 'address', $context );
+	}
+
+	protected function get_billing_address_prop( $prop, $context = 'view' ) {
+		return $this->get_address_prop_by_type( $prop, 'billing_address', $context );
+	}
+
 	/**
 	 * Returns an address prop.
 	 *
@@ -1759,27 +2112,31 @@ abstract class Shipment extends WC_Data {
 	 *
 	 * @return null|string
 	 */
-	protected function get_address_prop( $prop, $context = 'view' ) {
-		$value = null;
+	protected function get_address_prop_by_type( $prop, $address_type = 'address', $context = 'view' ) {
+		$value  = null;
+		$getter = "get_{$address_type}";
+		$data   = is_callable( array( $this, $getter ) ) ? (array) $this->{$getter}( $context ) : array();
 
-		if ( isset( $this->changes['address'][ $prop ] ) || isset( $this->data['address'][ $prop ] ) ) {
-			$value = isset( $this->changes['address'][ $prop ] ) ? $this->changes['address'][ $prop ] : $this->data['address'][ $prop ];
+		if ( array_key_exists( $prop, $data ) ) {
+			$value = $data[ $prop ];
 
 			if ( 'view' === $context ) {
 				/**
 				 * Filter to adjust a Shipment's shipping address property e.g. first_name.
 				 *
 				 * The dynamic portion of this hook, `$this->get_hook_prefix()` is used to construct a
-				 * unique hook for a shipment type. `$prop` refers to the actual address property e.g. first_name.
+				 * unique hook for a shipment type. `$address_type` refers to the address type
+				 * e.g. address (default shipping address) or billing_address.
+				 * `$prop` refers to the actual address property e.g. first_name.
 				 *
 				 * Example hook name: woocommerce_shiptastic_shipment_get_address_first_name
 				 *
-				 * @param string                                   $value The address property value.
+				 * @param string $value The address property value.
 				 * @param Shipment $this The shipment object.
 				 *
 				 * @package Vendidero/Shiptastic
 				 */
-				$value = apply_filters( "{$this->get_hook_prefix()}address_{$prop}", $value, $this );
+				$value = apply_filters( "{$this->get_hook_prefix()}{$address_type}_{$prop}", $value, $this );
 			}
 		}
 
@@ -2050,6 +2407,15 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Set shipment billing address.
+	 *
+	 * @param string[] $address The address props.
+	 */
+	public function set_billing_address( $address ) {
+		$this->set_prop( 'billing_address', empty( $address ) ? array() : (array) $address );
+	}
+
+	/**
 	 * Set remote status events.
 	 *
 	 * @param string[] $status The status events.
@@ -2078,6 +2444,24 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function set_version( $version ) {
 		$this->set_prop( 'version', $version );
+	}
+
+	/**
+	 * Set packing slip path.
+	 *
+	 * @param string $path The path.
+	 */
+	public function set_packing_slip_path( $path ) {
+		$this->set_prop( 'packing_slip_path', $path );
+	}
+
+	/**
+	 * Set packing slip path.
+	 *
+	 * @param string $path The path.
+	 */
+	public function set_commercial_invoice_path( $path ) {
+		$this->set_prop( 'commercial_invoice_path', $path );
 	}
 
 	/**
@@ -2150,7 +2534,7 @@ abstract class Shipment extends WC_Data {
 	 * @param $value
 	 */
 	protected function set_address_prop( $prop, $value ) {
-		$address          = $this->get_address();
+		$address          = $this->get_address( 'edit' );
 		$address[ $prop ] = $value;
 
 		$this->set_address( $address );
@@ -2163,6 +2547,34 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function set_tracking_id( $tracking_id ) {
 		$this->set_prop( 'tracking_id', $tracking_id );
+	}
+
+	/**
+	 * Set shipment tracking url.
+	 *
+	 * @param string $tracking_url The tracking url.
+	 */
+	public function set_tracking_url( $tracking_url ) {
+		$this->set_prop( 'tracking_url', $tracking_url );
+	}
+
+	/**
+	 * Set shipment tracking instruction.
+	 *
+	 * @param string $tracking_instruction The tracking instruction.
+	 */
+	public function set_tracking_instruction( $tracking_instruction ) {
+		$this->set_prop( 'tracking_instruction', $tracking_instruction );
+	}
+
+	public function remove_tracking() {
+		$this->set_tracking_id( '' );
+		$this->set_tracking_url( '' );
+		$this->set_tracking_instruction( '' );
+
+		if ( $this->supports_label() && ( $label = $this->get_label() ) ) {
+			$label->delete( true );
+		}
 	}
 
 	/**
@@ -2200,6 +2612,15 @@ abstract class Shipment extends WC_Data {
 	 */
 	public function set_shipping_provider( $provider ) {
 		$this->set_prop( 'shipping_provider', wc_stc_get_shipping_provider_slug( $provider ) );
+	}
+
+	/**
+	 * Set shipment shipping provider title.
+	 *
+	 * @param string $provider_title The shipping provider title.
+	 */
+	public function set_shipping_provider_title( $provider_title ) {
+		$this->set_prop( 'shipping_provider_title', $provider_title );
 	}
 
 	/**
@@ -2622,6 +3043,38 @@ abstract class Shipment extends WC_Data {
 	}
 
 	/**
+	 * Returns packing slip path.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return integer
+	 */
+	public function get_packing_slip_path( $context = 'view' ) {
+		$path = $this->get_prop( 'packing_slip_path', $context );
+
+		if ( 'view' === $context && ! empty( $path ) ) {
+			$path = Package::get_file_by_path( $path );
+		}
+
+		return $path;
+	}
+
+	/**
+	 * Returns commercial invoice path.
+	 *
+	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return integer
+	 */
+	public function get_commercial_invoice_path( $context = 'view' ) {
+		$path = $this->get_prop( 'commercial_invoice_path', $context );
+
+		if ( 'view' === $context && ! empty( $path ) ) {
+			$path = Package::get_file_by_path( $path );
+		}
+
+		return $path;
+	}
+
+	/**
 	 * Returns the packaging id belonging to the shipment.
 	 *
 	 * @param  string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -2906,6 +3359,12 @@ abstract class Shipment extends WC_Data {
 		if ( $label = $this->get_label() ) {
 			$this->set_tracking_id( $label->get_number() );
 
+			$label_tracking_url = $label->get_tracking_url();
+
+			if ( ! empty( $label_tracking_url ) ) {
+				$this->set_tracking_url( $label_tracking_url );
+			}
+
 			/**
 			 * Action for shipping providers to adjust the shipment before updating it after a label has
 			 * been successfully generated.
@@ -2937,15 +3396,16 @@ abstract class Shipment extends WC_Data {
 	}
 
 	public function delete_label( $force = false ) {
-		if ( $this->supports_label() && ( $label = $this->get_label() ) ) {
-			$label->delete( $force );
-			$this->set_tracking_id( '' );
-			$this->save();
+		$result = false;
 
-			return true;
+		if ( $this->supports_label() && $this->get_label() ) {
+			$result = true;
 		}
 
-		return false;
+		$this->remove_tracking();
+		$this->save();
+
+		return $result;
 	}
 
 	/**
@@ -3109,6 +3569,29 @@ abstract class Shipment extends WC_Data {
 				$this->update_packaging();
 			}
 
+			/**
+			 * Reset tracking information and delete (old) label when changing provider.
+			 */
+			if ( array_key_exists( 'shipping_provider', $this->get_changes() ) ) {
+				foreach ( array( 'tracking_id', 'tracking_url', 'tracking_instruction' ) as $tracking_field ) {
+					if ( ! array_key_exists( $tracking_field, $this->get_changes() ) ) {
+						$this->{"set_{$tracking_field}"}( '' );
+
+						if ( 'tracking_id' === $tracking_field ) {
+							$old_provider_name = $this->data['shipping_provider'];
+
+							if ( ! empty( $old_provider_name ) && ( $provider_instance = wc_stc_get_shipping_provider( $old_provider_name ) ) ) {
+								if ( $label = $provider_instance->get_label( $this ) ) {
+									$label->delete( true );
+								}
+							}
+						}
+					}
+				}
+			}
+
+			$changes = $this->get_changes();
+
 			if ( $this->data_store ) {
 				// Trigger action before saving to the DB. Allows you to adjust object props before save.
 				do_action( 'woocommerce_before_' . $this->object_type . '_object_save', $this, $this->data_store );
@@ -3155,10 +3638,11 @@ abstract class Shipment extends WC_Data {
 			 *
 			 * @param Shipment $shipment The shipment object being saved.
 			 * @param boolean  $is_new Indicator to determine whether this is a new shipment or not.
+			 * @param mixed[]  $changes Changes to be persisted.
 			 *
 			 * @package Vendidero/Shiptastic
 			 */
-			do_action( "woocommerce_shiptastic_{$hook_postfix}shipment_after_save", $this, $is_new );
+			do_action( "woocommerce_shiptastic_{$hook_postfix}shipment_after_save", $this, $is_new, $changes );
 
 			$this->status_transition();
 			$this->reset_content_data();

@@ -53,6 +53,7 @@ class Ajax {
 			'confirm_return_request',
 			'create_return_page',
 			'calculate_return_costs',
+			'json_search_shipping_providers',
 		);
 
 		$ajax_nopriv_events = array(
@@ -79,6 +80,31 @@ class Ajax {
 		}
 
 		$GLOBALS['wpdb']->hide_errors();
+	}
+
+	public static function json_search_shipping_providers() {
+		check_ajax_referer( 'search-shipping-providers', 'security' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_REQUEST['provider'] ) ) {
+			wp_die( -1 );
+		}
+
+		$provider_search = wc_clean( wp_unslash( $_REQUEST['provider'] ) );
+		$search_results  = array();
+
+		foreach ( Helper::instance()->get_known_shipping_providers() as $slug => $provider ) {
+			if ( strstr( strtolower( $provider->get_title() ), strtolower( $provider_search ) ) ) {
+				$search_results[ $slug ] = array(
+					'id'           => esc_html( $slug ),
+					'text'         => esc_html( $provider->get_title() ),
+					'slug'         => esc_html( $slug ),
+					'icon'         => esc_url_raw( $provider->get_icon() ),
+					'tracking_url' => $provider->get_default_tracking_url_placeholder(), // Cannot use esc_url_raw here as it strips the placeholders
+				);
+			}
+		}
+
+		wp_send_json( $search_results );
 	}
 
 	public static function send_return_shipment_notification_email() {
@@ -314,6 +340,9 @@ class Ajax {
 			wp_send_json( $response_error );
 		}
 
+		$order_shipment   = wc_stc_get_shipment_order( $shipment->get_order() );
+		$old_order_status = $order_shipment ? $order_shipment->get_order()->get_status() : '';
+
 		if ( $shipment->supports_label() && $shipment->needs_label() ) {
 			$data = array();
 
@@ -338,8 +367,7 @@ class Ajax {
 				'messages' => $result->get_error_messages_by_type(),
 			);
 		} elseif ( $label = $shipment->get_label() ) {
-			$order_shipment    = wc_stc_get_shipment_order( $shipment->get_order() );
-			$order_status_html = $order_shipment ? self::get_global_order_status_html( $order_shipment->get_order() ) : array();
+			$order_status_html = $order_shipment ? self::get_global_order_status_html( $order_shipment->get_order(), $old_order_status ) : array();
 
 			$response = array(
 				'success'       => true,
@@ -990,11 +1018,13 @@ class Ajax {
 			wp_send_json( $response_error );
 		}
 
+		$old_order_status = $order_shipment->get_order()->get_status();
+
 		static::refresh_shipments( $order_shipment );
 
 		$order_shipment->validate_shipments();
 
-		$response['fragments'] = self::get_shipments_html( $order_shipment, $active );
+		$response['fragments'] = self::get_shipments_html( $order_shipment, $active, $old_order_status );
 
 		self::send_json_success( $response, $order_shipment );
 	}
@@ -1166,11 +1196,12 @@ class Ajax {
 
 	/**
 	 * @param \WC_Order $order
+	 * @param string $old_order_status
 	 *
 	 * @return string[]
 	 */
-	private static function get_global_order_status_html( $order ) {
-		$old_status = $order->get_status();
+	private static function get_global_order_status_html( $order, $old_order_status = '' ) {
+		$old_status = empty( $old_order_status ) ? $order->get_status() : $old_order_status;
 		$result     = array(
 			'status' => '',
 			'input'  => '',
@@ -1300,6 +1331,8 @@ class Ajax {
 			wp_send_json( $response_error );
 		}
 
+		$old_order_status = $order_shipment->get_order()->get_status();
+
 		// Refresh data
 		self::refresh_shipments( $order_shipment );
 
@@ -1311,18 +1344,19 @@ class Ajax {
 
 		$order_shipment->save();
 
-		$response['fragments'] = self::get_shipments_html( $order_shipment, $active );
+		$response['fragments'] = self::get_shipments_html( $order_shipment, $active, $old_order_status );
 
 		self::send_json_success( $response, $order_shipment );
 	}
 
 	/**
-	 * @param Order $order_shipment
-	 * @param int $active
+	 * @param Order $p_order_shipment
+	 * @param int $p_active
+	 * @param string $old_order_status
 	 *
 	 * @return array
 	 */
-	private static function get_shipments_html( $p_order_shipment, $p_active = 0 ) {
+	private static function get_shipments_html( $p_order_shipment, $p_active = 0, $old_order_status = '' ) {
 		$order_shipment  = $p_order_shipment;
 		$active_shipment = $p_active;
 
@@ -1330,7 +1364,7 @@ class Ajax {
 		include Package::get_path() . '/includes/admin/views/html-order-shipment-list.php';
 		$html = ob_get_clean();
 
-		$order_status_html = self::get_global_order_status_html( $order_shipment->get_order() );
+		$order_status_html = self::get_global_order_status_html( $order_shipment->get_order(), $old_order_status );
 
 		$fragments = array(
 			'#order-shipments-list'                => $html,
@@ -1822,7 +1856,7 @@ class Ajax {
 				array(
 					'cost_formatted' => $costs_formatted,
 					'cost'           => wc_format_decimal( $result ),
-					'cost_i18n'      => '<div class="woocommerce-info">' . wp_kses_post( 0.00 === $result ? _x( 'Your return is free of charge.', 'shipments', 'woocommerce-germanized' ) : sprintf( _x( 'Your return shipping costs of %s will be automatically deducted from your refund amount.', 'shipments', 'woocommerce-germanized' ), $costs_formatted ) ) . '</div>',
+					'cost_i18n'      => '<div class="woocommerce-info">' . wp_kses_post( 0.00 === $result ? _x( 'Your return is free of charge.', 'shipments', 'woocommerce-germanized' ) : sprintf( _x( 'The return shipping costs of %s will be automatically deducted from your refund amount.', 'shipments', 'woocommerce-germanized' ), $costs_formatted ) ) . '</div>',
 				)
 			);
 		}

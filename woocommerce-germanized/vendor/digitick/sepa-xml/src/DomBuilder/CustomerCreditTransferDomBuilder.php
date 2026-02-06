@@ -34,7 +34,7 @@ use Digitick\Sepa\TransferInformation\TransferInformationInterface;
 class CustomerCreditTransferDomBuilder extends BaseDomBuilder
 {
 
-    function __construct(string $painFormat = 'pain.001.002.03', $withSchemaLocation = true)
+    function __construct(string $painFormat = 'pain.001.001.09', bool $withSchemaLocation = true)
     {
         parent::__construct($painFormat, $withSchemaLocation);
     }
@@ -62,7 +62,7 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
         }
 
         $this->currentPayment->appendChild(
-            $this->createElement('NbOfTxs', $paymentInformation->getNumberOfTransactions())
+            $this->createElement('NbOfTxs', (string) $paymentInformation->getNumberOfTransactions())
         );
 
         $this->currentPayment->appendChild(
@@ -70,13 +70,27 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
         );
 
         $paymentTypeInformation = $this->createElement('PmtTpInf');
-        if ($paymentInformation->getInstructionPriority()) {
+        if ($paymentInformation->getInstructionPriority()
+            && $this->messageFormat->isCreditTransfer()
+            && $this->messageFormat->getVariant() == 1
+        ) {
             $instructionPriority = $this->createElement('InstrPrty', $paymentInformation->getInstructionPriority());
             $paymentTypeInformation->appendChild($instructionPriority);
         }
         $serviceLevel = $this->createElement('SvcLvl');
         $serviceLevel->appendChild($this->createElement('Cd', 'SEPA'));
         $paymentTypeInformation->appendChild($serviceLevel);
+
+        if ($paymentInformation->getLocalInstrumentCode() || $paymentInformation->getLocalInstrumentProprietary()) {
+            $localInstrument = $this->createElement('LclInstrm');
+            if ($paymentInformation->getLocalInstrumentCode()) {
+                $localInstrument->appendChild($this->createElement('Cd', $paymentInformation->getLocalInstrumentCode()));
+            } else if ($paymentInformation->getLocalInstrumentProprietary()) {
+                $localInstrument->appendChild($this->createElement('Prtry', $paymentInformation->getLocalInstrumentProprietary()));
+            }
+            $paymentTypeInformation->appendChild($localInstrument);
+        }
+
         if ($paymentInformation->getCategoryPurposeCode()) {
             $categoryPurpose = $this->createElement('CtgyPurp');
             $categoryPurpose->appendChild($this->createElement('Cd', $paymentInformation->getCategoryPurposeCode()));
@@ -84,18 +98,26 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
         }
         $this->currentPayment->appendChild($paymentTypeInformation);
 
-        if ($paymentInformation->getLocalInstrumentCode()) {
-            $localInstrument = $this->createElement('LclInstr');
-            $localInstrument->appendChild($this->createElement('Cd', $paymentInformation->getLocalInstrumentCode()));
-            $this->currentPayment->appendChild($localInstrument);
+        if ($this->messageFormat->isCreditTransfer()
+            && $this->messageFormat->getVariant() == 1
+            && $this->messageFormat->getVersion() >= 8
+        ) {
+            $requestExecutionDate = $this->createElement('ReqdExctnDt');
+            $requestExecutionDate->appendChild($this->createElement('Dt', $paymentInformation->getDueDate()));
+        } else {
+            // In other variants and versions < 8 the ReqdExctnDt is just a plain ISODate
+            $requestExecutionDate = $this->createElement('ReqdExctnDt', $paymentInformation->getDueDate());
         }
+        $this->currentPayment->appendChild($requestExecutionDate);
 
-        $this->currentPayment->appendChild($this->createElement('ReqdExctnDt', $paymentInformation->getDueDate()));
         $debtor = $this->createElement('Dbtr');
         $debtor->appendChild($this->createElement('Nm', $paymentInformation->getOriginName()));
         $this->currentPayment->appendChild($debtor);
 
-        if ($paymentInformation->getOriginBankPartyIdentification() !== null && $this->painFormat === 'pain.001.001.03') {
+        if ($paymentInformation->getOriginBankPartyIdentification() !== null
+            && $this->messageFormat->isCreditTransfer()
+            && $this->messageFormat->getVersion() >= 3
+        ) {
             $organizationId = $this->getOrganizationIdentificationElement(
                 $paymentInformation->getOriginBankPartyIdentification(),
                 $paymentInformation->getOriginBankPartyIdentificationScheme());
@@ -126,7 +148,6 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
      */
     public function visitTransferInformation(TransferInformationInterface $transactionInformation): void
     {
-        /** @var $transactionInformation  CustomerCreditTransferInformation */
         $CdtTrfTxInf = $this->createElement('CdtTrfTxInf');
 
         // Payment ID 2.28
@@ -135,6 +156,9 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
             $PmtId->appendChild($this->createElement('InstrId', $transactionInformation->getInstructionId()));
         }
         $PmtId->appendChild($this->createElement('EndToEndId', $transactionInformation->getEndToEndIdentification()));
+        if ($transactionInformation->getUUID() && $this->messageFormat->isCreditTransfer() && $this->messageFormat->getVariant() == 1 && $this->messageFormat->getVersion() >= 9) {
+            $PmtId->appendChild($this->createElement('UETR', $transactionInformation->getUUID()));
+        }
         $CdtTrfTxInf->appendChild($PmtId);
 
         // Amount 2.42
@@ -148,22 +172,17 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
         $CdtTrfTxInf->appendChild($amount);
 
         //Creditor Agent 2.77
-        if ($transactionInformation->getBic()) {
-            $creditorAgent = $this->createElement('CdtrAgt');
-            $financialInstitution = $this->createElement('FinInstnId');
-            $financialInstitution->appendChild($this->createElement('BIC', $transactionInformation->getBic()));
-            $creditorAgent->appendChild($financialInstitution);
-            $CdtTrfTxInf->appendChild($creditorAgent);
-        }
+        $creditorAgent = $this->createElement('CdtrAgt');
+        $creditorAgent->appendChild($this->getFinancialInstitutionElement($transactionInformation->getBic()));
+        $CdtTrfTxInf->appendChild($creditorAgent);
+
 
         // Creditor 2.79
         $creditor = $this->createElement('Cdtr');
-        $creditor->appendChild($this->createElement('Nm', $transactionInformation->getCreditorName()));
+        $creditor->appendChild($this->createElement('Nm', $transactionInformation->getCreditorOrDebitorName()));
 
         // Creditor address if needed and supported by schema.
-        if (in_array($this->painFormat, array('pain.001.001.03'))) {
-            $this->appendAddressToDomElement($creditor, $transactionInformation);
-        }
+        $this->appendAddressToDomElement($creditor, $transactionInformation);
 
         $CdtTrfTxInf->appendChild($creditor);
 
@@ -173,6 +192,14 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
         $id->appendChild($this->createElement('IBAN', $transactionInformation->getIban()));
         $creditorAccount->appendChild($id);
         $CdtTrfTxInf->appendChild($creditorAccount);
+        
+        // Purpose code (Optional)
+        if (strlen((string)$transactionInformation->getPurposeCode()) > 0)
+        {
+            $purposeCode = $this->createElement('Purp');
+            $purposeCode->appendChild($this->createElement('Cd', $transactionInformation->getPurposeCode()));
+            $CdtTrfTxInf->appendChild($purposeCode);
+        }
 
         // remittance 2.98 2.99
         if (strlen((string)$transactionInformation->getCreditorReference()) > 0)
@@ -188,17 +215,22 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
     }
 
     /**
-     * Add the specific OrgId element for the format 'pain.001.001.03'
+     * Add the specific OrgId element for the format 'pain.001.001.xx'
      */
     public function visitGroupHeader(GroupHeader $groupHeader): void
     {
         parent::visitGroupHeader($groupHeader);
 
-        if ($groupHeader->getInitiatingPartyId() !== null && $this->painFormat === 'pain.001.001.03') {
+        if ($groupHeader->getInitiatingPartyId() !== null
+            && $this->messageFormat->isCreditTransfer()
+            && $this->messageFormat->getVariant() == 1
+            && $this->messageFormat->getVersion() >= 3
+        ) {
             $organizationId = $this->getOrganizationIdentificationElement(
                 $groupHeader->getInitiatingPartyId(),
                 $groupHeader->getInitiatingPartyIdentificationScheme(),
-                $groupHeader->getIssuer());
+                $groupHeader->getIssuer()
+            );
 
             $xpath = new \DOMXpath($this->doc);
             $items = $xpath->query('GrpHdr/InitgPty/Id', $this->currentTransfer);
@@ -248,24 +280,51 @@ class CustomerCreditTransferDomBuilder extends BaseDomBuilder
             return; // No address exists, nothing to do.
         }
 
-        $postalAddress = $this->createElement('PstlAdr');
+        if ($this->messageFormat->isCreditTransfer() && $this->messageFormat->getVersion() >= 1) {
+            $postalAddress = $this->createElement('PstlAdr');
+            // Variants 2 and 3 only support Country and AddressLine
+            if (!in_array($this->messageFormat->getVariant(), [2,3])) {
+                if (!empty($transactionInformation->getStreetName())) {
+                    $postalAddress->appendChild($this->createElement('StrtNm', $transactionInformation->getStreetName()));
+                }
 
-        // Gemerate country address node.
-        if ((bool)$transactionInformation->getCountry()) {
-            $postalAddress->appendChild($this->createElement('Ctry', $transactionInformation->getCountry()));
+                if (!empty($transactionInformation->getBuildingNumber())) {
+                    $postalAddress->appendChild($this->createElement('BldgNb', $transactionInformation->getBuildingNumber()));
+                }
+
+                if (!empty($transactionInformation->getFloorNumber())
+                    && $this->messageFormat->getVariant() == 1
+                    && $this->messageFormat->getVersion() >= 9
+                ) {
+                    $postalAddress->appendChild($this->createElement('Flr', $transactionInformation->getFloorNumber()));
+                }
+
+                if (!empty($transactionInformation->getPostCode())) {
+                    $postalAddress->appendChild($this->createElement('PstCd', $transactionInformation->getPostCode()));
+                }
+
+                if (!empty($transactionInformation->getTownName())) {
+                    $postalAddress->appendChild($this->createElement('TwnNm', $transactionInformation->getTownName()));
+                }
+            }
+
+            // Generate country address node.
+            if (!empty($transactionInformation->getCountry())) {
+                $postalAddress->appendChild($this->createElement('Ctry', $transactionInformation->getCountry()));
+            }
+
+            // Ensure $postalAddressData is an array as getPostalAddress() returns either string or string[].
+            $postalAddressData = $transactionInformation->getPostalAddress();
+            if (!is_array($postalAddressData)) {
+                $postalAddressData = [$postalAddressData];
+            }
+
+            // Generate nodes for each address line.
+            foreach (array_filter($postalAddressData) as $postalAddressLine) {
+                $postalAddress->appendChild($this->createElement('AdrLine', $postalAddressLine));
+            }
+
+            $creditor->appendChild($postalAddress);
         }
-
-        // Ensure $postalAddressData is an array as getPostalAddress() returns either string or string[].
-        $postalAddressData = $transactionInformation->getPostalAddress();
-        if (!is_array($postalAddressData)) {
-            $postalAddressData = array($postalAddressData);
-        }
-
-        // Generate nodes for each address line.
-        foreach (array_filter($postalAddressData) as $postalAddressLine) {
-            $postalAddress->appendChild($this->createElement('AdrLine', $postalAddressLine));
-        }
-
-        $creditor->appendChild($postalAddress);
     }
 }

@@ -186,10 +186,24 @@ class WC_GZD_Order_Helper {
 	protected function get_item_total( $item, $old_item = false ) {
 		// Let's grab a fresh copy (loaded from DB) to make sure we are not dependent on Woo's calculated taxes in $item.
 		if ( $old_item ) {
-			$item_total = wc_format_decimal( floatval( $old_item->get_total() ) );
+			$item_total         = wc_format_decimal( floatval( $old_item->get_total() ) );
+			$new_item_total     = wc_format_decimal( floatval( $item->get_total() ) );
+			$item_tax_total     = floatval( $old_item->get_total_tax() );
+			$new_item_tax_total = floatval( $item->get_total_tax() );
+			$order              = $item->get_order();
 
 			if ( wc_gzd_additional_costs_include_tax() ) {
-				$item_total += wc_format_decimal( floatval( $old_item->get_total_tax() ) );
+				/**
+				 * Orders created via rest-api may be transmitted without actual tax data for the shipping line
+				 * items and should be interpreted as net based. Add the tax calculated by Woo on top.
+				 */
+				$is_fresh_rest_api_item = 'rest-api' === $order->get_created_via() && 0.0 === $item_tax_total && $item_total === $new_item_total;
+
+				if ( apply_filters( 'woocommerce_gzd_order_item_additional_cost_is_net', $is_fresh_rest_api_item, $old_item, $item ) ) {
+					$item_total += wc_format_decimal( $new_item_tax_total );
+				} else {
+					$item_total += wc_format_decimal( $item_tax_total );
+				}
 			}
 		} else {
 			$item_total     = wc_format_decimal( floatval( $item->get_total() ) );
@@ -776,6 +790,9 @@ class WC_GZD_Order_Helper {
 		array_push( $metas, '_deposit_net_amount_per_unit' );
 		array_push( $metas, '_deposit_tax_status' );
 		array_push( $metas, '_deposit_packaging_type' );
+		array_push( $metas, '_deposit_packaging_amount' );
+		array_push( $metas, '_deposit_packaging_net_amount' );
+		array_push( $metas, '_deposit_packaging_number_contents' );
 
 		return $metas;
 	}
@@ -815,8 +832,11 @@ class WC_GZD_Order_Helper {
 					$gzd_item->set_deposit_net_amount_per_unit( $gzd_product->get_deposit_amount_per_unit( 'view', 'excl' ) );
 
 					$gzd_item->set_deposit_quantity( $gzd_product->get_deposit_quantity() );
-					$gzd_item->set_deposit_amount( $gzd_product->get_deposit_amount( 'view', 'incl' ) );
-					$gzd_item->set_deposit_net_amount( $gzd_product->get_deposit_amount( 'view', 'excl' ) );
+					$gzd_item->set_deposit_amount( $gzd_product->get_deposit_amount( 'view_exclude_packaging', 'incl' ) );
+					$gzd_item->set_deposit_net_amount( $gzd_product->get_deposit_amount( 'view_exclude_packaging', 'excl' ) );
+					$gzd_item->set_deposit_packaging_amount( $gzd_product->get_deposit_packaging_amount( 'view', 'incl' ) );
+					$gzd_item->set_deposit_packaging_net_amount( $gzd_product->get_deposit_packaging_amount( 'view', 'excl' ) );
+					$gzd_item->set_deposit_packaging_number_of_contents( $gzd_product->get_deposit_packaging_number_of_contents() );
 
 					$gzd_item->set_deposit_packaging_type( $gzd_product->get_deposit_packaging_type() );
 					$gzd_item->set_deposit_tax_status( $gzd_product->get_deposit_tax_status() );

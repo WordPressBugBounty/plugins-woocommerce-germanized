@@ -238,9 +238,14 @@ function wc_stc_get_shipment_order_shipping_statuses() {
 
 function wc_stc_get_shipment_order_return_statuses() {
 	$shipment_statuses = array(
-		'open'               => _x( 'Open', 'shipments', 'woocommerce-germanized' ),
-		'partially-returned' => _x( 'Partially returned', 'shipments', 'woocommerce-germanized' ),
-		'returned'           => _x( 'Returned', 'shipments', 'woocommerce-germanized' ),
+		'not-returned'        => _x( 'Not returned', 'shipments', 'woocommerce-germanized' ),
+		'partially-shipped'   => _x( 'Partially shipped', 'shipments', 'woocommerce-germanized' ),
+		'shipped'             => _x( 'Shipped', 'shipments', 'woocommerce-germanized' ),
+		'partially-returned'  => _x( 'Partially returned', 'shipments', 'woocommerce-germanized' ),
+		'returned'            => _x( 'Returned', 'shipments', 'woocommerce-germanized' ),
+		'partially-requested' => _x( 'Partially requested', 'shipments', 'woocommerce-germanized' ),
+		'requested'           => _x( 'Requested', 'shipments', 'woocommerce-germanized' ),
+		'no-return-needed'    => _x( 'No return needed', 'shipments', 'woocommerce-germanized' ),
 	);
 
 	/**
@@ -901,6 +906,7 @@ function wc_stc_create_shipping_provider( $props = array(), $is_manual = true ) 
 		array(
 			'title'                    => '',
 			'description'              => '',
+			'original_name'            => '',
 			'tracking_url_placeholder' => '',
 		)
 	);
@@ -1046,6 +1052,7 @@ function wc_stc_get_shipment_setting_default_address_fields( $type = 'shipper' )
 		'phone'                    => _x( 'Phone', 'shipments', 'woocommerce-germanized' ),
 		'email'                    => _x( 'Email', 'shipments', 'woocommerce-germanized' ),
 		'customs_reference_number' => _x( 'Customs Reference Number', 'shipments', 'woocommerce-germanized' ),
+		'vat_id'                   => _x( 'VAT ID (EU)', 'shipments', 'woocommerce-germanized' ),
 		'customs_uk_vat_id'        => _x( 'UK VAT ID (HMRC)', 'shipments', 'woocommerce-germanized' ),
 	);
 
@@ -1086,7 +1093,7 @@ function wc_stc_get_shipment_setting_address_fields( $address_type = 'shipper' )
 			if ( array_key_exists( $prop, $default_address_data ) && ! in_array( $prop, array( 'state' ), true ) ) {
 				$value = $default_address_data[ $prop ];
 			} else {
-				$value = '';
+				$value = apply_filters( "woocommerce_shiptastic_shipment_{$address_type}_address_default_field_value", $value, $prop );
 			}
 		}
 
@@ -1627,6 +1634,12 @@ function wc_stc_get_order_shipping_provider( $order, $method_id = '' ) {
 		}
 	}
 
+	if ( ! $provider ) {
+		if ( $provider_name = wc_stc_get_default_shipping_provider() ) {
+			$provider = wc_stc_get_shipping_provider( $provider_name );
+		}
+	}
+
 	/**
 	 * Filters the shipping provider detected for a specific order.
 	 *
@@ -1870,18 +1883,7 @@ function wc_shiptastic_substring( $str, $start, $length = null ) {
  * @return string|array
  */
 function wc_shiptastic_get_alphanumeric_string( $str ) {
-	if ( is_array( $str ) ) {
-		return array_map( 'wc_shiptastic_get_alphanumeric_string', $str );
-	} elseif ( is_scalar( $str ) ) {
-		$str = wc_shiptastic_decode_html( $str );
-		$str = remove_accents( $str );
-		$str = preg_replace( '/[^ \w-]/', ' ', $str );
-		$str = preg_replace( '/\s+/', ' ', $str );
-
-		return wc_clean( $str );
-	} else {
-		return $str;
-	}
+	return \Vendidero\Shiptastic\Encoding::to_alphanumeric( $str );
 }
 
 /**
@@ -1893,11 +1895,12 @@ function wc_shiptastic_get_alphanumeric_string( $str ) {
  * @return string|array
  */
 function wc_shiptastic_decode_html( $str ) {
-	if ( is_array( $str ) ) {
-		return array_map( 'wc_shiptastic_decode_html', $str );
-	} elseif ( is_scalar( $str ) && ! is_bool( $str ) ) {
-		return html_entity_decode( $str, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-	} else {
-		return $str;
-	}
+	return \Vendidero\Shiptastic\Encoding::to_utf8( $str );
+}
+
+/**
+ * @param WC_Email $email
+ */
+function wc_stc_get_email_locale_helper( $email ) {
+	return new \Vendidero\Shiptastic\EmailLocale( $email );
 }

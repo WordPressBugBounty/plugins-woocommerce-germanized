@@ -37,28 +37,54 @@ class TransferFileFacadeFactory
      *                                            Part of the duplication check (unique daily reference).
      *                                            The first 8 or 11 characters of <Msgld> must match the BIC of the
      *                                            Instructing Agent. The rest of the field can be freely defined.
+     * @param string $initiatingPartyName
+     * @param string $painFormat
+     * @return CustomerDirectDebitFacade
+     * @throws \DOMException
      */
-    public static function createDirectDebit(string $uniqueMessageIdentification, string $initiatingPartyName, string $painFormat = 'pain.008.002.02'): CustomerDirectDebitFacade
+    public static function createDirectDebit(string $uniqueMessageIdentification, string $initiatingPartyName, string $painFormat = 'pain.008.001.09'): CustomerDirectDebitFacade
     {
         $groupHeader = new GroupHeader($uniqueMessageIdentification, $initiatingPartyName);
 
         return self::createDirectDebitWithGroupHeader($groupHeader, $painFormat);
     }
 
-    public static function createDirectDebitWithGroupHeader(GroupHeader $groupHeader, string $painFormat = 'pain.008.002.02'): CustomerDirectDebitFacade
+    /**
+     * @param GroupHeader $groupHeader
+     * @param string $painFormat
+     * @return CustomerDirectDebitFacade
+     * @throws \DOMException
+     */
+    public static function createDirectDebitWithGroupHeader(GroupHeader $groupHeader, string $painFormat = 'pain.008.001.09'): CustomerDirectDebitFacade
     {
         return new CustomerDirectDebitFacade(new CustomerDirectDebitTransferFile($groupHeader), new CustomerDirectDebitTransferDomBuilder($painFormat));
     }
 
-    public static function createCustomerCredit(string $uniqueMessageIdentification, string $initiatingPartyName, string $painFormat = 'pain.001.002.03'): CustomerCreditFacade
+    /**
+     * @TODO: Rename to createCustomerCreditTransfer in v3.0
+     * @param string $uniqueMessageIdentification
+     * @param string $initiatingPartyName
+     * @param string $painFormat
+     * @return CustomerCreditFacade
+     * @throws \DOMException
+     */
+    public static function createCustomerCredit(string $uniqueMessageIdentification, string $initiatingPartyName, string $painFormat = 'pain.001.001.09'): CustomerCreditFacade
     {
         $groupHeader = new GroupHeader($uniqueMessageIdentification, $initiatingPartyName);
 
         return self::createCustomerCreditWithGroupHeader($groupHeader, $painFormat);
     }
 
-    public static function createCustomerCreditWithGroupHeader(GroupHeader $groupHeader, string $painFormat = 'pain.001.002.03'): CustomerCreditFacade
+    /**
+     * @TODO: Rename to createCustomerCreditTransferWithGroupHeader in v3.0
+     * @param GroupHeader $groupHeader
+     * @param string $painFormat
+     * @param bool $withSchemaLocation
+     * @return CustomerCreditFacade
+     * @throws \DOMException
+     */
+    public static function createCustomerCreditWithGroupHeader(GroupHeader $groupHeader, string $painFormat = 'pain.001.001.09', bool $withSchemaLocation = true): CustomerCreditFacade
     {
-        return new CustomerCreditFacade(new CustomerCreditTransferFile($groupHeader), new CustomerCreditTransferDomBuilder($painFormat));
+        return new CustomerCreditFacade(new CustomerCreditTransferFile($groupHeader), new CustomerCreditTransferDomBuilder($painFormat, $withSchemaLocation));
     }
 }

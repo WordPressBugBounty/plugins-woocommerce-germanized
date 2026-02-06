@@ -10,6 +10,7 @@ use Exception;
 use Vendidero\Shiptastic\Admin\Settings;
 use Vendidero\Shiptastic\Interfaces\ShipmentLabel;
 use Vendidero\Shiptastic\Interfaces\ShippingProvider;
+use Vendidero\Shiptastic\Package;
 use Vendidero\Shiptastic\SecretBox;
 use Vendidero\Shiptastic\Shipment;
 use Vendidero\Shiptastic\ShipmentError;
@@ -59,6 +60,11 @@ class Simple extends WC_Data implements ShippingProvider {
 	protected $print_formats = null;
 
 	/**
+	 * @var null|Placeholder
+	 */
+	protected $original_shipping_provider = null;
+
+	/**
 	 * Stores provider data.
 	 *
 	 * @var array
@@ -67,6 +73,7 @@ class Simple extends WC_Data implements ShippingProvider {
 		'activated'                  => false,
 		'title'                      => '',
 		'name'                       => '',
+		'original_name'              => '',
 		'description'                => '',
 		'order'                      => 0,
 		'supports_customer_returns'  => false,
@@ -126,6 +133,14 @@ class Simple extends WC_Data implements ShippingProvider {
 		return '';
 	}
 
+	public function get_icon() {
+		if ( $original = $this->get_original_provider() ) {
+			return $original->get_icon();
+		}
+
+		return '';
+	}
+
 	public function get_logo_path() {
 		return '';
 	}
@@ -177,6 +192,10 @@ class Simple extends WC_Data implements ShippingProvider {
 		}
 
 		return false;
+	}
+
+	public function get_available_incoterms() {
+		return array();
 	}
 
 	/**
@@ -254,6 +273,29 @@ class Simple extends WC_Data implements ShippingProvider {
 	 */
 	public function get_name( $context = 'view' ) {
 		return $this->get_prop( 'name', $context );
+	}
+
+	/**
+	 * Returns the original name (slug), e.g. dhl for the shipping provider.
+	 *
+	 * @param string $context
+	 *
+	 * @return string
+	 */
+	public function get_original_name( $context = 'view' ) {
+		return $this->get_prop( 'original_name', $context );
+	}
+
+	public function get_original_provider( $context = 'view' ) {
+		if ( is_null( $this->original_shipping_provider ) ) {
+			$this->original_shipping_provider = false;
+
+			if ( $original_name = $this->get_original_name( $context ) ) {
+				$this->original_shipping_provider = Helper::instance()->get_known_shipping_provider( $original_name );
+			}
+		}
+
+		return $this->original_shipping_provider;
 	}
 
 	/**
@@ -477,6 +519,10 @@ class Simple extends WC_Data implements ShippingProvider {
 		return $this->get_address_prop( 'customs_uk_vat_id' );
 	}
 
+	public function get_shipper_vat_id() {
+		return $this->get_address_prop( 'vat_id' );
+	}
+
 	public function get_shipper_country() {
 		$country_data = wc_format_country_state_string( $this->get_address_prop( 'country' ) );
 
@@ -672,6 +718,17 @@ class Simple extends WC_Data implements ShippingProvider {
 	}
 
 	/**
+	 * Set the name of the current shipping provider.
+	 *
+	 * @param string $name
+	 */
+	public function set_original_name( $name ) {
+		$this->set_prop( 'original_name', $name );
+
+		$this->original_shipping_provider = null;
+	}
+
+	/**
 	 * Set the title of the current shipping provider.
 	 *
 	 * @param string $title
@@ -806,12 +863,6 @@ class Simple extends WC_Data implements ShippingProvider {
 	 * @return array
 	 */
 	public function get_tracking_placeholders( $shipment = false ) {
-		$label = false;
-
-		if ( $shipment ) {
-			$label = $shipment->get_label();
-		}
-
 		/**
 		 * This filter may be used to add or manipulate tracking placeholder data
 		 * for a certain shipping provider.
@@ -827,26 +878,36 @@ class Simple extends WC_Data implements ShippingProvider {
 		 *
 		 * @package Vendidero/Shiptastic
 		 */
-		return apply_filters(
-			"{$this->get_hook_prefix()}tracking_placeholders",
-			array(
-				'{tracking_id}'       => $shipment ? $shipment->get_tracking_id() : '',
-				'{postcode}'          => $shipment ? $shipment->get_postcode() : '',
-				'{shipment_number}'   => $shipment ? $shipment->get_shipment_number() : '',
-				'{order_number}'      => $shipment ? $shipment->get_order_number() : '',
-				'{date_sent_day}'     => $shipment && $shipment->get_date_sent() ? $shipment->get_date_sent()->format( 'd' ) : '',
-				'{date_sent_month}'   => $shipment && $shipment->get_date_sent() ? $shipment->get_date_sent()->format( 'm' ) : '',
-				'{date_sent_year}'    => $shipment && $shipment->get_date_sent() ? $shipment->get_date_sent()->format( 'Y' ) : '',
-				'{date_day}'          => $shipment && $shipment->get_date_created() ? $shipment->get_date_created()->format( 'd' ) : '',
-				'{date_month}'        => $shipment && $shipment->get_date_created() ? $shipment->get_date_created()->format( 'm' ) : '',
-				'{date_year}'         => $shipment && $shipment->get_date_created() ? $shipment->get_date_created()->format( 'Y' ) : '',
-				'{label_date_day}'    => $label ? $label->get_date_created()->format( 'd' ) : '',
-				'{label_date_month}'  => $label ? $label->get_date_created()->format( 'm' ) : '',
-				'{label_date_year}'   => $label ? $label->get_date_created()->format( 'Y' ) : '',
-				'{shipping_provider}' => $this->get_title(),
-			),
-			$this,
-			$shipment
+		return apply_filters( "{$this->get_hook_prefix()}tracking_placeholders", $this->get_tracking_raw_placeholders( $shipment ), $this, $shipment );
+	}
+
+	/**
+	 * @param bool|Shipment $shipment
+	 *
+	 * @return array
+	 */
+	protected function get_tracking_raw_placeholders( $shipment = false ) {
+		$label = false;
+
+		if ( $shipment ) {
+			$label = $shipment->get_label();
+		}
+
+		return array(
+			'{tracking_id}'       => $shipment ? $shipment->get_tracking_id() : '',
+			'{postcode}'          => $shipment ? $shipment->get_postcode() : '',
+			'{shipment_number}'   => $shipment ? $shipment->get_shipment_number() : '',
+			'{order_number}'      => $shipment ? $shipment->get_order_number() : '',
+			'{date_sent_day}'     => $shipment && $shipment->get_date_sent() ? $shipment->get_date_sent()->format( 'd' ) : '',
+			'{date_sent_month}'   => $shipment && $shipment->get_date_sent() ? $shipment->get_date_sent()->format( 'm' ) : '',
+			'{date_sent_year}'    => $shipment && $shipment->get_date_sent() ? $shipment->get_date_sent()->format( 'Y' ) : '',
+			'{date_day}'          => $shipment && $shipment->get_date_created() ? $shipment->get_date_created()->format( 'd' ) : '',
+			'{date_month}'        => $shipment && $shipment->get_date_created() ? $shipment->get_date_created()->format( 'm' ) : '',
+			'{date_year}'         => $shipment && $shipment->get_date_created() ? $shipment->get_date_created()->format( 'Y' ) : '',
+			'{label_date_day}'    => $label ? $label->get_date_created()->format( 'd' ) : '',
+			'{label_date_month}'  => $label ? $label->get_date_created()->format( 'm' ) : '',
+			'{label_date_year}'   => $label ? $label->get_date_created()->format( 'Y' ) : '',
+			'{shipping_provider}' => $this->get_title(),
 		);
 	}
 
@@ -884,6 +945,22 @@ class Simple extends WC_Data implements ShippingProvider {
 		);
 
 		if ( $this->is_manual_integration() ) {
+			if ( Package::woo_supports_providers() ) {
+				$settings = array_merge(
+					$settings,
+					array(
+						array(
+							'title'    => _x( 'Shipping Service Provider', 'shipments', 'woocommerce-germanized' ),
+							'desc_tip' => _x( 'Start from a known shipping provider or provide the settings yourself.', 'shipments', 'woocommerce-germanized' ),
+							'id'       => 'shipping_provider_original_name',
+							'value'    => $this->get_original_name( 'edit' ),
+							'default'  => '',
+							'type'     => 'shiptastic_search_shipping_provider',
+						),
+					)
+				);
+			}
+
 			$settings = array_merge(
 				$settings,
 				array(
@@ -1121,7 +1198,7 @@ class Simple extends WC_Data implements ShippingProvider {
 
 				array(
 					'title'             => sprintf( _x( 'Costs (%s)', 'shipments', 'woocommerce-germanized' ), get_woocommerce_currency_symbol() ),
-					'desc'              => _x( 'Choose whether returns are subject to a fee for your customers.', 'shipments', 'woocommerce-germanized' ) . '<div class="wc-shiptastic-additional-desc">' . sprintf( _x( 'Costs are automatically deducted from the refund created to the return shipment. You may override these costs on a per-packaging basis.', 'shipments', 'woocommerce-germanized' ) ) . '</div>',
+					'desc'              => _x( 'Choose whether returns are subject to a fee for your customers.', 'shipments', 'woocommerce-germanized' ) . '<div class="wc-shiptastic-additional-desc">' . sprintf( _x( 'Costs are automatically deducted from the refund created to the return shipment.', 'shipments', 'woocommerce-germanized' ) ) . '</div>',
 					'id'                => 'return_costs',
 					'default'           => 0,
 					'value'             => wc_format_localized_decimal( $this->get_return_costs( 'edit' ) ),

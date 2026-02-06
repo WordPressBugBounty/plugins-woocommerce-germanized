@@ -25,6 +25,7 @@ class Api {
 		add_filter( 'woocommerce_rest_product_variation_schema', array( __CLASS__, 'product_variation_schema' ) );
 
 		add_filter( 'woocommerce_rest_pre_insert_product_object', array( __CLASS__, 'update_product' ), 10, 2 );
+		add_filter( 'woocommerce_rest_pre_insert_product_variation_object', array( __CLASS__, 'update_product' ), 10, 2 );
 
 		add_filter( 'woocommerce_rest_prepare_product_object', array( __CLASS__, 'prepare_product' ), 10, 3 );
 		add_filter( 'woocommerce_rest_prepare_product_variation_object', array( __CLASS__, 'prepare_product' ), 10, 3 );
@@ -45,8 +46,10 @@ class Api {
 
 		if ( $shipments_product = wc_shiptastic_get_product( $product ) ) {
 			$data['hs_code']             = $shipments_product->get_hs_code( $context );
+			$data['mid_code']            = $shipments_product->get_mid_code( $context );
 			$data['customs_description'] = $shipments_product->get_customs_description( $context );
 			$data['manufacture_country'] = $shipments_product->get_manufacture_country( $context );
+			$data['shipping_weight']     = $shipments_product->get_shipping_weight( $context );
 			$data['shipping_dimensions'] = array(
 				'length' => $shipments_product->get_shipping_length( $context ),
 				'width'  => $shipments_product->get_shipping_width( $context ),
@@ -73,16 +76,26 @@ class Api {
 				$shipments_product->set_hs_code( wc_clean( wp_unslash( $request['hs_code'] ) ) );
 			}
 
+			if ( isset( $request['mid_code'] ) ) {
+				$shipments_product->set_mid_code( wc_clean( wp_unslash( $request['mid_code'] ) ) );
+			}
+
 			if ( isset( $request['manufacture_country'] ) ) {
 				$shipments_product->set_manufacture_country( wc_clean( wp_unslash( $request['manufacture_country'] ) ) );
 			}
 
 			// Virtual.
 			if ( isset( $request['virtual'] ) && true === $request['virtual'] ) {
+				$shipments_product->set_shipping_weight( '' );
 				$shipments_product->set_shipping_length( '' );
 				$shipments_product->set_shipping_width( '' );
 				$shipments_product->set_shipping_height( '' );
 			} else {
+				// Weight.
+				if ( isset( $request['shipping_weight'] ) ) {
+					$shipments_product->set_shipping_weight( $request['shipping_weight'] );
+				}
+
 				// Height.
 				if ( isset( $request['shipping_dimensions']['height'] ) ) {
 					$shipments_product->set_shipping_height( $request['shipping_dimensions']['height'] );
@@ -120,7 +133,14 @@ class Api {
 		);
 
 		$schema_properties['hs_code'] = array(
-			'description' => _x( 'HS-Code', 'shipments', 'woocommerce-germanized' ),
+			'description' => _x( 'HS-Code (Customs)', 'shipments', 'woocommerce-germanized' ),
+			'type'        => 'string',
+			'context'     => array( 'view', 'edit' ),
+			'readonly'    => true,
+		);
+
+		$schema_properties['mid_code'] = array(
+			'description' => _x( 'MID (Customs)', 'shipments', 'woocommerce-germanized' ),
 			'type'        => 'string',
 			'context'     => array( 'view', 'edit' ),
 			'readonly'    => true,
@@ -131,6 +151,14 @@ class Api {
 			'type'        => 'string',
 			'context'     => array( 'view', 'edit' ),
 			'readonly'    => true,
+		);
+
+		$weight_unit_label = Package::get_weight_unit_label( get_option( 'woocommerce_weight_unit', 'kg' ) );
+
+		$schema_properties['shipping_weight'] = array(
+			'description' => sprintf( _x( 'Shipping weight (%s).', 'shipments', 'woocommerce-germanized' ), $weight_unit_label ),
+			'type'        => 'string',
+			'context'     => array( 'view', 'edit' ),
 		);
 
 		$dimension_unit_label = Package::get_dimensions_unit_label( get_option( 'woocommerce_dimension_unit', 'cm' ) );
@@ -185,8 +213,22 @@ class Api {
 			'context'     => array( 'view', 'edit' ),
 		);
 
+		$schema_properties['mid_code'] = array(
+			'description' => _x( 'MID (Customs)', 'shipments', 'woocommerce-germanized' ),
+			'type'        => 'string',
+			'context'     => array( 'view', 'edit' ),
+		);
+
 		$schema_properties['manufacture_country'] = array(
 			'description' => _x( 'Country of manufacture (Customs)', 'shipments', 'woocommerce-germanized' ),
+			'type'        => 'string',
+			'context'     => array( 'view', 'edit' ),
+		);
+
+		$weight_unit_label = Package::get_weight_unit_label( get_option( 'woocommerce_weight_unit', 'kg' ) );
+
+		$schema_properties['shipping_weight'] = array(
+			'description' => sprintf( _x( 'Shipping weight (%s).', 'shipments', 'woocommerce-germanized' ), $weight_unit_label ),
 			'type'        => 'string',
 			'context'     => array( 'view', 'edit' ),
 		);
@@ -256,6 +298,7 @@ class Api {
 			array(
 				'shipments'                       => array(),
 				'shipping_status'                 => 'no-shipping-needed',
+				'return_status'                   => 'no-return-needed',
 				'shipping_provider'               => '',
 				'pickup_location_code'            => '',
 				'pickup_location_customer_number' => '',
@@ -274,6 +317,7 @@ class Api {
 			}
 
 			$response_order_data['shipping_status']                 = $order_shipment->get_shipping_status();
+			$response_order_data['return_status']                   = $order_shipment->get_return_status();
 			$response_order_data['shipping_provider']               = $provider ? $provider->get_name() : '';
 			$response_order_data['pickup_location_code']            = $order_shipment->get_pickup_location_code();
 			$response_order_data['pickup_location_customer_number'] = $order_shipment->get_pickup_location_customer_number();
@@ -297,6 +341,14 @@ class Api {
 
 		$schema_properties['shipping_status'] = array(
 			'description' => _x( 'Shipping status', 'shipments', 'woocommerce-germanized' ),
+			'type'        => 'string',
+			'enum'        => $statuses,
+			'context'     => array( 'view', 'edit' ),
+			'readonly'    => true,
+		);
+
+		$schema_properties['return_status'] = array(
+			'description' => _x( 'Return status', 'shipments', 'woocommerce-germanized' ),
 			'type'        => 'string',
 			'enum'        => $statuses,
 			'context'     => array( 'view', 'edit' ),

@@ -2,10 +2,10 @@
 Contributors: vendidero, vdwoocommercesupport
 Tags: woocommerce, germany, germany, deutsch, woo
 Requires at least: 5.4
-Tested up to: 6.8
+Tested up to: 6.9
 WC requires at least: 3.9
-WC tested up to: 10.1
-Stable tag: 3.20.2
+WC tested up to: 10.4
+Stable tag: 3.20.5
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -206,6 +206,28 @@ Bug reports may be filed via our [GitHub repository](https://github.com/vendider
 6. Edit pdf documents (Pro)
 
 == Changelog ==
+= 3.20.5 =
+* Improvement: Cart/Checkout block price label HTML styling
+* Improvement: Divi 5 Gutenberg checkout blocks
+* Improvement: Elementor Pro checkout widget detection and compatibility
+* Improvement: Do not use deprecated wc_enqueue_js
+* Improvement: Update sepa xml library to latest version to support newer pain formats
+* Improvement: Update to latest Shiptastic, see separate changelogs
+* Improvement: Latest tax rate changesets for 2026
+* Fix: Price labels within thankyou/order confirmation block
+
+= 3.20.4 =
+* New: Support deposit packaging, e.g. beverage crates (Pro)
+* Improvement: Missing/empty price detection
+* Improvement: Update to latest Shiptastic, see separate changelogs
+
+= 3.20.3 =
+* New: Woo 10.3.0 compatibility
+* Improvement: Update to latest Shiptastic and DHL for Shiptastic, see separate changelogs
+* Improvement: Show inline checkbox error messages, if available, within block-based checkout
+* Improvement: Interpret additional costs for newly created orders via REST as net
+* Improvement: Removed the built-in language fallback for de_CH and de_AT as it doesn't work in newer WP env - install language fallback plugin instead
+
 = 3.20.2 =
 * Improvement: Update to latest Shiptastic and DHL for Shiptastic
 * Improvement: Migrate update scripts to stop using core Shiptastic methods

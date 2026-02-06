@@ -44,12 +44,14 @@ class ShipmentTracking implements Compatibility {
 				'tracking_number'          => '',
 				'custom_tracking_provider' => '',
 				'tracking_provider'        => '',
+				'custom_tracking_link'     => '',
 			)
 		);
 
 		if ( ! empty( $tracking_item['tracking_number'] ) ) {
 			if ( $shipment_order = wc_stc_get_shipment_order( $order_id ) ) {
 				if ( $shipment = $shipment_order->get_last_shipment_without_tracking() ) {
+					$shipment->set_shipping_provider( '' );
 					$shipment->set_tracking_id( $tracking_item['tracking_number'] );
 
 					$provider_title = $tracking_item['custom_tracking_provider'] ? $tracking_item['custom_tracking_provider'] : $tracking_item['tracking_provider'];
@@ -59,13 +61,21 @@ class ShipmentTracking implements Compatibility {
 						$provider = Helper::instance()->get_shipping_provider_by_title( $provider_title );
 					}
 
+					if ( ! empty( $tracking_item['custom_tracking_link'] ) ) {
+						$shipment->set_tracking_url( esc_url_raw( $tracking_item['custom_tracking_link'] ) );
+					}
+
 					$provider = apply_filters( 'woocommerce_shiptastic_shipment_tracking_item_shipping_provider', $provider, $provider_title, $tracking_item );
 
 					if ( $provider ) {
 						$shipment->set_shipping_provider( $provider->get_name() );
+					} else {
+						$shipment->set_shipping_provider_title( $provider_title );
 					}
 
-					$shipment->update_status( 'shipped' );
+					if ( apply_filters( 'woocommerce_shiptastic_shipment_tracking_mark_as_shipped', true, $shipment, $tracking_item ) ) {
+						$shipment->update_status( 'shipped' );
+					}
 				}
 			}
 		}
@@ -89,7 +99,7 @@ class ShipmentTracking implements Compatibility {
 
 			if ( ! empty( $shipments ) ) {
 				foreach ( $shipments as $shipment ) {
-					$shipment->set_tracking_id( '' );
+					$shipment->remove_tracking();
 					$shipment->save();
 				}
 			}

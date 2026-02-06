@@ -843,7 +843,7 @@ if ( ! function_exists( 'woocommerce_gzd_add_variation_options' ) ) {
 					'food_description'               => $gzd_product->is_food() ? $gzd_product->get_formatted_food_description() : '',
 					'food_place_of_origin'           => $gzd_product->is_food() ? $gzd_product->get_formatted_food_place_of_origin() : '',
 					'food_distributor'               => $gzd_product->is_food() ? $gzd_product->get_formatted_food_distributor() : '',
-					'alcohol_content'                => $gzd_product->is_food() && $gzd_product->includes_alcohol() ? $gzd_product->get_formatted_alcohol_content() : '',
+					'alcohol_content'                => $gzd_product->is_food() && ( $gzd_product->includes_alcohol() || $gzd_product->is_non_alcoholic() ) ? $gzd_product->get_formatted_alcohol_content() : '',
 					'includes_alcohol'               => $gzd_product->is_food() && $gzd_product->includes_alcohol() ? 'yes' : 'no',
 					'drained_weight'                 => $gzd_product->is_food() ? $gzd_product->get_formatted_drain_weight() : '',
 					'net_filling_quantity'           => $gzd_product->is_food() ? $gzd_product->get_formatted_net_filling_quantity() : '',
@@ -1219,6 +1219,18 @@ if ( ! function_exists( 'woocommerce_gzd_template_order_item_hooks' ) ) {
 		 */
 		foreach ( wc_gzd_get_order_shopmarks() as $shopmark ) {
 			$shopmark->execute();
+		}
+	}
+}
+
+if ( ! function_exists( 'woocommerce_gzd_template_order_item_remove_hooks' ) ) {
+
+	function woocommerce_gzd_template_order_item_remove_hooks() {
+		/**
+		 * Checkout Hooks
+		 */
+		foreach ( wc_gzd_get_order_shopmarks() as $shopmark ) {
+			$shopmark->remove();
 		}
 	}
 }

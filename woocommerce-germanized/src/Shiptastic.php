@@ -218,28 +218,33 @@ class Shiptastic {
 	public static function get_shipping_provider_integrations_for_pro() {
 		return array(
 			'dpd'    => array(
-				'title'               => _x( 'DPD', 'shipments', 'woocommerce-germanized' ),
-				'countries_supported' => array( 'DE' ),
-				'is_builtin'          => false,
-				'is_pro'              => true,
-				'extension_name'      => 'dpd-for-shiptastic',
-				'help_url'            => 'https://vendidero.de/woocommerce-germanized/features#providers',
+				'title'                     => _x( 'DPD', 'shipments', 'woocommerce-germanized' ),
+				'countries_supported'       => array( 'DE', 'AT' ),
+				'is_builtin'                => false,
+				'supports_pickup_locations' => true,
+				'is_pro'                    => true,
+				'tracking_url_placeholder'  => 'AT' === wc_gzd_get_base_country() ? 'https://www.mydpd.at/?f=parcel.load&p={tracking_id}' : 'https://my.dpd.de/redirect.aspx?action=1&locale=de_DE&parcelno={tracking_id}',
+				'extension_name'            => 'dpd-for-shiptastic',
+				'help_url'                  => 'https://vendidero.de/woocommerce-germanized/features#providers',
 			),
 			'gls'    => array(
-				'title'               => _x( 'GLS', 'shipments', 'woocommerce-germanized' ),
-				'countries_supported' => array( 'DE', 'AT', 'CH', 'BE', 'LU', 'FR', 'IE', 'ES' ),
-				'is_builtin'          => false,
-				'is_pro'              => true,
-				'extension_name'      => 'gls-for-shiptastic',
-				'help_url'            => 'https://vendidero.de/woocommerce-germanized/features#providers',
+				'title'                    => _x( 'GLS', 'shipments', 'woocommerce-germanized' ),
+				'countries_supported'      => array( 'DE', 'AT', 'CH', 'BE', 'LU', 'FR', 'IE', 'ES' ),
+				'is_builtin'               => false,
+				'is_pro'                   => true,
+				'tracking_url_placeholder' => 'https://gls-group.eu/track/{tracking_id}',
+				'extension_name'           => 'gls-for-shiptastic',
+				'help_url'                 => 'https://vendidero.de/woocommerce-germanized/features#providers',
 			),
 			'hermes' => array(
-				'title'               => _x( 'Hermes', 'shipments', 'woocommerce-germanized' ),
-				'countries_supported' => array( 'DE' ),
-				'is_builtin'          => false,
-				'is_pro'              => true,
-				'extension_name'      => 'hermes-for-shiptastic',
-				'help_url'            => 'https://vendidero.de/woocommerce-germanized/features#providers',
+				'title'                     => _x( 'Hermes', 'shipments', 'woocommerce-germanized' ),
+				'countries_supported'       => array( 'DE' ),
+				'is_builtin'                => false,
+				'supports_pickup_locations' => true,
+				'is_pro'                    => true,
+				'tracking_url_placeholder'  => 'https://www.myhermes.de/empfangen/sendungsverfolgung/sendungsinformation/#{tracking_id}',
+				'extension_name'            => 'hermes-for-shiptastic',
+				'help_url'                  => 'https://vendidero.de/woocommerce-germanized/features#providers',
 			),
 		);
 	}
@@ -259,6 +264,16 @@ class Shiptastic {
 				}
 
 				return $slug;
+			}
+		);
+
+		/*
+		 * Prevent redirecting to setup wizard when accessing Shiptastic settings.
+		 */
+		add_action(
+			'woocommerce_shiptastic_before_setup_wizard',
+			function () {
+				delete_option( '_wc_gzd_setup_installed_shiptastic' );
 			}
 		);
 
@@ -474,6 +489,33 @@ class Shiptastic {
 		}
 
 		return false;
+	}
+
+	public static function needs_shiptastic_standalone() {
+		$uses_shipments       = false;
+		$uses_dhl_or_dp       = false;
+		$is_shipping_disabled = 'disabled' === get_option( 'woocommerce_ship_to_countries' );
+
+		if ( \Vendidero\Germanized\Packages::load_shipping_package() && ! $is_shipping_disabled ) {
+			$available_providers = self::get_shipping_providers( true );
+			$uses_shipments      = ! empty( $available_providers );
+
+			if ( ! $uses_shipments ) {
+				$uses_shipments = self::has_created_shipments();
+			}
+		}
+
+		return $uses_shipments;
+	}
+
+	public static function needs_shiptastic_dhl_standalone() {
+		$uses_dhl_or_dp = false;
+
+		if ( self::needs_shiptastic_standalone() ) {
+			$uses_dhl_or_dp = self::is_shipping_provider_active( 'dhl' ) || self::is_shipping_provider_active( 'deutsche_post' );
+		}
+
+		return $uses_dhl_or_dp;
 	}
 
 	public static function get_shipping_providers( $active_only = false ) {

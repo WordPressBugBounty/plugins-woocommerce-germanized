@@ -6,6 +6,7 @@ use Vendidero\Shiptastic\Interfaces\ShipmentLabel;
 use Vendidero\Shiptastic\Package;
 use Vendidero\Shiptastic\Shipment;
 use Vendidero\Shiptastic\ShipmentError;
+use Vendidero\Shiptastic\ShippingProvider\ServiceList;
 use WC_Data;
 use WC_Data_Store;
 use Exception;
@@ -56,9 +57,11 @@ class Label extends WC_Data implements ShipmentLabel {
 		'product_id'              => '',
 		'parent_id'               => 0,
 		'number'                  => '',
+		'tracking_url'            => '',
 		'shipping_provider'       => '',
 		'weight'                  => '',
 		'net_weight'              => '',
+		'file_types'              => array(),
 		'length'                  => '',
 		'width'                   => '',
 		'height'                  => '',
@@ -68,6 +71,7 @@ class Label extends WC_Data implements ShipmentLabel {
 		'services'                => array(),
 		'print_format'            => '',
 		'export_reference_number' => '',
+		'incoterms'               => '',
 	);
 
 	public function __construct( $data = 0 ) {
@@ -187,12 +191,28 @@ class Label extends WC_Data implements ShipmentLabel {
 		return $this->get_prop( 'number', $context );
 	}
 
+	public function get_tracking_url( $context = 'view' ) {
+		return $this->get_prop( 'tracking_url', $context );
+	}
+
 	public function get_print_format( $context = 'view' ) {
 		return $this->get_prop( 'print_format', $context );
 	}
 
 	public function get_export_reference_number( $context = 'view' ) {
 		return $this->get_prop( 'export_reference_number', $context );
+	}
+
+	public function get_incoterms( $context = 'view' ) {
+		$incoterms = $this->get_prop( 'incoterms', $context );
+
+		if ( 'view' === $context && empty( $incoterms ) ) {
+			if ( $shipment = $this->get_shipment() ) {
+				$incoterms = $shipment->get_incoterms();
+			}
+		}
+
+		return $incoterms;
 	}
 
 	public function has_number() {
@@ -271,10 +291,17 @@ class Label extends WC_Data implements ShipmentLabel {
 		return ( ! empty( $width ) && ! empty( $length ) && ! empty( $height ) );
 	}
 
-	public function get_path( $context = 'view', $file_path = '' ) {
-		$path_name = empty( $file_path ) ? 'path' : "{$file_path}_path";
+	public function get_path( $context = 'view', $file_type = '' ) {
+		$path_name = empty( $file_type ) ? 'path' : "{$file_type}_path";
+		$getter    = "get_{$path_name}";
 
-		return $this->get_prop( $path_name, $context );
+		if ( ! empty( $file_type ) && ! is_callable( array( $this, $getter ) ) ) {
+			$value = $this->get_meta( $path_name, true, $context );
+		} else {
+			$value = $this->get_prop( $path_name, $context );
+		}
+
+		return $value;
 	}
 
 	public function get_plain_path( $context = 'view' ) {
@@ -283,6 +310,10 @@ class Label extends WC_Data implements ShipmentLabel {
 
 	public function get_services( $context = 'view' ) {
 		return $this->get_prop( 'services', $context );
+	}
+
+	public function get_file_types( $context = 'view' ) {
+		return $this->get_prop( 'file_types', $context );
 	}
 
 	public function has_service( $service ) {
@@ -336,6 +367,10 @@ class Label extends WC_Data implements ShipmentLabel {
 		$this->set_prop( 'number', $number );
 	}
 
+	public function set_tracking_url( $url ) {
+		$this->set_prop( 'tracking_url', esc_url_raw( $url ) );
+	}
+
 	public function set_product_id( $number ) {
 		$this->set_prop( 'product_id', $number );
 	}
@@ -346,6 +381,10 @@ class Label extends WC_Data implements ShipmentLabel {
 
 	public function set_export_reference_number( $ref_number ) {
 		$this->set_prop( 'export_reference_number', $ref_number );
+	}
+
+	public function set_incoterms( $value ) {
+		$this->set_prop( 'incoterms', $value );
 	}
 
 	public function set_shipping_provider( $slug ) {
@@ -382,8 +421,23 @@ class Label extends WC_Data implements ShipmentLabel {
 
 	public function set_path( $path, $file_type = '' ) {
 		$path_name = empty( $file_type ) ? 'path' : "{$file_type}_path";
+		$setter    = "set_{$path_name}";
 
-		$this->set_prop( $path_name, $path );
+		/**
+		 * Maybe update available file types
+		 */
+		if ( ! empty( $file_type ) && ! is_callable( array( $this, $setter ) ) ) {
+			$this->update_meta_data( $path_name, $path );
+			$file_types = $this->get_file_types();
+
+			if ( ! in_array( $file_type, $file_types, true ) ) {
+				$file_types[] = $file_type;
+
+				$this->set_file_types( $file_types );
+			}
+		} else {
+			$this->set_prop( $path_name, $path );
+		}
 	}
 
 	public function set_plain_path( $path ) {
@@ -392,6 +446,10 @@ class Label extends WC_Data implements ShipmentLabel {
 
 	public function set_services( $services ) {
 		$this->set_prop( 'services', empty( $services ) ? array() : (array) $services );
+	}
+
+	public function set_file_types( $file_types ) {
+		$this->set_prop( 'file_types', empty( $file_types ) ? array() : (array) $file_types );
 	}
 
 	/**
@@ -411,7 +469,7 @@ class Label extends WC_Data implements ShipmentLabel {
 
 	public function add_service( $service ) {
 		$services           = (array) $this->get_services();
-		$available_services = array();
+		$available_services = new ServiceList();
 
 		if ( $provider = $this->get_shipping_provider_instance() ) {
 			if ( $shipment = $this->get_shipment() ) {
@@ -419,7 +477,7 @@ class Label extends WC_Data implements ShipmentLabel {
 			}
 		}
 
-		if ( ! in_array( $service, $services, true ) && in_array( $service, $available_services, true ) ) {
+		if ( ! in_array( $service, $services, true ) && $available_services->get( $service ) ) {
 			$services[] = $service;
 			$this->set_services( $services );
 
@@ -447,9 +505,7 @@ class Label extends WC_Data implements ShipmentLabel {
 	}
 
 	public function get_additional_file_types() {
-		return array(
-			'plain',
-		);
+		return array_merge( (array) $this->get_file_types(), array( 'plain' ) );
 	}
 
 	public function get_plain_file() {
@@ -469,12 +525,12 @@ class Label extends WC_Data implements ShipmentLabel {
 	}
 
 	public function get_stream( $file_type = '' ) {
-		if ( ! $this->get_file( $file_type ) ) {
+		if ( ! $file = $this->get_file( $file_type ) ) {
 			return '';
 		}
 
 		try {
-			$result = file_get_contents( $this->get_path( $file_type ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$result = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		} catch ( \Exception $e ) {
 			$result = '';
 		}
@@ -517,14 +573,7 @@ class Label extends WC_Data implements ShipmentLabel {
 	}
 
 	protected function get_file_by_path( $file ) {
-		// If the file is relative, prepend upload dir.
-		if ( $file && 0 !== strpos( $file, '/' ) && ( ( $uploads = Package::get_upload_dir() ) && false === $uploads['error'] ) ) {
-			$file = $uploads['basedir'] . "/$file";
-
-			return $file;
-		} else {
-			return false;
-		}
+		return Package::get_file_by_path( $file );
 	}
 
 	public function set_shipment_id( $shipment_id ) {
@@ -862,8 +911,9 @@ class Label extends WC_Data implements ShipmentLabel {
 				array(
 					'description'         => wc_shiptastic_substring( wc_shiptastic_get_alphanumeric_string( apply_filters( "{$this->get_general_hook_prefix()}item_description", $single_item_description, $item, $this, $shipment ) ), 0, $max_desc_length ),
 					'category'            => wc_shiptastic_get_alphanumeric_string( apply_filters( "{$this->get_general_hook_prefix()}item_category", $category, $item, $this, $shipment ) ),
-					'origin_code'         => ( $shipment_product && $shipment_product->get_manufacture_country() ) ? $shipment_product->get_manufacture_country() : Package::get_base_country(),
-					'tariff_number'       => $shipment_product ? $shipment_product->get_hs_code() : '',
+					'origin_code'         => $item->get_manufacture_country(),
+					'tariff_number'       => $item->get_hs_code(),
+					'mid'                 => $item->get_mid_code(),
 					'quantity'            => intval( $item->get_quantity() ),
 					'weight_in_kg'        => $this->round_customs_item_weight( (float) wc_get_weight( $item_weights[ $key ], 'kg', 'g' ), 3 ),
 					'weight_in_g'         => $item_weights[ $key ],
@@ -892,11 +942,18 @@ class Label extends WC_Data implements ShipmentLabel {
 			array(
 				'shipment_id'                   => $shipment->get_id(),
 				'additional_fee'                => wc_format_decimal( $shipment->get_additional_total(), 2 ),
+				'additional_totals'             => array(
+					'insurance' => 0.0,
+					'shipping'  => wc_format_decimal( $shipment->get_additional_total(), 2 ),
+					'other'     => 0.0,
+				),
 				'place_of_commital'             => $shipment->get_sender_city(),
 				'export_reference_number'       => $this->get_export_reference_number(),
 				// e.g. EORI number
 				'sender_customs_ref_number'     => $shipment->get_sender_customs_reference_number(),
+				'sender_vat_id'                 => $shipment->get_sender_vat_id(),
 				'receiver_customs_ref_number'   => $shipment->get_customs_reference_number(),
+				'receiver_vat_id'               => $shipment->get_billing_vat_id(),
 				// Customs UK VAT ID (HMRC) for totals <= 135 GBP
 				'sender_customs_uk_vat_id'      => $shipment->get_sender_customs_uk_vat_id(),
 				'items'                         => $customs_items,
@@ -905,9 +962,12 @@ class Label extends WC_Data implements ShipmentLabel {
 				'item_total_gross_weight_in_kg' => $this->round_customs_item_weight( (float) wc_get_weight( $total_gross_weight, 'kg', 'g' ), 3 ),
 				'item_total_gross_weight_in_g'  => $total_gross_weight,
 				'item_total_value'              => $total_value,
+				'total_value'                   => wc_format_decimal( $shipment->get_additional_total() + $total_value, 2 ),
 				'currency'                      => $order ? $order->get_currency() : get_woocommerce_currency(),
-				'invoice_number'                => '',
-				'incoterms'                     => $shipment->get_incoterms(),
+				'invoice_number'                => $shipment->get_shipment_number(),
+				'is_proforma'                   => false,
+				'invoice_date'                  => $shipment->get_date_created()->date_i18n( 'Y-m-d' ),
+				'incoterms'                     => $this->get_incoterms(),
 				'export_type'                   => '',
 				'export_reason_description'     => $item_description,
 				'export_type_description'       => $item_description,

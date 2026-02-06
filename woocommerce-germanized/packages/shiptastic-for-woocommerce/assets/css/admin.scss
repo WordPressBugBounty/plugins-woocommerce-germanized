@@ -37,6 +37,10 @@ a .wc-shiptastic-pro-outlined {
   border: 1px solid #0073aa;
   color: #0073aa;
   text-decoration: none;
+
+  &:hover {
+    color: #135e96;
+  }
 }
 
 .wc-shiptastic-pro-outlined {
@@ -214,6 +218,7 @@ span.woocommerce-shiptastic-input-toggle {
   background-color: var(--wp-admin-theme-color, #007cba);
   display: inline-block;
   text-indent: -9999px;
+  box-sizing: content-box;
   border-radius: 10em;
   position: relative;
   margin-top: -1px;
@@ -789,7 +794,8 @@ tbody.packaging_list {
   &.status-partially-shipped,
   &.status-partially-ready-for-shipping,
   &.status-partially-delivered,
-  &.status-open,
+  &.status-no-return-needed,
+  &.status-not-returned,
   &.status-partially-returned {
     background: #f8dda7;
     color: #573b00;
@@ -805,7 +811,8 @@ tbody.packaging_list {
     color: #2c4700;
   }
 
-  &.shipment-type-return-status.status-shipped {
+  &.shipment-type-return-status.status-shipped,
+  &.order-return-status.status-shipped {
     background: #f8dda7;
     color: #573b00;
   }
@@ -2126,6 +2133,7 @@ a.button.wc-stc-shipment-action-button {
 
   .wc-shiptastic-badge {
     text-decoration: none;
+    line-height: normal;
     border: 1px solid #3c434a;
     color: #3c434a;
     font-size: 11px;
@@ -2712,9 +2720,39 @@ table.wc-stc-shipping-providers {
     a.wc-stc-shipping-provider-delete {
       color: #b32d2e;
     }
+
+    a.wc-stc-shipping-provider-edit-link {
+      display: flex;
+      align-items: baseline;
+    }
+
+    img.wc-stc-shipping-provider-icon {
+      margin-right: 10px;
+      display: inline-flex;
+      align-self: center;
+      max-width: 70px;
+      max-height: 20px;
+    }
+
+    .row-actions {
+      font-size: 12px;
+    }
   }
 
   tr:nth-child(odd) td {
     background: #f9f9f9;
+  }
+}
+
+.select2-results__option {
+  .stc-provider-result-wrapper {
+    display: flex;
+    align-items: center;
+
+    img {
+      max-width: 70px;
+      max-height: 20px;
+      margin-right: 5px;
+    }
   }
 }

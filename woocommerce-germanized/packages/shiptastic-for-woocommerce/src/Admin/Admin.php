@@ -96,12 +96,11 @@ class Admin {
 		);
 
 		add_action( 'woocommerce_admin_field_shiptastic_toggle', array( __CLASS__, 'toggle_input_field' ), 30 );
-		add_filter( 'woocommerce_admin_settings_sanitize_option', array( __CLASS__, 'sanitize_toggle_field' ), 10, 3 );
-
+		add_action( 'woocommerce_admin_field_shiptastic_search_shipping_provider', array( __CLASS__, 'search_shipping_provider_field' ), 10 );
+		add_action( 'woocommerce_admin_field_dimensions', array( __CLASS__, 'register_dimensions_field' ), 30 );
 		add_action( 'woocommerce_admin_field_shiptastic_oauth', array( __CLASS__, 'oauth_field' ), 30 );
 
-		add_action( 'woocommerce_admin_field_dimensions', array( __CLASS__, 'register_dimensions_field' ), 30 );
-		add_filter( 'woocommerce_admin_settings_sanitize_option', array( __CLASS__, 'sanitize_dimensions_field' ), 10, 3 );
+		add_filter( 'woocommerce_admin_settings_sanitize_option', array( __CLASS__, 'sanitize_fields' ), 10, 3 );
 
 		add_action( 'woocommerce_system_status_report', array( __CLASS__, 'status_report' ) );
 		add_filter( 'woocommerce_debug_tools', array( __CLASS__, 'register_tools' ), 10, 1 );
@@ -325,7 +324,7 @@ class Admin {
 		<?php
 	}
 
-	public static function sanitize_toggle_field( $value, $option, $raw_value ) {
+	public static function sanitize_fields( $value, $option, $raw_value ) {
 		$option = wp_parse_args(
 			$option,
 			array(
@@ -335,6 +334,39 @@ class Admin {
 
 		if ( 'shiptastic_toggle' === $option['type'] ) {
 			$value = '1' === $raw_value || 'yes' === $raw_value ? 'yes' : 'no';
+		} elseif ( 'dimensions' === $option['type'] ) {
+			$option = wp_parse_args(
+				$option,
+				array(
+					'type'       => '',
+					'field_name' => '',
+					'id'         => '',
+					'store_as'   => 'separate',
+				)
+			);
+
+			$value       = wp_parse_args(
+				(array) $value,
+				array(
+					'length' => 0,
+					'width'  => 0,
+					'height' => 0,
+				)
+			);
+			$value       = wc_clean( $value );
+			$option_name = ! empty( $option['field_name'] ) ? $option['field_name'] : $option['id'];
+
+			if ( 'separate' === $option['store_as'] ) {
+				$option_name = str_replace( 'dimensions', '', $option_name );
+
+				foreach ( $value as $dim => $dim_val ) {
+					update_option( "{$option_name}{$dim}", $dim_val );
+				}
+
+				$value = null;
+			}
+		} elseif ( 'shiptastic_search_shipping_provider' === $option['type'] ) {
+			$value = wc_clean( $value );
 		}
 
 		return $value;
@@ -426,43 +458,6 @@ class Admin {
 		<?php
 	}
 
-	public static function sanitize_dimensions_field( $value, $option, $raw_value ) {
-		$option = wp_parse_args(
-			$option,
-			array(
-				'type'       => '',
-				'field_name' => '',
-				'id'         => '',
-				'store_as'   => 'separate',
-			)
-		);
-
-		if ( 'dimensions' === $option['type'] ) {
-			$value       = wp_parse_args(
-				(array) $value,
-				array(
-					'length' => 0,
-					'width'  => 0,
-					'height' => 0,
-				)
-			);
-			$value       = wc_clean( $value );
-			$option_name = ! empty( $option['field_name'] ) ? $option['field_name'] : $option['id'];
-
-			if ( 'separate' === $option['store_as'] ) {
-				$option_name = str_replace( 'dimensions', '', $option_name );
-
-				foreach ( $value as $dim => $dim_val ) {
-					update_option( "{$option_name}{$dim}", $dim_val );
-				}
-
-				$value = null;
-			}
-		}
-
-		return $value;
-	}
-
 	public static function oauth_field( $value ) {
 		$value = wp_parse_args(
 			$value,
@@ -513,6 +508,51 @@ class Admin {
 						<a class="button button-primary" href="<?php echo esc_url( $connect_url ); ?>"><?php printf( esc_html_x( 'Connect to %s', 'shipments', 'woocommerce-germanized' ), esc_html( $api->get_title() ) ); ?></a>
 					<?php endif; ?>
 				</fieldset>
+			</td>
+		</tr>
+		<?php
+	}
+
+	public static function search_shipping_provider_field( $value ) {
+		// Description handling.
+		$field_description_data = \WC_Admin_Settings::get_field_description( $value );
+		$original_provider      = null;
+
+		if ( ! empty( $value['value'] ) ) {
+			$original_providers = \Vendidero\Shiptastic\ShippingProvider\Helper::instance()->get_known_shipping_providers();
+
+			if ( array_key_exists( $value['value'], $original_providers ) ) {
+				$original_provider = $original_providers[ $value['value'] ];
+			}
+		}
+		?>
+		<tr class="shiptastic_search_shipping_provider <?php echo esc_attr( $value['row_class'] ); ?>">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?> <?php echo wp_kses_post( $field_description_data['tooltip_html'] ); ?></label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+				<select
+					name="<?php echo esc_attr( $value['field_name'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					style="<?php echo esc_attr( $value['css'] ); ?>"
+					class="stc-search-shipping-provider <?php echo esc_attr( $value['class'] ); ?>"
+					<?php
+					if ( ! empty( $value['custom_attributes'] ) && is_array( $value['custom_attributes'] ) ) {
+						foreach ( $value['custom_attributes'] as $attribute => $attribute_value ) {
+							echo esc_attr( $attribute ) . '="' . esc_attr( $attribute_value ) . '" ';
+						}
+					}
+					?>
+					data-placeholder="<?php echo esc_attr_x( 'Search for a shipping provider&hellip;', 'shipments', 'woocommerce-germanized' ); ?>"
+					data-allow_clear="true"
+				>
+					<option value=""></option>
+					<?php if ( $original_provider ) { ?>
+						<option value="<?php echo esc_attr( $original_provider->get_original_name() ); ?>" selected="selected">
+							<?php echo wp_strip_all_tags( $original_provider->get_title() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</option>
+					<?php } ?>
+				</select>
 			</td>
 		</tr>
 		<?php
@@ -917,12 +957,32 @@ class Admin {
 
 		$_parent_product          = wc_get_product( $variation_object->get_parent_id() );
 		$shipments_parent_product = wc_shiptastic_get_product( $_parent_product );
+		$shipments_product        = wc_shiptastic_get_product( $variation_object );
+
+		if ( wc_product_weight_enabled() ) {
+			$parent_weight = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_weight() ) : '';
+			$label         = sprintf(
+				/* translators: WooCommerce weight unit */
+				esc_html_x( 'Shipping weight (%s)', 'shipments', 'woocommerce-germanized' ),
+				esc_html( Package::get_weight_unit_label( get_option( 'woocommerce_weight_unit' ) ) )
+			);
+
+			woocommerce_wp_text_input(
+				array(
+					'id'          => "_variable_shipping_weight_{$loop}",
+					'name'        => "variable_shipping_weight[{$loop}]",
+					'label'       => $label,
+					'value'       => wc_format_localized_decimal( $shipments_product->get_shipping_weight( 'edit' ) ),
+					'placeholder' => $parent_weight ? $parent_weight : wc_format_localized_decimal( $variation_object->get_weight() ),
+					'data_type'   => 'decimal',
+				)
+			);
+		}
 
 		if ( wc_product_dimensions_enabled() ) {
-			$shipments_product = wc_shiptastic_get_product( $variation_object );
-			$parent_length     = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_length() ) : '';
-			$parent_width      = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_width() ) : '';
-			$parent_height     = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_height() ) : '';
+			$parent_length = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_length() ) : '';
+			$parent_width  = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_width() ) : '';
+			$parent_height = $shipments_parent_product ? wc_format_localized_decimal( $shipments_parent_product->get_shipping_height() ) : '';
 			?>
 			<p class="form-field form-row dimensions_field shipping_dimensions_field hide_if_variation_virtual form-row-first">
 				<label for="product_shipping_length">
@@ -952,8 +1012,27 @@ class Admin {
 		$shipments_product = wc_shiptastic_get_product( $_product );
 		$countries         = WC()->countries->get_countries();
 		$countries         = array_merge( array( '0' => _x( 'Select a country', 'shipments', 'woocommerce-germanized' ) ), $countries );
-		?>
-		<?php if ( wc_product_dimensions_enabled() ) : ?>
+
+		if ( wc_product_weight_enabled() ) {
+			$label = sprintf(
+				/* translators: WooCommerce weight unit */
+				esc_html_x( 'Shipping weight (%s)', 'shipments', 'woocommerce-germanized' ),
+				esc_html( Package::get_weight_unit_label( get_option( 'woocommerce_weight_unit' ) ) )
+			);
+
+			woocommerce_wp_text_input(
+				array(
+					'id'          => '_shipping_weight',
+					'label'       => $label,
+					'value'       => wc_format_localized_decimal( $shipments_product->get_shipping_weight( 'edit' ) ),
+					'data_type'   => 'decimal',
+					'placeholder' => wc_format_localized_decimal( $_product->get_weight() ),
+				)
+			);
+		}
+
+		if ( wc_product_dimensions_enabled() ) :
+			?>
 			<p class="form-field dimensions_field shipping_dimensions_field">
 				<label for="product_shipping_length">
 					<?php
@@ -1021,6 +1100,16 @@ class Admin {
 			)
 		);
 
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_mid_code',
+				'label'       => _x( 'MID-Code', 'shipments', 'woocommerce-germanized' ),
+				'desc_tip'    => true,
+				'description' => _x( 'The Manufacturer Identification Code (MID) is a standardized alphanumeric identifier created by the CBP. It serves as a unique “fingerprint” for the foreign manufacturer, producer, or exporter of the goods being imported into the U.S.', 'shipments', 'woocommerce-germanized' ),
+				'value'       => $shipments_product->get_mid_code( 'edit' ),
+			)
+		);
+
 		woocommerce_wp_select(
 			array(
 				'options'     => $countries,
@@ -1043,6 +1132,7 @@ class Admin {
 	 */
 	public static function save_variation_product( $variation, $i ) {
 		if ( $shipments_product = wc_shiptastic_get_product( $variation ) ) {
+			$shipments_product->set_shipping_weight( isset( $_POST['variable_shipping_weight'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_shipping_weight'][ $i ] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$shipments_product->set_shipping_length( isset( $_POST['variable_shipping_length'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_shipping_length'][ $i ] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$shipments_product->set_shipping_width( isset( $_POST['variable_shipping_width'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_shipping_width'][ $i ] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$shipments_product->set_shipping_height( isset( $_POST['variable_shipping_height'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_shipping_height'][ $i ] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -1056,11 +1146,13 @@ class Admin {
 		$shipments_product = wc_shiptastic_get_product( $product );
 
 		$shipments_product->set_hs_code( isset( $_POST['_hs_code'] ) ? wc_clean( wp_unslash( $_POST['_hs_code'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$shipments_product->set_mid_code( isset( $_POST['_mid_code'] ) ? wc_clean( wp_unslash( $_POST['_mid_code'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_customs_description( isset( $_POST['_customs_description'] ) ? wc_clean( wp_unslash( $_POST['_customs_description'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_manufacture_country( isset( $_POST['_manufacture_country'] ) ? wc_clean( wp_unslash( $_POST['_manufacture_country'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_is_non_returnable( isset( $_POST['_is_non_returnable'] ) ? wc_clean( wp_unslash( $_POST['_is_non_returnable'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_ship_separately_via( isset( $_POST['_ship_separately_via'] ) ? wc_clean( wp_unslash( $_POST['_ship_separately_via'] ) ) : array() ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
+		$shipments_product->set_shipping_weight( isset( $_POST['_shipping_weight'] ) ? wc_clean( wp_unslash( $_POST['_shipping_weight'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_shipping_length( isset( $_POST['_shipping_length'] ) ? wc_clean( wp_unslash( $_POST['_shipping_length'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_shipping_width( isset( $_POST['_shipping_width'] ) ? wc_clean( wp_unslash( $_POST['_shipping_width'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$shipments_product->set_shipping_height( isset( $_POST['_shipping_height'] ) ? wc_clean( wp_unslash( $_POST['_shipping_height'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -1177,7 +1269,7 @@ class Admin {
 
 				if ( $return_count ) {
 					foreach ( $submenu['woocommerce'] as $key => $menu_item ) {
-						if ( 0 === strpos( $menu_item[0], _x( 'Returns', 'shipments', 'woocommerce-germanized' ) ) ) {
+						if ( isset( $menu_item[2] ) && 'wc-stc-return-shipments' === $menu_item[2] ) {
 							$submenu['woocommerce'][ $key ][0] .= ' <span class="awaiting-mod update-plugins count-' . esc_attr( $return_count ) . '"><span class="requested-count">' . number_format_i18n( $return_count ) . '</span></span>'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 							break;
 						}
@@ -2024,7 +2116,9 @@ class Admin {
 
 	private static function get_admin_settings_params() {
 		$params = array(
-			'packaging_types' => wc_stc_get_packaging_types(),
+			'packaging_types'                 => wc_stc_get_packaging_types(),
+			'ajax_url'                        => admin_url( 'admin-ajax.php' ),
+			'search_shipping_providers_nonce' => wp_create_nonce( 'search-shipping-providers' ),
 		);
 
 		if ( self::is_shipping_settings_request() ) {
