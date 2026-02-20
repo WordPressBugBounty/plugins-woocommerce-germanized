@@ -3,7 +3,7 @@
         'name' => 'vendidero/woocommerce-germanized',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '641955f4a743a93185dff8978d58d3206bcc2a28',
+        'reference' => '8159e2d89d6f91371f91370b5191eb2ae17d10e0',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -202,7 +202,7 @@
         'vendidero/woocommerce-germanized' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '641955f4a743a93185dff8978d58d3206bcc2a28',
+            'reference' => '8159e2d89d6f91371f91370b5191eb2ae17d10e0',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
