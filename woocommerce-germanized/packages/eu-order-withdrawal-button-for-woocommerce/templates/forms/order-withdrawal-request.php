@@ -11,11 +11,12 @@
  * the readme will list any important changes.
  *
  * @package Vendidero/OrderWithdrawalButton/Templates
- * @version 1.0.0
+ * @version 1.0.2
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+$manually_select_items = apply_filters( 'eu_owb_woocommerce_manually_select_items_default', $manually_select_items );
 ?>
 <form class="woocommerce-form woocommerce-form-order-withdrawal-request order-withdrawal-request" method="post">
 	<?php do_action( 'eu_owb_woocommerce_return_request_form_start' ); ?>
@@ -25,16 +26,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="eu-owb-form-fields">
 		<?php if ( ! is_user_logged_in() && ! $order ) : ?>
 			<div class="form-row form-row-first">
-				<label for="order-withdrawal-request-email"><?php echo esc_html_x( 'Email', 'owb', 'woocommerce-germanized' ); ?>&nbsp;<span class="required">*</span></label>
-				<input type="text" class="input-text" name="email" id="order-withdrawal-request-email" autocomplete="email" />
-			</div>
-
-			<div class="form-row form-row-last">
 				<label for="order-withdrawal-request-order-number"><?php echo esc_html_x( 'Order number', 'owb', 'woocommerce-germanized' ); ?>&nbsp;<span class="required">*</span></label>
 				<input type="text" class="input-text" name="order_number" id="order-withdrawal-request-order-number" autocomplete="off" />
 			</div>
 
+			<div class="form-row form-row-last">
+				<label for="order-withdrawal-request-email"><?php echo esc_html_x( 'Email', 'owb', 'woocommerce-germanized' ); ?>&nbsp;<span class="required">*</span></label>
+				<input type="text" class="input-text" name="email" id="order-withdrawal-request-email" autocomplete="email" />
+			</div>
+
 			<div class="clear"></div>
+
+			<?php if ( \Vendidero\OrderWithdrawalButton\Package::enable_partial_withdrawals() ) : ?>
+				<div class="order-supports-partial-withdrawal hidden">
+					<div class="form-row form-row-full">
+						<label class="woocommerce-form__label woocommerce-form__label-for-checkbox checkbox" for="manually-select-items">
+							<input type="checkbox" class="woocommerce-form__input woocommerce-form__input-checkbox input-checkbox" name="manually_select_items" <?php checked( $manually_select_items, true ); // WPCS: input var ok, csrf ok. ?> id="manually-select-items" />
+							<span class="eu-owb-woocommerce-select-certain-items-text"><?php echo esc_html_x( 'I want to select the items to cancel manually.', 'owb', 'woocommerce-germanized' ); ?></span>
+							<span class="notice eu-owb-woocommerce-select-certain-items-desc"><?php echo esc_html_x( 'You will receive an email confirming receipt of your withdrawal request. In the email, you will find a link that allows you to select the items you wish to return.', 'owb', 'woocommerce-germanized' ); ?></span>
+						</label>
+					</div>
+				</div>
+			<?php endif; ?>
 
 			<?php do_action( 'eu_owb_woocommerce_return_request_guest_form' ); ?>
 		<?php else : ?>

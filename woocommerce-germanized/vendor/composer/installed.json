@@ -952,17 +952,17 @@
         },
         {
             "name": "vendidero/eu-order-withdrawal-button-for-woocommerce",
-            "version": "1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "1.0.2",
+            "version_normalized": "1.0.2.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:vendidero/eu-order-withdrawal-button-for-woocommerce.git",
-                "reference": "60298c452bc397c24230e1d62a86c5d2744fa790"
+                "url": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce.git",
+                "reference": "c946d30bca12206a1e898917607d1289de1b15ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vendidero/eu-order-withdrawal-button-for-woocommerce/zipball/60298c452bc397c24230e1d62a86c5d2744fa790",
-                "reference": "60298c452bc397c24230e1d62a86c5d2744fa790",
+                "url": "https://api.github.com/repos/vendidero/eu-order-withdrawal-button-for-woocommerce/zipball/c946d30bca12206a1e898917607d1289de1b15ed",
+                "reference": "c946d30bca12206a1e898917607d1289de1b15ed",
                 "shasum": ""
             },
             "require": {
@@ -973,7 +973,7 @@
                 "woocommerce/woocommerce-sniffs": "^1.0.0",
                 "yoast/phpunit-polyfills": "^3.0"
             },
-            "time": "2026-03-26T07:42:19+00:00",
+            "time": "2026-03-27T10:42:34+00:00",
             "type": "wordpress-plugin",
             "installation-source": "dist",
             "autoload": {
@@ -998,7 +998,7 @@
             "description": "EU Order Withdrawal Button for WooCommerce",
             "homepage": "https://vendidero.de",
             "support": {
-                "source": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce/tree/v1.0.0",
+                "source": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce/tree/v1.0.2",
                 "issues": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce/issues"
             },
             "install-path": "../../packages/eu-order-withdrawal-button-for-woocommerce"
