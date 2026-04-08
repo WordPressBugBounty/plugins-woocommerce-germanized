@@ -1659,19 +1659,19 @@ return array(
 		'path'    => $baseDir . '/src/Utilities/NumberUtil.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Ajax' => array(
-		'version' => '1.0.2.0',
+		'version' => '2.0.0.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Install' => array(
-		'version' => '1.0.2.0',
+		'version' => '2.0.0.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Install.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Package' => array(
-		'version' => '1.0.2.0',
+		'version' => '2.0.0.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Settings' => array(
-		'version' => '1.0.2.0',
+		'version' => '2.0.0.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Settings.php'
 	),
 	'Version_Loader' => array(

@@ -77,13 +77,23 @@ class Settings {
 			),
 
 			array(
-				'title'    => _x( 'Withdrawal period', 'owb', 'woocommerce-germanized' ),
-				'desc_tip' => _x( 'Choose the number of days, starting with the orders\' completed date, to accept withdrawals for orders.', 'owb', 'woocommerce-germanized' ),
-				'desc'     => _x( 'Days', 'owb', 'woocommerce-germanized' ),
-				'css'      => 'max-width: 60px;',
-				'type'     => 'number',
-				'id'       => 'eu_owb_woocommerce_number_of_days_to_withdraw',
-				'default'  => '14',
+				'title'     => _x( 'Withdrawal period', 'owb', 'woocommerce-germanized' ),
+				'desc_tip'  => _x( 'Choose the number of days, starting with the orders\' completed date, to accept withdrawals for orders.', 'owb', 'woocommerce-germanized' ),
+				'desc'      => _x( 'Days', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'Keep in mind that the withdrawal period does not begin until the customer receives the order. If necessary add a buffer period depending on your shipping process', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
+				'css'       => 'max-width: 60px;',
+				'row_class' => 'withdrawal-period',
+				'type'      => 'number',
+				'id'        => 'eu_owb_woocommerce_number_of_days_to_withdraw',
+				'default'   => '14',
+				'autoload'  => false,
+			),
+
+			array(
+				'title'    => _x( 'Unverified requests', 'owb', 'woocommerce-germanized' ),
+				'desc'     => _x( 'Separately list unverified withdrawal requests.', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'For some requests, the email address differs from the original stored within the order. Make sure these requests are listed under <a href="%1$s">unverified requests</a> and are not automatically set to the pending withdrawal request status.', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
+				'id'       => 'eu_owb_woocommerce_separately_store_unverified_withdrawal_requests',
+				'type'     => Package::is_integration() ? 'gzd_toggle' : 'checkbox',
+				'default'  => 'yes',
 				'autoload' => false,
 			),
 

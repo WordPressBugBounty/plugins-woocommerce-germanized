@@ -11,15 +11,16 @@
  * the readme will list any important changes.
  *
  * @package Vendidero/OrderWithdrawalButton/Templates
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
 
 $text_align                 = is_rtl() ? 'right' : 'left';
 $email_improvements_enabled = \Vendidero\OrderWithdrawalButton\Package::has_email_improvements_enabled();
+$verified_notice            = eu_owb_order_withdrawal_email_is_verified( $order, $withdrawal ) ? esc_html_x( 'verified', 'owb', 'woocommerce-germanized' ) : esc_html_x( 'unknown', 'owb', 'woocommerce-germanized' );
 
-do_action( 'eu_owb_woocommerce_withdrawal_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
+do_action( 'eu_owb_woocommerce_withdrawal_before_order_table', $order, $sent_to_admin, $plain_text, $email, $withdrawal ); ?>
 
 <?php
 	echo wp_kses_post( _x( 'Withdrawal summary', 'owb', 'woocommerce-germanized' ) );
@@ -27,20 +28,30 @@ do_action( 'eu_owb_woocommerce_withdrawal_before_order_table', $order, $sent_to_
 ?>
 
 <?php echo wp_kses_post( _x( 'Order', 'owb', 'woocommerce-germanized' ) ); ?>: <?php echo wp_kses_post( $order->get_order_number() ) . "\n"; ?>
-<?php echo wp_kses_post( _x( 'Received on', 'owb', 'woocommerce-germanized' ) ); ?>: <?php echo esc_html( sprintf( _x( '%1$s at %2$s', 'owb-datetime', 'woocommerce-germanized' ), wc_format_datetime( eu_owb_get_order_withdrawal_date_received( $order ) ), wc_format_datetime( eu_owb_get_order_withdrawal_date_received( $order ), wc_time_format() ) ) ) . "\n"; ?>
-<?php echo wp_kses_post( _x( 'E-Mail', 'owb', 'woocommerce-germanized' ) ); ?>: <?php echo wp_kses_post( eu_owb_get_order_withdrawal_email( $order ) ) . "\n"; ?>
+<?php echo wp_kses_post( _x( 'Received on', 'owb', 'woocommerce-germanized' ) ); ?>: <?php echo esc_html( sprintf( _x( '%1$s at %2$s', 'owb-datetime', 'woocommerce-germanized' ), wc_format_datetime( eu_owb_get_order_withdrawal_date_received( $order, $withdrawal ) ), wc_format_datetime( eu_owb_get_order_withdrawal_date_received( $order, $withdrawal ), wc_time_format() ) ) ) . "\n"; ?>
+<?php echo wp_kses_post( _x( 'E-Mail', 'owb', 'woocommerce-germanized' ) ); ?>: <?php echo wp_kses_post( eu_owb_get_order_withdrawal_email( $order, $withdrawal ) ) . ( $sent_to_admin ? ' (' . esc_html( $verified_notice ) . ')' : '' ) . "\n"; ?>
+<?php echo wp_kses_post( _x( 'Full name', 'owb', 'woocommerce-germanized' ) ); ?>: <?php echo wp_kses_post( eu_owb_get_order_withdrawal_full_name( $order, $withdrawal, true ) ) . "\n"; ?>
+
+<?php if ( $show_deleted_original && ( $original_order_id = eu_owb_order_withdrawal_request_get_original_order_id( $withdrawal ) ) ) : ?>
+	<?php echo wp_kses_post( sprintf( _x( 'As you requested, we have deleted your original withdrawal request for order %1$s.', 'owb', 'woocommerce-germanized' ), esc_html( $original_order_id ) ) ) . "\n"; ?>
+<?php endif; ?>
+
+<?php echo "\n==========\n"; ?>
 
 <?php
-echo "\n" . eu_owb_get_email_withdrawal_items( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	$order,
-	array(
-		'show_sku'      => $sent_to_admin,
-		'show_image'    => false,
-		'image_size'    => array( 32, 32 ),
-		'plain_text'    => true,
-		'sent_to_admin' => $sent_to_admin,
-	)
-);
+if ( ! $hide_items ) :
+	echo "\n" . eu_owb_get_email_withdrawal_items( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$order,
+		array(
+			'show_sku'      => $sent_to_admin,
+			'show_image'    => false,
+			'image_size'    => array( 32, 32 ),
+			'plain_text'    => true,
+			'sent_to_admin' => $sent_to_admin,
+			'withdrawal'    => $withdrawal,
+		)
+	);
+endif;
 
 echo "==========\n\n";
 
@@ -60,5 +71,5 @@ if ( $sent_to_admin ) {
  * @param WC_Email $email Email object.
  * @since 2.5.0
  */
-do_action( 'eu_owb_woocommerce_withdrawal_after_order_table', $order, $sent_to_admin, $plain_text, $email );
+do_action( 'eu_owb_woocommerce_withdrawal_after_order_table', $order, $sent_to_admin, $plain_text, $email, $withdrawal );
 ?>
