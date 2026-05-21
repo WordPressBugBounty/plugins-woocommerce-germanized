@@ -1,4 +1,4 @@
-/******/ (function() { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 var __webpack_exports__ = {};
 jQuery(function ($) {
   $('form#woocommerce-gzd-revocation')

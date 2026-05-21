@@ -24,6 +24,13 @@ class Settings {
 	}
 
 	public static function get_settings( $current_section = '' ) {
+		$default_email = get_option( 'admin_email' );
+		$woo_mail      = sanitize_email( get_option( 'woocommerce_email_from_address' ) );
+
+		if ( $woo_mail ) {
+			$default_email = $woo_mail;
+		}
+
 		$settings = array(
 			array(
 				'title' => '',
@@ -56,8 +63,20 @@ class Settings {
 			),
 
 			array(
+				'title'             => _x( 'Display everywhere', 'owb', 'woocommerce-germanized' ),
+				'desc'              => _x( 'Display the button on every page, not just on shop-related pages.', 'owb', 'woocommerce-germanized' ),
+				'id'                => 'eu_owb_woocommerce_embed_everywhere',
+				'type'              => Package::is_integration() ? 'gzd_toggle' : 'checkbox',
+				'default'           => 'no',
+				'autoload'          => true,
+				'custom_attributes' => array(
+					'data-show_if_eu_owb_woocommerce_enable_embed' => '',
+				),
+			),
+
+			array(
 				'title'    => _x( 'Partial withdrawals', 'owb', 'woocommerce-germanized' ),
-				'desc'     => _x( 'Allow your customers to select which order items to withdraw.', 'owb', 'woocommerce-germanized' ),
+				'desc'     => _x( 'Allow customers and verified guests to select which order items to withdraw.', 'owb', 'woocommerce-germanized' ),
 				'id'       => 'eu_owb_woocommerce_enable_partial_withdrawals',
 				'type'     => Package::is_integration() ? 'gzd_toggle' : 'checkbox',
 				'default'  => 'yes',
@@ -79,7 +98,7 @@ class Settings {
 			array(
 				'title'     => _x( 'Withdrawal period', 'owb', 'woocommerce-germanized' ),
 				'desc_tip'  => _x( 'Choose the number of days, starting with the orders\' completed date, to accept withdrawals for orders.', 'owb', 'woocommerce-germanized' ),
-				'desc'      => _x( 'Days', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'Keep in mind that the withdrawal period does not begin until the customer receives the order. If necessary add a buffer period depending on your shipping process', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
+				'desc'      => _x( 'Days', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'Keep in mind that the withdrawal period does not begin until the customer receives the order. If necessary add a buffer period depending on your shipping process.', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
 				'css'       => 'max-width: 60px;',
 				'row_class' => 'withdrawal-period',
 				'type'      => 'number',
@@ -90,11 +109,22 @@ class Settings {
 
 			array(
 				'title'    => _x( 'Unverified requests', 'owb', 'woocommerce-germanized' ),
-				'desc'     => _x( 'Separately list unverified withdrawal requests.', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'For some requests, the email address differs from the original stored within the order. Make sure these requests are listed under <a href="%1$s">unverified requests</a> and are not automatically set to the pending withdrawal request status.', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
+				'desc'     => _x( 'Do not adjust order status for unverified requests.', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . _x( 'For some requests, the email address differs from the original stored within the order. Make sure these requests do not automatically set the pending withdrawal order status.', 'owb', 'woocommerce-germanized' ) . '</div>',
 				'id'       => 'eu_owb_woocommerce_separately_store_unverified_withdrawal_requests',
 				'type'     => Package::is_integration() ? 'gzd_toggle' : 'checkbox',
 				'default'  => 'yes',
 				'autoload' => false,
+			),
+
+			array(
+				'title'        => _x( 'Contact email', 'owb', 'woocommerce-germanized' ),
+				'desc_tip'     => _x( 'Please provide an email address where customers can contact you if they have any issues.', 'owb', 'woocommerce-germanized' ),
+				'id'           => 'eu_owb_woocommerce_contact_email_address',
+				'type'         => 'email',
+				'placeholder'  => $default_email,
+				'default'      => '',
+				'skip_install' => true,
+				'autoload'     => false,
 			),
 
 			array(

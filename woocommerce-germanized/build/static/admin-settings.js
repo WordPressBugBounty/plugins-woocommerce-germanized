@@ -1,4 +1,4 @@
-/******/ (function() { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 var __webpack_exports__ = {};
 /*global woocommerce_admin_meta_boxes, woocommerce_admin, accounting, woocommerce_admin_meta_boxes_order */
 window.germanized = window.germanized || {};
@@ -206,7 +206,6 @@ window.germanized = window.germanized || {};
         //$( this ).selectWoo( select2_args ).addClass( 'enhanced' );
       });
     },
-
     onParcelDeliveryShowSpecial: function () {
       var val = $(this).val();
       if ('shipping_methods' === val) {

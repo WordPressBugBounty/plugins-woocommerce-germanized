@@ -132,8 +132,8 @@
     GermanizedVariationForm.prototype.onShowVariation = function( event, variation, purchasable ) {
         var form            = event.data.GermanizedvariationForm,
             $wrapper        = form.$wrapper,
-            hasCustomPrice  = variation.hasOwnProperty( 'price_html' ) && variation.price_html !== '',
-            hasDisplayPrice = variation.hasOwnProperty( 'display_price' ) && variation.display_price !== '';
+            hasCustomPrice  = ( variation.price_html && variation.price_html !== '' ) ? true : false,
+            hasDisplayPrice = ( variation.display_price && variation.display_price !== '' ) ? true : false;
 
         if ( hasCustomPrice && form.replacePrice ) {
             var $priceElement = form.getPriceElement( form );
@@ -175,7 +175,7 @@
         form.getElementOrBlock( form, 'unit-price', '.price-unit' ).wc_gzd_set_content( hasDisplayPrice ? variation.unit_price : '' );
         form.getElementOrBlock( form, 'unit-product', '.product-units' ).wc_gzd_set_content( hasDisplayPrice ? variation.product_units : '' );
 
-        form.showOrHideTabs( form, variation.has_product_safety_information )
+        form.showOrHideTabs( form, variation.has_product_safety_information );
 
         form.$form.trigger( 'germanized_variation_data', variation, $wrapper );
     };

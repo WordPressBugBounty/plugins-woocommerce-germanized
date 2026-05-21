@@ -15,7 +15,7 @@ class Helper {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.0.9';
+	const VERSION = '2.1.0';
 
 	public static function get_version() {
 		return self::VERSION;
@@ -881,7 +881,26 @@ class Helper {
 	}
 
 	public static function get_tax_type_by_country_rate( $rate_percentage, $country ) {
-		$country = strtoupper( $country );
+		$tax_type = self::find_tax_type_by_rate( self::get_eu_tax_rates(), $country, $rate_percentage );
+
+		/**
+		 * Fallback to older tax rates without applying changesets
+		 */
+		if ( '' === $tax_type ) {
+			$tax_type = self::find_tax_type_by_rate( self::get_eu_tax_rates( false ), $country, $rate_percentage );
+		}
+
+		if ( '' === $tax_type ) {
+			$tax_type = 'standard';
+		}
+
+		return apply_filters( 'woocommerce_eu_tax_helper_country_rate_tax_type', $tax_type, $country, $rate_percentage );
+	}
+
+	protected static function find_tax_type_by_rate( $eu_rates, $country, $rate_percentage ) {
+		$tax_type        = '';
+		$rate_percentage = (float) $rate_percentage;
+		$country         = strtoupper( $country );
 
 		/**
 		 * Map northern ireland to GB
@@ -890,16 +909,15 @@ class Helper {
 			$country = 'GB';
 		}
 
-		$eu_rates        = self::get_eu_tax_rates();
-		$tax_type        = 'standard';
-		$rate_percentage = (float) $rate_percentage;
-
 		if ( array_key_exists( $country, $eu_rates ) ) {
 			$rates = $eu_rates[ $country ];
 
 			foreach ( $rates as $rate ) {
 				foreach ( $rate as $tax_rate_type => $tax_rate_percent ) {
-					if ( ( is_array( $tax_rate_percent ) && in_array( $rate_percentage, $tax_rate_percent, true ) ) || (float) $tax_rate_percent === $rate_percentage ) {
+					/**
+					 * Do not use strict for in array as some rates may be stored as integer instead of floats.
+					 */
+					if ( ( is_array( $tax_rate_percent ) && in_array( $rate_percentage, $tax_rate_percent ) ) || (float) $tax_rate_percent === $rate_percentage ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 						$tax_type = $tax_rate_type;
 						break;
 					}
@@ -907,7 +925,7 @@ class Helper {
 			}
 		}
 
-		return apply_filters( 'woocommerce_eu_tax_helper_country_rate_tax_type', $tax_type, $country, $rate_percentage );
+		return $tax_type;
 	}
 
 	public static function get_eu_tax_rate_changesets( $apply_postcode_exempts = true ) {

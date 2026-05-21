@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('wc-settings'), 'version' => '04cffc5f543ace1b24b2');
+<?php return array('dependencies' => array('wc-settings'), 'version' => 'd0d02b7d255e7a4ea342');

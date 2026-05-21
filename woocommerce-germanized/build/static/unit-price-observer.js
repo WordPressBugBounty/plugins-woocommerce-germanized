@@ -1,4 +1,4 @@
-/******/ (function() { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 var __webpack_exports__ = {};
 /*global wc_gzd_unit_price_observer_params, accounting */
 ;
@@ -69,32 +69,26 @@ var __webpack_exports__ = {};
         return false;
       }
       if (self.params.refresh_on_load) {
-        $.each(self.params.price_selector, function (priceSelector, priceArgs) {
-          var isPrimary = priceArgs.hasOwnProperty('is_primary_selector') ? priceArgs['is_primary_selector'] : false,
-            $price = self.getPriceNode(self, priceSelector, isPrimary),
-            $unitPrice = self.getUnitPriceNode(self, $price);
-
-          /**
-           * Do only refresh primary price nodes on load.
-           */
-          if (!isPrimary) {
-            return;
-          }
-          if ($unitPrice.length > 0) {
-            self.stopObserver(self, priceSelector);
-            self.setUnitPriceLoading(self, $unitPrice);
-            setTimeout(function () {
-              self.stopObserver(self, priceSelector);
-              var priceData = self.getCurrentPriceData(self, $price, priceArgs['is_total_price'], isPrimary, priceArgs['quantity_selector']);
-              if (priceData) {
-                self.refreshUnitPrice(self, priceData, priceSelector, isPrimary);
-              } else if ($unitPrice.length > 0) {
-                self.unsetUnitPriceLoading(self, $unitPrice);
-              }
-              self.startObserver(self, priceSelector, isPrimary);
-            }, 250);
-          }
-        });
+        /**
+         * Do not refresh variable products on single product pages
+         * as that leads to race conditions with the Woo Core.
+         */
+        if (self.isVar && self.$form) {
+          self.$form.on('show_variation.unit-price-observer', {
+            GermanizedUnitPriceObserver: self
+          }, function (event) {
+            var self = event.data.GermanizedUnitPriceObserver;
+            self.forceRefresh(self);
+          });
+          self.$form.on('reset_data.unit-price-observer', {
+            GermanizedUnitPriceObserver: self
+          }, function (event) {
+            var self = event.data.GermanizedUnitPriceObserver;
+            self.forceRefresh(self);
+          });
+        } else {
+          self.forceRefresh(self);
+        }
       }
     }
     $wrapper.data('unitPriceObserver', self);
@@ -183,7 +177,7 @@ var __webpack_exports__ = {};
           childList: true,
           subtree: true,
           characterData: true,
-          attributeFilter: ['style']
+          attributeFilter: ['style', 'data-force-refresh']
         });
       }
       return true;
@@ -298,6 +292,23 @@ var __webpack_exports__ = {};
     var self = event.data.GermanizedUnitPriceObserver;
     self.variationId = 0;
   };
+  GermanizedUnitPriceObserver.prototype.forceRefresh = function (self) {
+    $.each(self.params.price_selector, function (priceSelector, priceArgs) {
+      var isPrimary = priceArgs.hasOwnProperty('is_primary_selector') ? priceArgs['is_primary_selector'] : false,
+        $price = self.getPriceNode(self, priceSelector, isPrimary),
+        $unitPrice = self.getUnitPriceNode(self, $price);
+
+      /**
+       * Do only refresh primary price nodes on load.
+       */
+      if (!isPrimary) {
+        return;
+      }
+      if ($unitPrice.length > 0) {
+        $price[0].setAttribute('data-force-refresh', 'yes');
+      }
+    });
+  };
   GermanizedUnitPriceObserver.prototype.onFoundVariation = function (event, variation) {
     var self = event.data.GermanizedUnitPriceObserver;
     if (variation.hasOwnProperty('variation_id')) {
@@ -393,12 +404,14 @@ var __webpack_exports__ = {};
   GermanizedUnitPriceObserver.prototype.setUnitPriceLoading = function (self, $unit_price) {
     var unitPriceOrg = $unit_price.html();
     if (!$unit_price.hasClass('wc-gzd-loading')) {
-      var textWidth = self.getTextWidth($unit_price),
-        textHeight = $unit_price.find('span').length > 0 ? $unit_price.find('span').innerHeight() : $unit_price.height();
-      /**
-       * @see https://github.com/zalog/placeholder-loading
-       */
-      $unit_price.html('<span class="wc-gzd-placeholder-loading"><span class="wc-gzd-placeholder-row" style="height: ' + $unit_price.height() + 'px;"><span class="wc-gzd-placeholder-row-col-4" style="width: ' + textWidth + 'px; height: ' + textHeight + 'px;"></span></span></span>');
+      if ($unit_price.find('.wc-gzd-placeholder-loading').length <= 0) {
+        var textWidth = self.getTextWidth($unit_price),
+          textHeight = $unit_price.find('span').length > 0 ? $unit_price.find('span').innerHeight() : $unit_price.height();
+        /**
+         * @see https://github.com/zalog/placeholder-loading
+         */
+        $unit_price.html('<span class="wc-gzd-placeholder-loading"><span class="wc-gzd-placeholder-row" style="height: ' + $unit_price.height() + 'px;"><span class="wc-gzd-placeholder-row-col-4" style="width: ' + textWidth + 'px; height: ' + textHeight + 'px;"></span></span></span>');
+      }
       $unit_price.addClass('wc-gzd-loading');
     }
     $unit_price.data('org-html', unitPriceOrg);
@@ -436,12 +449,51 @@ var __webpack_exports__ = {};
   };
   $(function () {
     if (typeof wc_gzd_unit_price_observer_params !== 'undefined') {
-      $(wc_gzd_unit_price_observer_params.wrapper).each(function () {
-        if ($(this).is('body')) {
-          return;
+      const initObservations = function () {
+        $(wc_gzd_unit_price_observer_params.wrapper).each(function () {
+          if ($(this).is('body')) {
+            return;
+          }
+          $(this).wc_germanized_unit_price_observer();
+        });
+      };
+      initObservations();
+
+      /**
+       * Support (async) navigation for product collection block
+       */
+      if ($('.wp-block-woocommerce-product-collection').length > 0) {
+        let currentObserver = false;
+        const maybeInitObserver = function (mutationsList, observer) {
+          let needsInit = false;
+          for (let mutation of mutationsList) {
+            let $element = $(mutation.target);
+            if ($element.length > 0 && 'woocommerce/product-template' === $element.data('block-name')) {
+              needsInit = true;
+              break;
+            }
+          }
+          if (needsInit) {
+            initObservations();
+          }
+        };
+        if ("MutationObserver" in window) {
+          currentObserver = new window.MutationObserver(maybeInitObserver);
+        } else if ("WebKitMutationObserver" in window) {
+          currentObserver = new window.WebKitMutationObserver(maybeInitObserver);
+        } else if ("MozMutationObserver" in window) {
+          currentObserver = new window.MozMutationObserver(maybeInitObserver);
         }
-        $(this).wc_germanized_unit_price_observer();
-      });
+        if (currentObserver) {
+          $('.wp-block-woocommerce-product-collection').each(function () {
+            let $node = $(this);
+            currentObserver.observe($node[0], {
+              childList: true,
+              subtree: true
+            });
+          });
+        }
+      }
     }
   });
 })(jQuery, window, document);

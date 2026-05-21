@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit273c74d511734acdde97b17776828fb8
+class ComposerStaticInit1cf287e5de987fb7724aaeec621c452c
 {
     public static $files = array (
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
@@ -510,18 +510,25 @@ class ComposerStaticInit273c74d511734acdde97b17776828fb8
         'Vendidero\\Germanized\\Shopmarks' => __DIR__ . '/../..' . '/src/Shopmarks.php',
         'Vendidero\\Germanized\\Utilities\\CartCheckout' => __DIR__ . '/../..' . '/src/Utilities/CartCheckout.php',
         'Vendidero\\Germanized\\Utilities\\NumberUtil' => __DIR__ . '/../..' . '/src/Utilities/NumberUtil.php',
+        'Vendidero\\OrderWithdrawalButton\\Admin\\Admin' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php',
+        'Vendidero\\OrderWithdrawalButton\\Admin\\WithdrawalTable' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/WithdrawalTable.php',
         'Vendidero\\OrderWithdrawalButton\\Ajax' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php',
+        'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalItem' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalItem.php',
+        'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalOrder' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrder.php',
+        'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalOrderCPT' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrderCPT.php',
         'Vendidero\\OrderWithdrawalButton\\Install' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Install.php',
         'Vendidero\\OrderWithdrawalButton\\Package' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php',
         'Vendidero\\OrderWithdrawalButton\\Settings' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Settings.php',
+        'Vendidero\\OrderWithdrawalButton\\WithdrawalItem' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalItem.php',
+        'Vendidero\\OrderWithdrawalButton\\WithdrawalOrder' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit273c74d511734acdde97b17776828fb8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit273c74d511734acdde97b17776828fb8::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit273c74d511734acdde97b17776828fb8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1cf287e5de987fb7724aaeec621c452c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1cf287e5de987fb7724aaeec621c452c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit1cf287e5de987fb7724aaeec621c452c::$classMap;
 
         }, null, ClassLoader::class);
     }
