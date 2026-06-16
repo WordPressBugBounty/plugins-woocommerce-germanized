@@ -15,7 +15,7 @@ class Package {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.1.1';
+	const VERSION = '2.2.1';
 
 	protected static $localized_scripts = array();
 
@@ -61,6 +61,74 @@ class Package {
 
 		add_action( 'woocommerce_prepare_email_for_preview', array( __CLASS__, 'prepare_email_for_preview' ) );
 		add_action( 'eu_owb_migrate_withdrawals', array( __CLASS__, 'migrate_withdrawals' ) );
+
+		add_action(
+			'eu_owb_woocommerce_return_request_form_start',
+			function () {
+				add_filter( 'woocommerce_form_field', array( __CLASS__, 'force_div_form_field_filter' ), 10, 1 );
+			}
+		);
+
+		add_action(
+			'eu_owb_woocommerce_return_request_form_end',
+			function () {
+				remove_filter( 'woocommerce_form_field', array( __CLASS__, 'force_div_form_field_filter' ), 10 );
+			}
+		);
+	}
+
+	public static function force_div_form_field() {
+		return apply_filters( 'eu_owb_woocommerce_force_div_form_field', true );
+	}
+
+	public static function force_div_form_field_filter( $field_html ) {
+		if ( self::force_div_form_field() ) {
+			$field_html = str_replace( array( '<p', '</p>' ), array( '<div', '</div>' ), $field_html );
+		}
+
+		return $field_html;
+	}
+
+	public static function get_additional_admin_notification_recipient() {
+		$recipient = '';
+
+		if ( $email = self::get_setting( 'contact_email_address' ) ) {
+			$email = apply_filters( 'eu_owb_get_contact_support_email', sanitize_email( $email ) );
+
+			if ( ! empty( $email ) ) {
+				$recipient = $email;
+			}
+		}
+
+		return apply_filters( 'eu_owb_woocommerce_additional_admin_notification_recipient', $recipient );
+	}
+
+	public static function substr( $str, $start, $length = null ) {
+		if ( is_array( $str ) ) {
+			return array_map( array( __CLASS__, 'substr' ), $str );
+		} elseif ( is_scalar( $str ) ) {
+			if ( function_exists( 'mb_substr' ) ) {
+				$str = mb_substr( $str, $start, $length );
+			} else {
+				$str = substr( $str, $start, $length );
+			}
+
+			return $str;
+		} else {
+			return $str;
+		}
+	}
+
+	public static function get_form_field_maxlength( $field_name ) {
+		$max_length = -1;
+
+		if ( 'order_number' === $field_name ) {
+			$max_length = 20;
+		} elseif ( 'first_name' === $field_name || 'last_name' === $field_name ) {
+			$max_length = 40;
+		}
+
+		return apply_filters( 'eu_owb_woocommerce_form_field_maxlength', $max_length, $field_name );
 	}
 
 	public static function migrate_withdrawals( $date_created_after ) {
@@ -319,6 +387,12 @@ class Package {
 		$stores['order-withdrawal']      = 'Vendidero\OrderWithdrawalButton\DataStores\WithdrawalOrderCPT';
 		$stores['order-item-withdrawal'] = 'Vendidero\OrderWithdrawalButton\DataStores\WithdrawalItem';
 
+		/**
+		 * Backwards compatibility for older Woo wc_orders_count implementation
+		 * requesting count via static order type data store names.
+		 */
+		$stores['shop_order_withdraw'] = 'Vendidero\OrderWithdrawalButton\DataStores\WithdrawalOrderCPT';
+
 		if ( self::is_hpos_enabled() ) {
 			try {
 				$meta    = wc_get_container()->get( \Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStoreMeta::class );
@@ -328,7 +402,8 @@ class Package {
 				$data_store = new \Vendidero\OrderWithdrawalButton\DataStores\WithdrawalOrder();
 				$data_store->init( $meta, $db_util, $proxy );
 
-				$stores['order-withdrawal'] = $data_store;
+				$stores['order-withdrawal']    = $data_store;
+				$stores['shop_order_withdraw'] = $data_store;
 			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 			}
 		}
@@ -644,15 +719,29 @@ class Package {
 		}
 	}
 
+	public static function page_has_withdrawal_form( $the_post = null ) {
+		return self::page_has_shortcode( 'eu_owb_order_withdrawal_request_form', $the_post ) || apply_filters( 'eu_owb_woocommerce_page_has_form', false, $the_post );
+	}
+
+	public static function page_has_shortcode( $tag, $the_post = null ) {
+		if ( ! is_null( $the_post ) ) {
+			$the_post = get_post( $the_post );
+		} else {
+			global $post;
+
+			$the_post = $post;
+		}
+
+		return is_a( $the_post, 'WP_Post' ) && has_shortcode( $the_post->post_content, $tag );
+	}
+
 	public static function register_scripts() {
 		self::register_script( 'eu-owb-woocommerce', 'static/order-withdrawal.js', array( 'jquery', 'woocommerce' ) );
 		wp_register_style( 'eu-owb-woocommerce-form', self::get_assets_url( 'static/form-styles.css' ), array(), self::get_version() );
 
-		if ( function_exists( 'wc_post_content_has_shortcode' ) ) {
-			if ( wc_post_content_has_shortcode( 'eu_owb_order_withdrawal_request_form' ) || apply_filters( 'eu_owb_woocommerce_page_has_form', false ) ) {
-				wp_enqueue_style( 'eu-owb-woocommerce-form' );
-				wp_enqueue_script( 'eu-owb-woocommerce' );
-			}
+		if ( self::page_has_withdrawal_form() ) {
+			wp_enqueue_style( 'eu-owb-woocommerce-form' );
+			wp_enqueue_script( 'eu-owb-woocommerce' );
 		}
 	}
 
@@ -738,7 +827,7 @@ class Package {
 		add_filter(
 			'is_woocommerce',
 			function ( $is_woocommerce ) {
-				if ( wc_post_content_has_shortcode( 'eu_owb_order_withdrawal_request_form' ) ) {
+				if ( self::page_has_withdrawal_form() ) {
 					$is_woocommerce = true;
 				}
 

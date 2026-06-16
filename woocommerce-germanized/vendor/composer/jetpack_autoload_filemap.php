@@ -7,7 +7,7 @@ $baseDir   = dirname($vendorDir);
 
 return array(
 	'23c18046f52bef3eea034657bafda50f' => array(
-		'version' => '1.37.0.0',
+		'version' => '1.38.1.0',
 		'path'    => $vendorDir . '/symfony/polyfill-php81/bootstrap.php'
 	),
 	'320cde22f66dd4f5d3fd621d3e88b98f' => array(

@@ -103,7 +103,7 @@ return array(
 		'path'    => $vendorDir . '/brick/math/src/RoundingMode.php'
 	),
 	'CURLStringFile' => array(
-		'version' => '1.37.0.0',
+		'version' => '1.38.1.0',
 		'path'    => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php'
 	),
 	'Composer\\Installers\\AglInstaller' => array(
@@ -1251,7 +1251,7 @@ return array(
 		'path'    => $vendorDir . '/ramsey/uuid/src/Validator/ValidatorInterface.php'
 	),
 	'ReturnTypeWillChange' => array(
-		'version' => '1.37.0.0',
+		'version' => '1.38.1.0',
 		'path'    => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/ReturnTypeWillChange.php'
 	),
 	'Shutdown_Handler' => array(
@@ -1275,7 +1275,7 @@ return array(
 		'path'    => $vendorDir . '/symfony/polyfill-php80/PhpToken.php'
 	),
 	'Symfony\\Polyfill\\Php81\\Php81' => array(
-		'version' => '1.37.0.0',
+		'version' => '1.38.1.0',
 		'path'    => $vendorDir . '/symfony/polyfill-php81/Php81.php'
 	),
 	'UnhandledMatchError' => array(
@@ -1659,47 +1659,47 @@ return array(
 		'path'    => $baseDir . '/src/Utilities/NumberUtil.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Admin\\Admin' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Admin\\WithdrawalTable' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/WithdrawalTable.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Ajax' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalItem' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalItem.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalOrder' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrder.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalOrderCPT' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrderCPT.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Install' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Install.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Package' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Settings' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Settings.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\WithdrawalItem' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalItem.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\WithdrawalOrder' => array(
-		'version' => '2.1.1.0',
+		'version' => '2.2.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php'
 	),
 	'Version_Loader' => array(

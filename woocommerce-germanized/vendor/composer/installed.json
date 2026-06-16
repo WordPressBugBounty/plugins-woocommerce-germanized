@@ -869,23 +869,23 @@
         },
         {
             "name": "symfony/polyfill-php81",
-            "version": "v1.37.0",
-            "version_normalized": "1.37.0.0",
+            "version": "v1.38.1",
+            "version_normalized": "1.38.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php81.git",
-                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c"
+                "reference": "6bfb9c766cacffbc8e118cb87217d08ed84e5cd7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
-                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/6bfb9c766cacffbc8e118cb87217d08ed84e5cd7",
+                "reference": "6bfb9c766cacffbc8e118cb87217d08ed84e5cd7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2"
             },
-            "time": "2024-09-09T11:45:10+00:00",
+            "time": "2026-05-26T12:45:58+00:00",
             "type": "library",
             "extra": {
                 "thanks": {
@@ -928,7 +928,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php81/tree/v1.37.0"
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.38.1"
             },
             "funding": [
                 {
@@ -952,17 +952,17 @@
         },
         {
             "name": "vendidero/eu-order-withdrawal-button-for-woocommerce",
-            "version": "2.1.1",
-            "version_normalized": "2.1.1.0",
+            "version": "2.2.1",
+            "version_normalized": "2.2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce.git",
-                "reference": "a44a8b7e2f259ec39aa29234b402ab202d02f41f"
+                "reference": "24392d8cb1f39d0b76e369f0f64e308fbace1008"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vendidero/eu-order-withdrawal-button-for-woocommerce/zipball/a44a8b7e2f259ec39aa29234b402ab202d02f41f",
-                "reference": "a44a8b7e2f259ec39aa29234b402ab202d02f41f",
+                "url": "https://api.github.com/repos/vendidero/eu-order-withdrawal-button-for-woocommerce/zipball/24392d8cb1f39d0b76e369f0f64e308fbace1008",
+                "reference": "24392d8cb1f39d0b76e369f0f64e308fbace1008",
                 "shasum": ""
             },
             "require": {
@@ -973,7 +973,7 @@
                 "woocommerce/woocommerce-sniffs": "^1.0.0",
                 "yoast/phpunit-polyfills": "^3.0"
             },
-            "time": "2026-05-26T13:09:44+00:00",
+            "time": "2026-06-16T08:27:37+00:00",
             "type": "wordpress-plugin",
             "installation-source": "dist",
             "autoload": {
@@ -998,7 +998,7 @@
             "description": "EU Order Withdrawal Button for WooCommerce",
             "homepage": "https://vendidero.de",
             "support": {
-                "source": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce/tree/v2.1.1",
+                "source": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce/tree/v2.2.1",
                 "issues": "https://github.com/vendidero/eu-order-withdrawal-button-for-woocommerce/issues"
             },
             "install-path": "../../packages/eu-order-withdrawal-button-for-woocommerce"

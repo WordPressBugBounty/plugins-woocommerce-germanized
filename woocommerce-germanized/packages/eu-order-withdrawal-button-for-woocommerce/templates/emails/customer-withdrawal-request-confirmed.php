@@ -11,7 +11,7 @@
  * the readme will list any important changes.
  *
  * @package Vendidero/OrderWithdrawalButton/Templates
- * @version 2.1.0
+ * @version 2.1.2
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -37,15 +37,11 @@ if ( ! empty( $withdrawal_name ) ) {
 ?>
 </p>
 
-<p><?php printf( esc_html_x( 'We’ve wanted to let you know that your withdrawal request has been reviewed and is hereby confirmed. We will inform you shortly about the next steps.', 'owb', 'woocommerce-germanized' ), esc_html( $order->get_order_number() ) ); ?></p>
+<p><?php printf( esc_html_x( 'We’ve wanted to let you know that your withdrawal request has been reviewed and is hereby confirmed.', 'owb', 'woocommerce-germanized' ), esc_html( $order->get_order_number() ) ); ?></p>
 
 <?php echo $email_improvements_enabled ? '</div>' : ''; ?>
 
 <?php
-
-do_action( 'eu_owb_woocommerce_withdrawal_request_details', $order, $sent_to_admin, $plain_text, $email, $withdrawal );
-
-do_action( 'eu_owb_woocommerce_withdrawal_request_meta', $order, $sent_to_admin, $plain_text, $email, $withdrawal );
 
 /**
  * Show user-defined additional content - this is set in each email's settings.
@@ -55,6 +51,10 @@ if ( $additional_content ) {
 	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
 	echo $email_improvements_enabled ? '</td></tr></table>' : '';
 }
+
+do_action( 'eu_owb_woocommerce_withdrawal_request_details', $order, $sent_to_admin, $plain_text, $email, $withdrawal );
+
+do_action( 'eu_owb_woocommerce_withdrawal_request_meta', $order, $sent_to_admin, $plain_text, $email, $withdrawal );
 
 /*
  * @hooked WC_Emails::email_footer() Output the email footer

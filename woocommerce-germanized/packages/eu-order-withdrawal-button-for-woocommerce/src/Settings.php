@@ -2,6 +2,8 @@
 
 namespace Vendidero\OrderWithdrawalButton;
 
+use Vendidero\OrderWithdrawalButton\Admin\Admin;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -16,7 +18,7 @@ class Settings {
 	}
 
 	public static function get_description() {
-		return sprintf( _x( 'Configure your EU-compliant order withdrawal button. <a href="https://vendidero.com/implementing-legally-compliant-eu-order-withdrawal-button-in-woocommerce" target="_blank">Need help?</a>', 'owb', 'woocommerce-germanized' ) );
+		return _x( 'Configure your EU-compliant order withdrawal button. <a target="_blank" href="https://vendidero.com/implementing-legally-compliant-eu-order-withdrawal-button-in-woocommerce">Learn more</a>', 'owb', 'woocommerce-germanized' ) . ' <a class="page-title-action" href="' . esc_url( \Vendidero\OrderWithdrawalButton\Package::get_withdrawals_url() ) . '">' . _x( 'Withdrawals', 'owb', 'woocommerce-germanized' ) . '</a>';
 	}
 
 	public static function get_help_url() {
@@ -26,6 +28,7 @@ class Settings {
 	public static function get_settings( $current_section = '' ) {
 		$default_email = get_option( 'admin_email' );
 		$woo_mail      = sanitize_email( get_option( 'woocommerce_email_from_address' ) );
+		$page_status   = Admin::get_current_withdrawal_page_status();
 
 		if ( $woo_mail ) {
 			$default_email = $woo_mail;
@@ -51,6 +54,7 @@ class Settings {
 				'default'  => '',
 				'css'      => 'min-width:300px;',
 				'autoload' => false,
+				'desc'     => '<a href="' . esc_url( $page_status['edit_url'] ) . '" class="withdrawal-page-status withdrawal-page-' . esc_attr( $page_status['status'] ) . '">' . ( 'valid' === $page_status['status'] ? esc_html_x( 'Valid', 'owb', 'woocommerce-germanized' ) : sprintf( esc_html_x( 'Invalid: %1$s', 'owb', 'woocommerce-germanized' ), esc_html( $page_status['invalid_reason'] ) ) ) . '</a>',
 			),
 
 			array(
@@ -156,6 +160,6 @@ class Settings {
 	}
 
 	public static function get_settings_url() {
-		return admin_url( 'admin.php?page=wc-settings&tab=owb' );
+		return Package::is_integration() ? admin_url( 'admin.php?page=wc-settings&tab=germanized-general&section=withdrawal_button' ) : admin_url( 'admin.php?page=wc-settings&tab=owb' );
 	}
 }
