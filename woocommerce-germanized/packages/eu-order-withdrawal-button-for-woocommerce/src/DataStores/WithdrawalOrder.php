@@ -34,6 +34,7 @@ class WithdrawalOrder extends OrdersTableDataStore {
 		'_last_name',
 		'_email',
 		'_order_number',
+		'_verification_code',
 	);
 
 	/**
@@ -120,6 +121,24 @@ class WithdrawalOrder extends OrdersTableDataStore {
 
 			do_action( 'eu_owb_woocommerce_withdrawal_order_trashed', $withdrawal_id );
 		}
+	}
+
+	/**
+	 * @param \Vendidero\OrderWithdrawalButton\WithdrawalOrder $withdrawal
+	 *
+	 * @return void
+	 */
+	public function trash_order( $withdrawal ) {
+		if ( 'trash' === $withdrawal->get_status( 'edit' ) ) {
+			return;
+		}
+
+		$status_from = $withdrawal->get_status( 'edit' );
+		$status_to   = 'trash';
+
+		parent::trash_order( $withdrawal );
+
+		$withdrawal->add_order_note( sprintf( _x( 'Withdrawal status changed from %1$s to %2$s.', 'owb', 'woocommerce-germanized' ), Package::get_withdrawal_status_name( $status_from ), Package::get_withdrawal_status_name( $status_to ) ), 0, true );
 	}
 
 	/**
@@ -213,6 +232,10 @@ class WithdrawalOrder extends OrdersTableDataStore {
 	 * @param \Vendidero\OrderWithdrawalButton\WithdrawalOrder $withdrawal Withdrawal object.
 	 */
 	public function update( &$withdrawal ) {
+		if ( ! $withdrawal->get_date_received( 'edit' ) ) {
+			$withdrawal->set_date_received( time() );
+		}
+
 		$this->persist_updates( $withdrawal, false );
 		$withdrawal->apply_changes();
 
@@ -228,6 +251,10 @@ class WithdrawalOrder extends OrdersTableDataStore {
 	public function update_order_meta( &$withdrawal ) {
 		$props_changed = $withdrawal->get_changes();
 		$search_props  = $withdrawal->get_search_props();
+
+		if ( '' === $withdrawal->get_verification_code( 'edit' ) || $withdrawal->has_changes() ) {
+			$withdrawal->set_verification_code( $withdrawal->get_current_verification_code() );
+		}
 
 		foreach ( $search_props as $prop => $search_value ) {
 			if ( array_key_exists( $prop, $props_changed ) ) {
@@ -299,6 +326,12 @@ class WithdrawalOrder extends OrdersTableDataStore {
 			_x( 'Withdrawal &ndash; %s', 'owb', 'woocommerce-germanized' ),
 			( new \DateTime( 'now' ) )->format( _x( 'M d, Y @ h:i A', 'owb-order-date-format', 'woocommerce-germanized' ) ) // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment, WordPress.WP.I18n.UnorderedPlaceholdersText
 		);
+	}
+
+	public function read_multiple( &$orders ) {
+		add_filter( 'woocommerce_hpos_enable_sync_on_read', '__return_false', 9991 );
+		parent::read_multiple( $orders );
+		remove_filter( 'woocommerce_hpos_enable_sync_on_read', '__return_false', 9991 );
 	}
 
 	/**

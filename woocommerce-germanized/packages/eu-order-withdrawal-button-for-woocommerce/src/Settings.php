@@ -88,6 +88,36 @@ class Settings {
 			),
 
 			array(
+				'title'    => _x( 'Mandatory fields', 'owb', 'woocommerce-germanized' ),
+				'id'       => 'eu_owb_woocommerce_mandatory_fields',
+				'desc_tip' => _x( 'Select fields that should be mandatory while submitting a new withdrawal', 'owb', 'woocommerce-germanized' ),
+				'type'     => 'multiselect',
+				'class'    => 'wc-enhanced-select',
+				'css'      => 'width: 400px;',
+				'options'  => array(
+					'first_name'             => _x( 'First name', 'owb', 'woocommerce-germanized' ),
+					'last_name'              => _x( 'Last name', 'owb', 'woocommerce-germanized' ),
+					'order_number'           => _x( 'Contract Identification', 'owb', 'woocommerce-germanized' ),
+					'additional_information' => _x( 'Additional information', 'owb', 'woocommerce-germanized' ),
+				),
+				'default'  => array(
+					'order_number',
+					'first_name',
+					'last_name',
+				),
+				'autoload' => false,
+			),
+
+			array(
+				'title'    => _x( 'Additional information', 'owb', 'woocommerce-germanized' ),
+				'desc'     => _x( 'Allow guests to enter additional information in a separate text field.', 'owb', 'woocommerce-germanized' ),
+				'id'       => 'eu_owb_woocommerce_enable_additional_information',
+				'type'     => Package::is_integration() ? 'gzd_toggle' : 'checkbox',
+				'default'  => 'no',
+				'autoload' => false,
+			),
+
+			array(
 				'title'    => _x( 'Non-refundable', 'owb', 'woocommerce-germanized' ),
 				'desc'     => _x( 'Choose certain product types to exclude from being withdrawn.', 'owb', 'woocommerce-germanized' ),
 				'desc_tip' => true,
@@ -102,7 +132,7 @@ class Settings {
 			array(
 				'title'     => _x( 'Withdrawal period', 'owb', 'woocommerce-germanized' ),
 				'desc_tip'  => _x( 'Choose the number of days, starting with the orders\' completed date, to accept withdrawals for orders.', 'owb', 'woocommerce-germanized' ),
-				'desc'      => _x( 'Days', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'Keep in mind that the withdrawal period does not begin until the customer receives the order. If necessary add a buffer period depending on your shipping process.', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
+				'desc'      => _x( 'Days', 'owb', 'woocommerce-germanized' ) . '<div class="eu-owb-settings-additional-desc">' . sprintf( _x( 'Keep in mind that the withdrawal period does not begin until the customer receives the order. If necessary add a buffer period depending on your shipping process. Use 0 to make withdrawals available at any time.', 'owb', 'woocommerce-germanized' ), esc_url( get_admin_url( null, 'admin.php?page=wc-orders&unverified_withdrawals=yes' ) ) ) . '</div>',
 				'css'       => 'max-width: 60px;',
 				'row_class' => 'withdrawal-period',
 				'type'      => 'number',

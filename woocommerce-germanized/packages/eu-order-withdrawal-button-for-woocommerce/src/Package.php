@@ -3,6 +3,7 @@
 namespace Vendidero\OrderWithdrawalButton;
 
 use Vendidero\OrderWithdrawalButton\Admin\Admin;
+use Vendidero\OrderWithdrawalButton\Admin\Privacy;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -15,7 +16,7 @@ class Package {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.2.1';
+	const VERSION = '2.3.0';
 
 	protected static $localized_scripts = array();
 
@@ -29,6 +30,15 @@ class Package {
 
 		self::init_hooks();
 		self::includes();
+
+		/**
+		 * Defer loading compatibilities until the plugins_loaded hooks has "fully" traversed.
+		 */
+		if ( doing_action( 'plugins_loaded' ) ) {
+			add_action( 'plugins_loaded', array( __CLASS__, 'load_compatibilities' ), 9999 );
+		} else {
+			self::load_compatibilities();
+		}
 
 		do_action( 'eu_owb_woocommerce_init' );
 	}
@@ -75,6 +85,23 @@ class Package {
 				remove_filter( 'woocommerce_form_field', array( __CLASS__, 'force_div_form_field_filter' ), 10 );
 			}
 		);
+	}
+
+	public static function load_compatibilities() {
+		$compatibilities = apply_filters(
+			'eu_owb_woocommerce_compatibilities',
+			array(
+				'wpml' => '\Vendidero\OrderWithdrawalButton\Compatibility\WPML',
+			)
+		);
+
+		foreach ( $compatibilities as $compatibility ) {
+			if ( is_a( $compatibility, '\Vendidero\OrderWithdrawalButton\Compatibility\Compatibility', true ) ) {
+				if ( $compatibility::is_active() ) {
+					$compatibility::init();
+				}
+			}
+		}
 	}
 
 	public static function force_div_form_field() {
@@ -126,9 +153,28 @@ class Package {
 			$max_length = 20;
 		} elseif ( 'first_name' === $field_name || 'last_name' === $field_name ) {
 			$max_length = 40;
+		} elseif ( 'additional_information' === $field_name ) {
+			$max_length = 150;
 		}
 
 		return apply_filters( 'eu_owb_woocommerce_form_field_maxlength', $max_length, $field_name );
+	}
+
+	public static function get_form_field_required( $form_field ) {
+		$required         = false;
+		$mandatory_fields = (array) self::get_setting( 'mandatory_fields', array() );
+
+		if ( 'email' === $form_field ) {
+			$required = true;
+		} elseif ( in_array( $form_field, $mandatory_fields, true ) ) {
+			$required = true;
+		}
+
+		if ( 'additional_information' === $form_field && $required && ! eu_owb_enable_additional_information_field() ) {
+			$required = false;
+		}
+
+		return apply_filters( 'eu_owb_woocommerce_form_field_required', $required, $form_field );
 	}
 
 	public static function migrate_withdrawals( $date_created_after ) {
@@ -477,6 +523,7 @@ class Package {
 			'_last_name'          => 'last_name',
 			'_email'              => 'email',
 			'_order_number'       => 'order_number',
+			'_verification_code'  => 'verification_code',
 		);
 
 		if ( $cpt ) {
@@ -487,6 +534,7 @@ class Package {
 					'_customer_id'         => 'customer_id',
 					'_customer_ip_address' => 'customer_ip_address',
 					'_customer_user_agent' => 'customer_user_agent',
+					'_billing_email'       => 'billing_email',
 				)
 			);
 		}
@@ -546,7 +594,7 @@ class Package {
 	}
 
 	public static function register_plugin_links() {
-		if ( self::is_standalone() && ! self::is_integration() ) {
+		if ( self::is_standalone() ) {
 			add_filter( 'plugin_action_links_' . plugin_basename( trailingslashit( self::get_path() ) . 'eu-order-withdrawal-button-for-woocommerce.php' ), array( __CLASS__, 'plugin_action_links' ) );
 		}
 	}
@@ -554,7 +602,8 @@ class Package {
 	public static function plugin_action_links( $links ) {
 		return array_merge(
 			array(
-				'<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=advanced&section=owb' ) ) . '">' . _x( 'Settings', 'owb', 'woocommerce-germanized' ) . '</a>',
+				'<a href="' . esc_url( self::is_integration() ? admin_url( 'admin.php?page=wc-settings&tab=germanized-general&section=withdrawal_button' ) : admin_url( 'admin.php?page=wc-settings&tab=advanced&section=owb' ) ) . '">' . _x( 'Settings', 'owb', 'woocommerce-germanized' ) . '</a>',
+				'<a href="' . esc_url( self::get_withdrawals_url() ) . '">' . _x( 'Withdrawals', 'owb', 'woocommerce-germanized' ) . '</a>',
 			),
 			$links
 		);
@@ -968,6 +1017,7 @@ class Package {
 	private static function includes() {
 		Ajax::init();
 		Admin::init();
+		Privacy::init();
 
 		include_once self::get_path() . '/includes/eu-owb-core-functions.php';
 	}

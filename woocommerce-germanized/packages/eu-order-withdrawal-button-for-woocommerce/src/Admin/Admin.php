@@ -335,7 +335,14 @@ class Admin {
 
 		if ( $needs_reset && class_exists( '\Automattic\WooCommerce\Caches\OrderCountCache' ) ) {
 			$order_count_cache = new \Automattic\WooCommerce\Caches\OrderCountCache();
-			$order_count_cache->set_multiple( $order_type, $counts );
+
+			if ( is_callable( array( $order_count_cache, 'set_multiple' ) ) ) {
+				$order_count_cache->set_multiple( $order_type, $counts );
+			} else {
+				foreach ( $counts as $status => $count ) {
+					$order_count_cache->set( $order_type, $status, $count );
+				}
+			}
 		}
 
 		if ( ! empty( $target_status ) ) {
@@ -540,7 +547,7 @@ class Admin {
 	 * @return string
 	 */
 	public static function get_withdrawal_email_verified_html( $withdrawal ) {
-		return ( $withdrawal->has_verified_email() ? '<span class="eu-owb-woocommerce-verified-status is-verified dashicons dashicons-yes-alt tips" data-tip="' . esc_attr( _x( 'E-mail address matches', 'owb', 'woocommerce-germanized' ) ) . '"></span>' : '<span class="eu-owb-woocommerce-verified-status is-unverified dashicons dashicons-warning tips" data-tip="' . esc_attr( _x( 'E-mail address unknown', 'owb', 'woocommerce-germanized' ) ) . '"></span>' );
+		return ( $withdrawal->has_verified_email() ? '<span class="eu-owb-woocommerce-verified-status is-verified dashicons dashicons-yes-alt tips" data-tip="' . esc_attr( _x( 'Email address matches', 'owb', 'woocommerce-germanized' ) ) . '"></span>' : '<span class="eu-owb-woocommerce-verified-status is-unverified dashicons dashicons-warning tips" data-tip="' . esc_attr( _x( 'E-mail address unknown', 'owb', 'woocommerce-germanized' ) ) . '"></span>' );
 	}
 
 	public static function register_order_bulk_actions( $actions ) {
