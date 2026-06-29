@@ -16,7 +16,7 @@ class Package {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.3.0';
+	const VERSION = '2.3.1';
 
 	protected static $localized_scripts = array();
 
@@ -85,6 +85,118 @@ class Package {
 				remove_filter( 'woocommerce_form_field', array( __CLASS__, 'force_div_form_field_filter' ), 10 );
 			}
 		);
+
+		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'maybe_link_refund' ), 10, 2 );
+		add_filter( 'woocommerce_pre_delete_order_refund', array( __CLASS__, 'maybe_remove_refund' ), 5, 3 );
+	}
+
+	/**
+	 * @param null $result
+	 * @param \WC_Order_Refund $refund
+	 * @param boolean $force_delete
+	 *
+	 * @return null
+	 */
+	public static function maybe_remove_refund( $result, $refund, $force_delete ) {
+		if ( ! $force_delete ) {
+			return $result;
+		}
+
+		if ( $order = wc_get_order( $refund->get_parent_id() ) ) {
+			$withdrawals = eu_owb_get_order_withdrawals( $order, array( 'status' => 'confirmed' ) );
+			$refund_map  = array();
+
+			if ( ! empty( $withdrawals ) ) {
+				foreach ( $refund->get_items() as $item ) {
+					$original_item_id = absint( $item->get_meta( '_refunded_item_id' ) );
+					$refunded_qty     = $item->get_quantity() * - 1;
+
+					$refund_map[ $original_item_id ] = $refunded_qty;
+				}
+			}
+
+			if ( ! empty( $refund_map ) ) {
+				foreach ( $withdrawals as $withdrawal ) {
+					$has_removed_refund = false;
+
+					foreach ( $withdrawal->get_items() as $withdrawal_item ) {
+						if ( $withdrawal_item->get_refunded_quantity() <= 0 ) {
+							continue;
+						}
+
+						$order_item_id = $withdrawal_item->get_parent_id();
+
+						if ( array_key_exists( $order_item_id, $refund_map ) ) {
+							$max_qty = min( $refund_map[ $order_item_id ], $withdrawal_item->get_refunded_quantity() );
+
+							if ( $max_qty > 0 ) {
+								$withdrawal_item->set_refunded_quantity( max( 0, ( $withdrawal_item->get_refunded_quantity() - $max_qty ) ) );
+								$has_removed_refund = true;
+
+								$refund_map[ $order_item_id ] -= $max_qty;
+
+								if ( $refund_map[ $order_item_id ] <= 0 ) {
+									unset( $refund_map[ $order_item_id ] );
+								}
+							}
+						}
+					}
+
+					if ( $has_removed_refund ) {
+						$withdrawal->set_refund_id( 0 );
+						$withdrawal->save();
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	public static function maybe_link_refund( $order_id, $refund_id ) {
+		if ( $order = wc_get_order( $order_id ) ) {
+			$withdrawals = eu_owb_get_order_withdrawals( $order, array( 'status' => 'confirmed' ) );
+			$refund_map  = array();
+
+			if ( ! empty( $withdrawals ) ) {
+				if ( $refund = wc_get_order( $refund_id ) ) {
+					foreach ( $refund->get_items() as $item ) {
+						$original_item_id = absint( $item->get_meta( '_refunded_item_id' ) );
+						$refunded_qty     = $item->get_quantity() * - 1;
+
+						$refund_map[ $original_item_id ] = $refunded_qty;
+					}
+				}
+			}
+
+			if ( ! empty( $refund_map ) ) {
+				foreach ( $withdrawals as $withdrawal ) {
+					$has_linked_refund = false;
+
+					foreach ( $withdrawal->get_refundable_items() as $order_item_id => $withdrawal_item ) {
+						if ( array_key_exists( $order_item_id, $refund_map ) ) {
+							$max_qty = min( $refund_map[ $order_item_id ], $withdrawal_item['quantity'] );
+
+							if ( $max_qty > 0 ) {
+								$withdrawal_item['item']->set_refunded_quantity( $withdrawal_item['item']->get_refunded_quantity() + $max_qty );
+								$has_linked_refund = true;
+
+								$refund_map[ $order_item_id ] -= $max_qty;
+
+								if ( $refund_map[ $order_item_id ] <= 0 ) {
+									unset( $refund_map[ $order_item_id ] );
+								}
+							}
+						}
+					}
+
+					if ( $has_linked_refund ) {
+						$withdrawal->set_refund_id( $refund_id );
+						$withdrawal->save();
+					}
+				}
+			}
+		}
 	}
 
 	public static function load_compatibilities() {
@@ -509,21 +621,22 @@ class Package {
 
 	public static function get_withdrawal_order_props( $cpt = false ) {
 		$props = array(
-			'_withdrawal_number'  => 'withdrawal_number',
-			'_date_confirmed'     => 'date_confirmed',
-			'_date_rejected'      => 'date_rejected',
-			'_original_status'    => 'original_status',
-			'_rejection_reason'   => 'rejection_reason',
-			'_is_partial'         => 'is_partial',
-			'_has_verified_email' => 'has_verified_email',
-			'_is_update'          => 'is_update',
-			'_is_guest'           => 'is_guest',
-			'_refund_id'          => 'refund_id',
-			'_first_name'         => 'first_name',
-			'_last_name'          => 'last_name',
-			'_email'              => 'email',
-			'_order_number'       => 'order_number',
-			'_verification_code'  => 'verification_code',
+			'_withdrawal_number'       => 'withdrawal_number',
+			'_date_confirmed'          => 'date_confirmed',
+			'_date_rejected'           => 'date_rejected',
+			'_original_status'         => 'original_status',
+			'_rejection_reason'        => 'rejection_reason',
+			'_is_partial'              => 'is_partial',
+			'_has_verified_email'      => 'has_verified_email',
+			'_is_update'               => 'is_update',
+			'_is_guest'                => 'is_guest',
+			'_refund_id'               => 'refund_id',
+			'_first_name'              => 'first_name',
+			'_last_name'               => 'last_name',
+			'_email'                   => 'email',
+			'_order_number'            => 'order_number',
+			'_verification_code'       => 'verification_code',
+			'_contract_identification' => 'contract_identification',
 		);
 
 		if ( $cpt ) {
@@ -749,7 +862,7 @@ class Package {
 					'email'                 => $email,
 					'withdrawal'            => $withdrawal,
 					'show_deleted_original' => is_a( $email, 'EU_OWB_Email_Customer_Withdrawal_Request_Received' ) ? true : false,
-					'hide_items'            => is_a( $email, 'EU_OWB_Email_Customer_Withdrawal_Request_Confirmed' ) ? false : ! $withdrawal->has_verified_email(),
+					'hide_items'            => is_a( $email, 'EU_OWB_Email_Customer_Withdrawal_Request_Confirmed' ) ? false : ( ! $withdrawal->has_verified_email() && ! $sent_to_admin ),
 				)
 			);
 		} else {
@@ -762,7 +875,7 @@ class Package {
 					'email'                 => $email,
 					'withdrawal'            => $withdrawal,
 					'show_deleted_original' => is_a( $email, 'EU_OWB_Email_Customer_Withdrawal_Request_Received' ) ? true : false,
-					'hide_items'            => is_a( $email, 'EU_OWB_Email_Customer_Withdrawal_Request_Confirmed' ) ? false : ! $withdrawal->has_verified_email(),
+					'hide_items'            => is_a( $email, 'EU_OWB_Email_Customer_Withdrawal_Request_Confirmed' ) ? false : ( ! $withdrawal->has_verified_email() && ! $sent_to_admin ),
 				)
 			);
 		}

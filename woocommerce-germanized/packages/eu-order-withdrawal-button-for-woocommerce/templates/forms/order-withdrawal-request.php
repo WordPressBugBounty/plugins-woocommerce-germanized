@@ -11,7 +11,7 @@
  * the readme will list any important changes.
  *
  * @package Vendidero/OrderWithdrawalButton/Templates
- * @version 2.3.0
+ * @version 2.3.1
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -173,19 +173,11 @@ $show_submit             = true;
 			$default_email_address = $order ? $order->get_billing_email() : ( WC()->customer ? WC()->customer->get_billing_email() : '' );
 			$default_first_name    = $order ? $order->get_billing_first_name() : ( WC()->customer ? WC()->customer->get_billing_first_name() : '' );
 			$default_last_name     = $order ? $order->get_billing_last_name() : ( WC()->customer ? WC()->customer->get_billing_last_name() : '' );
-			$orders                = is_user_logged_in() ? eu_owb_get_orders_for_user() : array();
+			$orders                = ( $order || ! is_user_logged_in() ) ? eu_owb_get_orders_for_guest( $order ) : eu_owb_get_orders_for_user();
 			$default_order_id      = 0;
 
 			if ( $order ) {
 				$default_order_id = $order->get_id();
-				$orders           = eu_owb_find_orders(
-					array(
-						'email'       => $order->get_billing_email(),
-						'customer_id' => $order->get_customer_id(),
-						'return'      => 'objects',
-						'status'      => eu_owb_get_withdrawable_order_statuses(),
-					)
-				);
 
 				if ( $request = eu_owb_get_withdrawal_request( $order ) ) {
 					$default_email_address = $request->get_email();
@@ -201,7 +193,14 @@ $show_submit             = true;
 				);
 
 				foreach ( $orders as $t_order ) {
-					$orders_select[ absint( $t_order->get_id() ) ] = sprintf( _x( 'Order %1$s', 'owb', 'woocommerce-germanized' ), $t_order->get_order_number() );
+					$orders_select[ absint( $t_order->get_id() ) ] = sprintf( _x( 'Order #%1$s', 'owb', 'woocommerce-germanized' ), $t_order->get_order_number() );
+				}
+
+				/**
+				 * Force existence of the requested order.
+				 */
+				if ( $order && ! array_key_exists( $order->get_id(), $orders_select ) ) {
+					$orders_select[ absint( $order->get_id() ) ] = sprintf( _x( 'Order #%1$s', 'owb', 'woocommerce-germanized' ), $order->get_order_number() );
 				}
 				?>
 				<?php
@@ -319,7 +318,7 @@ $show_submit             = true;
 							apply_filters(
 								'eu_owb_woocommerce_form_field_delete_original_request_args',
 								array(
-									'label'         => sprintf( _x( 'Please delete my original withdrawal request to order %1$s.', 'owb', 'woocommerce-germanized' ), esc_html( $order->get_order_number() ) ),
+									'label'         => sprintf( _x( 'Please delete my original withdrawal request to order #%1$s.', 'owb', 'woocommerce-germanized' ), esc_html( $order->get_order_number() ) ),
 									'class'         => array( 'form-row-full', 'hidden', 'order-withdrawal-delete-original-request-checkbox' ),
 									'id'            => 'delete-original-request',
 									'default'       => $delete_original_request,
