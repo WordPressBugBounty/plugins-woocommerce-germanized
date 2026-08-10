@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 jQuery(function ($) {
   var wc_gzd_direct_debit = {
     $checkoutForm: $('form.checkout, form#order_review'),
@@ -74,8 +74,7 @@ jQuery(function ($) {
     onPrettyPhotoOpen: function (e) {
       var self = wc_gzd_direct_debit;
       e.preventDefault();
-      var url = $(this).attr('href');
-      var data = {};
+      let data = {};
       $.each(self.params.mandate_fields, function (key, selector) {
         if ($('input' + selector + ', select' + selector).length > 0) {
           data[key] = $('input' + selector + ', select' + selector).val();
@@ -83,9 +82,21 @@ jQuery(function ($) {
           data[key] = '';
         }
       });
-      url += '&ajax=true&' + jQuery.param(data);
-      $('#show-direct-debit-pretty').attr('href', url);
-      $('#show-direct-debit-pretty').trigger('click');
+      $.ajax({
+        type: "POST",
+        url: $(this).attr('href'),
+        data: data,
+        success: function (responseHtml) {
+          $('#show-direct-debit-pretty').attr('href', '#show-direct-debit-container');
+          $('#show-direct-debit-container').remove();
+          $('body').append('<div id="show-direct-debit-container"></div>');
+          $('#show-direct-debit-container').hide();
+          $('#show-direct-debit-container').html(responseHtml);
+          $('#show-direct-debit-pretty').trigger('click');
+        },
+        error: function () {},
+        dataType: 'html'
+      });
     },
     initPrettyPhoto: function () {
       $('a#show-direct-debit-pretty').prettyPhoto({

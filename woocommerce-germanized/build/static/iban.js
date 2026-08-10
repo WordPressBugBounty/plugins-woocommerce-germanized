@@ -1,8 +1,8 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 260:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ 260
+(__unused_webpack_module, exports) {
 
 /**
 The MIT License (MIT)
@@ -411,7 +411,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   exports.countries = countries;
 })( false ? 0 : exports);
 
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -419,8 +419,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__[260](0, __webpack_exports__);
+/******/ 	let __webpack_exports__ = {};
+/******/ 	__webpack_modules__[260](0,__webpack_exports__);
 /******/ 	((window.germanized = window.germanized || {})["static"] = window.germanized["static"] || {}).iban = __webpack_exports__;
 /******/ 	
 /******/ })()

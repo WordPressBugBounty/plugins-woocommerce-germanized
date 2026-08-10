@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 jQuery(function ($) {
   if ($('#order_review').length > 0 && $('input#payment_method_' + wc_gzd_force_pay_order_params.gateway).length > 0) {
     $payment_box = $('div.payment_method_' + wc_gzd_force_pay_order_params.gateway);

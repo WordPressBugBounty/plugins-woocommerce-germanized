@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 /*global wc_gzd_add_to_cart_variation_params */
 ;
 (function ($, window, document, undefined) {

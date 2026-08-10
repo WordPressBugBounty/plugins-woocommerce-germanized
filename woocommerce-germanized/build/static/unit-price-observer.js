@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 /*global wc_gzd_unit_price_observer_params, accounting */
 ;
 (function ($, window, document, undefined) {

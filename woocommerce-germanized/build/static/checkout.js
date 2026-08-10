@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 /*global woocommerce_admin_meta_boxes, woocommerce_admin, accounting, woocommerce_admin_meta_boxes_order */
 window.germanized = window.germanized || {};
 (function ($, germanized) {

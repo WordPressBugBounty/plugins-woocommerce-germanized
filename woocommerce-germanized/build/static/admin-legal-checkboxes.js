@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 /* global shippingZonesLocalizeScript, ajaxurl */
 (function ($, data, wp, ajaxurl) {
   $(function () {

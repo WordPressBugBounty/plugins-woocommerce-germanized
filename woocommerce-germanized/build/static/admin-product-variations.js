@@ -1,5 +1,5 @@
 /******/ (() => { // webpackBootstrap
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 jQuery(function ($) {
   var wc_gzd_product_variations_actions = {
     params: {},

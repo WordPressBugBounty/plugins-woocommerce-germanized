@@ -180,6 +180,19 @@ class WithdrawalOrderCPT extends \Abstract_WC_Order_Data_Store_CPT implements \W
 	 * @return void
 	 */
 	public function update( &$withdrawal ) {
+		/**
+		 * Updating a withdrawal's emails needs a new DOI to edit the withdrawal request.
+		 */
+		if ( array_key_exists( 'email', $withdrawal->get_changes() ) || array_key_exists( 'billing_email', $withdrawal->get_changes() ) ) {
+			$withdrawal->set_order_key( wc_generate_order_key() );
+
+			if ( $parent = $withdrawal->get_parent() ) {
+				$withdrawal->set_has_verified_email( eu_owb_custom_email_matches_order_email( $parent, $withdrawal->get_email() ) );
+			} else {
+				$withdrawal->set_has_verified_email( false );
+			}
+		}
+
 		parent::update( $withdrawal );
 
 		do_action( 'eu_owb_woocommerce_withdrawal_order_updated', $withdrawal->get_id(), $withdrawal );

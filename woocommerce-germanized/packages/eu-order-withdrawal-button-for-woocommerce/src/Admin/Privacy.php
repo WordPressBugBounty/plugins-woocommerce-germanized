@@ -118,16 +118,16 @@ class Privacy {
 		);
 		$withdrawals = self::query( $email_address, $page );
 		$props       = array(
-			'order_number'           => _x( 'Order number', 'owb', 'woocommerce-germanized' ),
-			'first_name'             => _x( 'First name', 'owb', 'woocommerce-germanized' ),
-			'last_name'              => _x( 'Last name', 'owb', 'woocommerce-germanized' ),
-			'email'                  => _x( 'Email', 'owb', 'woocommerce-germanized' ),
-			'date_received'          => _x( 'Date received', 'owb', 'woocommerce-germanized' ),
-			'additional_information' => _x( 'Additional information', 'owb', 'woocommerce-germanized' ),
-			'customer_ip_address'    => _x( 'IP Address', 'owb', 'woocommerce-germanized' ),
-			'customer_user_agent'    => _x( 'User Agent', 'owb', 'woocommerce-germanized' ),
-			'items'                  => _x( 'Items', 'owb', 'woocommerce-germanized' ),
-			'status'                 => _x( 'Status', 'owb', 'woocommerce-germanized' ),
+			'contract_identification' => _x( 'Contract Identification', 'owb', 'woocommerce-germanized' ),
+			'first_name'              => _x( 'First name', 'owb', 'woocommerce-germanized' ),
+			'last_name'               => _x( 'Last name', 'owb', 'woocommerce-germanized' ),
+			'email'                   => _x( 'Email', 'owb', 'woocommerce-germanized' ),
+			'date_received'           => _x( 'Date received', 'owb', 'woocommerce-germanized' ),
+			'additional_information'  => _x( 'Additional information', 'owb', 'woocommerce-germanized' ),
+			'customer_ip_address'     => _x( 'IP Address', 'owb', 'woocommerce-germanized' ),
+			'customer_user_agent'     => _x( 'User Agent', 'owb', 'woocommerce-germanized' ),
+			'items'                   => _x( 'Items', 'owb', 'woocommerce-germanized' ),
+			'status'                  => _x( 'Status', 'owb', 'woocommerce-germanized' ),
 		);
 
 		if ( 0 < count( $withdrawals ) ) {
@@ -136,6 +136,10 @@ class Privacy {
 
 				foreach ( $props as $prop => $name ) {
 					$value = null;
+
+					if ( ! $withdrawal->has_verified_email() && 'items' === $prop ) {
+						continue;
+					}
 
 					switch ( $prop ) {
 						case 'items':
