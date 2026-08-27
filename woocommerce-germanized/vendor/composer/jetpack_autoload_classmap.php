@@ -518,62 +518,6 @@ return array(
 		'version' => '2.11.18.0',
 		'path'    => $vendorDir . '/automattic/jetpack-autoloader/src/class-container.php'
 	),
-	'Defuse\\Crypto\\Core' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Core.php'
-	),
-	'Defuse\\Crypto\\Crypto' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Crypto.php'
-	),
-	'Defuse\\Crypto\\DerivedKeys' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/DerivedKeys.php'
-	),
-	'Defuse\\Crypto\\Encoding' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Encoding.php'
-	),
-	'Defuse\\Crypto\\Exception\\BadFormatException' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Exception/BadFormatException.php'
-	),
-	'Defuse\\Crypto\\Exception\\CryptoException' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Exception/CryptoException.php'
-	),
-	'Defuse\\Crypto\\Exception\\EnvironmentIsBrokenException' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Exception/EnvironmentIsBrokenException.php'
-	),
-	'Defuse\\Crypto\\Exception\\IOException' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Exception/IOException.php'
-	),
-	'Defuse\\Crypto\\Exception\\WrongKeyOrModifiedCiphertextException' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Exception/WrongKeyOrModifiedCiphertextException.php'
-	),
-	'Defuse\\Crypto\\File' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/File.php'
-	),
-	'Defuse\\Crypto\\Key' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/Key.php'
-	),
-	'Defuse\\Crypto\\KeyOrPassword' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/KeyOrPassword.php'
-	),
-	'Defuse\\Crypto\\KeyProtectedByPassword' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/KeyProtectedByPassword.php'
-	),
-	'Defuse\\Crypto\\RuntimeTests' => array(
-		'version' => '2.4.0.0',
-		'path'    => $vendorDir . '/defuse/php-encryption/src/RuntimeTests.php'
-	),
 	'Digitick\\Sepa\\DomBuilder\\BaseDomBuilder' => array(
 		'version' => '3.0.0.0',
 		'path'    => $vendorDir . '/digitick/sepa-xml/src/DomBuilder/BaseDomBuilder.php'
@@ -1318,6 +1262,10 @@ return array(
 		'version' => 'dev-master',
 		'path'    => $baseDir . '/src/Blocks/BlockTypes/CheckoutCheckboxes.php'
 	),
+	'Vendidero\\Germanized\\Blocks\\BlockTypes\\CheckoutLegalGuarantee' => array(
+		'version' => 'dev-master',
+		'path'    => $baseDir . '/src/Blocks/BlockTypes/CheckoutLegalGuarantee.php'
+	),
 	'Vendidero\\Germanized\\Blocks\\BlockTypes\\CheckoutPhotovoltaicSystemNotice' => array(
 		'version' => 'dev-master',
 		'path'    => $baseDir . '/src/Blocks/BlockTypes/CheckoutPhotovoltaicSystemNotice.php'
@@ -1337,6 +1285,14 @@ return array(
 	'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductDepositPackagingType' => array(
 		'version' => 'dev-master',
 		'path'    => $baseDir . '/src/Blocks/BlockTypes/ProductDepositPackagingType.php'
+	),
+	'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductGaranLabel' => array(
+		'version' => 'dev-master',
+		'path'    => $baseDir . '/src/Blocks/BlockTypes/ProductGaranLabel.php'
+	),
+	'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductLegalGuarantee' => array(
+		'version' => 'dev-master',
+		'path'    => $baseDir . '/src/Blocks/BlockTypes/ProductLegalGuarantee.php'
 	),
 	'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductManufacturer' => array(
 		'version' => 'dev-master',
@@ -1650,6 +1606,14 @@ return array(
 		'version' => 'dev-master',
 		'path'    => $baseDir . '/src/Shopmarks.php'
 	),
+	'Vendidero\\Germanized\\StoreApi\\ProductsGaranLabel' => array(
+		'version' => 'dev-master',
+		'path'    => $baseDir . '/src/StoreApi/ProductsGaranLabel.php'
+	),
+	'Vendidero\\Germanized\\StoreApi\\StoreApi' => array(
+		'version' => 'dev-master',
+		'path'    => $baseDir . '/src/StoreApi/StoreApi.php'
+	),
 	'Vendidero\\Germanized\\Utilities\\CartCheckout' => array(
 		'version' => 'dev-master',
 		'path'    => $baseDir . '/src/Utilities/CartCheckout.php'
@@ -1659,63 +1623,63 @@ return array(
 		'path'    => $baseDir . '/src/Utilities/NumberUtil.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Admin\\Admin' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Admin\\Privacy' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Privacy.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Admin\\WithdrawalTable' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/WithdrawalTable.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Ajax' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Compatibility\\Compatibility' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Compatibility/Compatibility.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Compatibility\\WPML' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Compatibility/WPML.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalItem' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalItem.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalOrder' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrder.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\DataStores\\WithdrawalOrderCPT' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrderCPT.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\EmailTranslationHelper' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/EmailTranslationHelper.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Install' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Install.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Package' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\Settings' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Settings.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\WithdrawalItem' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalItem.php'
 	),
 	'Vendidero\\OrderWithdrawalButton\\WithdrawalOrder' => array(
-		'version' => '2.4.0.0',
+		'version' => '2.4.1.0',
 		'path'    => $baseDir . '/packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php'
 	),
 	'Version_Loader' => array(

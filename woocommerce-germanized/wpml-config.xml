@@ -46,6 +46,7 @@
     <custom-term-fields>
 		<custom-term-field action="copy-once" style="textarea">formatted_address</custom-term-field>
 		<custom-term-field action="copy-once" style="textarea">formatted_eu_address</custom-term-field>
+        <custom-term-field action="copy-once">garan_label_name</custom-term-field>
 	</custom-term-fields>
     <taxonomies>
         <taxonomy translate="1">product_price_label</taxonomy>
@@ -113,6 +114,8 @@
         <key name="woocommerce_customer_new_account_activation_settings">
             <key name="subject" />
             <key name="heading" />
+            <key name="subject_email_update" />
+            <key name="heading_email_update" />
             <key name="additional_content" />
         </key>
         <key name="woocommerce_customer_sepa_direct_debit_mandate_settings">

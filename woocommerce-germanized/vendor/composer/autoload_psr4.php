@@ -15,7 +15,6 @@ return array(
     'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
     'Ramsey\\Collection\\' => array($vendorDir . '/ramsey/collection/src'),
     'Digitick\\Sepa\\' => array($vendorDir . '/digitick/sepa-xml/src'),
-    'Defuse\\Crypto\\' => array($vendorDir . '/defuse/php-encryption/src'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
     'Brick\\Math\\' => array($vendorDir . '/brick/math/src'),
     'Automattic\\Jetpack\\Autoloader\\' => array($vendorDir . '/automattic/jetpack-autoloader/src'),

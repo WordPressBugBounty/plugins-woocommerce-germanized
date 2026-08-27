@@ -9,11 +9,12 @@ import {
 } from '@woocommerce/shared-context';
 import { __, _x, sprintf } from '@wordpress/i18n';
 import { useStyleProps } from '@germanized/base-hooks';
+import { WC_GZD_ASSET_URL } from '@germanized/settings';
 import FormattedMonetaryAmount from '@germanized/base-components/formatted-monetary-amount';
 
 import FormattedPriceLabel from './formatted-price-label';
 
-const getPreviewData = ( labelType, productData, isDescendentOfSingleProductTemplate ) => {
+const getPreviewData = ( labelType, productData, isDescendentOfSingleProductTemplate, props ) => {
     const gzdData = productData.hasOwnProperty( 'extensions' ) ? productData.extensions['woocommerce-germanized'] : {
         'unit_price_html': '',
         'unit_prices': {
@@ -40,6 +41,8 @@ const getPreviewData = ( labelType, productData, isDescendentOfSingleProductTemp
         'manufacturer_html': '',
         'product_safety_attachments_html': '',
         'safety_instructions_html': '',
+        'garan_label_html': '',
+        'legal_guarantee_html': '',
     };
 
     const prices            = productData.prices;
@@ -143,6 +146,30 @@ const getPreviewData = ( labelType, productData, isDescendentOfSingleProductTemp
                 </svg>
             </>
         );
+    } else if ( 'garan_label' === labelTypeData ) {
+        const maxWidth = 'full' === props['variant'] ? '100%' : '350px';
+
+        formattedPreview = (
+            <>
+                <img style={{minWidth: '200px', maxWidth: maxWidth}} src={ `${ WC_GZD_ASSET_URL }images/garan-label/garan-label-${ props['variant'] }-sample.svg` } />
+            </>
+        );
+    } else if ( 'legal_guarantee' === labelTypeData ) {
+        if ( 'full' === props['variant'] || 'preview' === props['variant'] ) {
+            const maxWidth = 'full' === props['variant'] ? '100%' : '250px';
+
+            formattedPreview = (
+                <>
+                    <img style={{maxWidth: maxWidth, minWidth: '200px'}} src={ `${ WC_GZD_ASSET_URL }images/legal-guarantee/legal_guarantee_notice-EN.png` } />
+                </>
+            );
+        } else if ( 'link' === props['variant'] ) {
+            formattedPreview = (
+                <>
+                    <p><a href="#">{ __( 'Your legal guarantee rights', 'woocommerce-germanized' ) }</a></p>
+                </>
+            );
+        }
     }
 
     return {
@@ -186,7 +213,7 @@ const PriceLabelBlock = (props) => {
         return productComponent;
     }
 
-    const previewData = getPreviewData(labelType, product, isDescendentOfSingleProductTemplate);
+    const previewData = getPreviewData(labelType, product, isDescendentOfSingleProductTemplate, props);
 
     const productComponent = (
         <FormattedPriceLabel
@@ -202,6 +229,22 @@ const PriceLabelBlock = (props) => {
             }
         />
     );
+
+    if ( isDescendentOfSingleProductTemplate ) {
+        return (
+            <FormattedPriceLabel
+                align={textAlign}
+                parentClassName={ parentClassName }
+                className={ className }
+                labelType={ labelType }
+                formattedLabel={
+                    isDescendentOfSingleProductTemplate
+                        ? previewData['preview']
+                        : previewData['data']
+                }
+            />
+        );
+    }
 
     if (isDescendentOfAllProductsBlock) {
         const allProductsClassName = `wp-block-woocommerce-gzd-product-${labelType}`;

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
+class ComposerStaticInit35cabb0b7accb7f2ff031936f340b993
 {
     public static $files = array (
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
@@ -36,7 +36,6 @@ class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
         'D' => 
         array (
             'Digitick\\Sepa\\' => 14,
-            'Defuse\\Crypto\\' => 14,
         ),
         'C' => 
         array (
@@ -88,10 +87,6 @@ class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
         'Digitick\\Sepa\\' => 
         array (
             0 => __DIR__ . '/..' . '/digitick/sepa-xml/src',
-        ),
-        'Defuse\\Crypto\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/defuse/php-encryption/src',
         ),
         'Composer\\Installers\\' => 
         array (
@@ -233,20 +228,6 @@ class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
         'Composer\\Installers\\YawikInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/YawikInstaller.php',
         'Composer\\Installers\\ZendInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ZendInstaller.php',
         'Composer\\Installers\\ZikulaInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ZikulaInstaller.php',
-        'Defuse\\Crypto\\Core' => __DIR__ . '/..' . '/defuse/php-encryption/src/Core.php',
-        'Defuse\\Crypto\\Crypto' => __DIR__ . '/..' . '/defuse/php-encryption/src/Crypto.php',
-        'Defuse\\Crypto\\DerivedKeys' => __DIR__ . '/..' . '/defuse/php-encryption/src/DerivedKeys.php',
-        'Defuse\\Crypto\\Encoding' => __DIR__ . '/..' . '/defuse/php-encryption/src/Encoding.php',
-        'Defuse\\Crypto\\Exception\\BadFormatException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/BadFormatException.php',
-        'Defuse\\Crypto\\Exception\\CryptoException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/CryptoException.php',
-        'Defuse\\Crypto\\Exception\\EnvironmentIsBrokenException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/EnvironmentIsBrokenException.php',
-        'Defuse\\Crypto\\Exception\\IOException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/IOException.php',
-        'Defuse\\Crypto\\Exception\\WrongKeyOrModifiedCiphertextException' => __DIR__ . '/..' . '/defuse/php-encryption/src/Exception/WrongKeyOrModifiedCiphertextException.php',
-        'Defuse\\Crypto\\File' => __DIR__ . '/..' . '/defuse/php-encryption/src/File.php',
-        'Defuse\\Crypto\\Key' => __DIR__ . '/..' . '/defuse/php-encryption/src/Key.php',
-        'Defuse\\Crypto\\KeyOrPassword' => __DIR__ . '/..' . '/defuse/php-encryption/src/KeyOrPassword.php',
-        'Defuse\\Crypto\\KeyProtectedByPassword' => __DIR__ . '/..' . '/defuse/php-encryption/src/KeyProtectedByPassword.php',
-        'Defuse\\Crypto\\RuntimeTests' => __DIR__ . '/..' . '/defuse/php-encryption/src/RuntimeTests.php',
         'Digitick\\Sepa\\DomBuilder\\BaseDomBuilder' => __DIR__ . '/..' . '/digitick/sepa-xml/src/DomBuilder/BaseDomBuilder.php',
         'Digitick\\Sepa\\DomBuilder\\CustomerCreditTransferDomBuilder' => __DIR__ . '/..' . '/digitick/sepa-xml/src/DomBuilder/CustomerCreditTransferDomBuilder.php',
         'Digitick\\Sepa\\DomBuilder\\CustomerDirectDebitTransferDomBuilder' => __DIR__ . '/..' . '/digitick/sepa-xml/src/DomBuilder/CustomerDirectDebitTransferDomBuilder.php',
@@ -425,11 +406,14 @@ class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\AbstractInnerBlock' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/AbstractInnerBlock.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\AbstractProductElementBlock' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/AbstractProductElementBlock.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\CheckoutCheckboxes' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/CheckoutCheckboxes.php',
+        'Vendidero\\Germanized\\Blocks\\BlockTypes\\CheckoutLegalGuarantee' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/CheckoutLegalGuarantee.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\CheckoutPhotovoltaicSystemNotice' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/CheckoutPhotovoltaicSystemNotice.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductDefectDescription' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductDefectDescription.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductDeliveryTime' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductDeliveryTime.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductDeposit' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductDeposit.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductDepositPackagingType' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductDepositPackagingType.php',
+        'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductGaranLabel' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductGaranLabel.php',
+        'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductLegalGuarantee' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductLegalGuarantee.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductManufacturer' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductManufacturer.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductNutriScore' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductNutriScore.php',
         'Vendidero\\Germanized\\Blocks\\BlockTypes\\ProductPowerSupply' => __DIR__ . '/../..' . '/src/Blocks/BlockTypes/ProductPowerSupply.php',
@@ -508,6 +492,8 @@ class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
         'Vendidero\\Germanized\\Shiptastic' => __DIR__ . '/../..' . '/src/Shiptastic.php',
         'Vendidero\\Germanized\\Shopmark' => __DIR__ . '/../..' . '/src/Shopmark.php',
         'Vendidero\\Germanized\\Shopmarks' => __DIR__ . '/../..' . '/src/Shopmarks.php',
+        'Vendidero\\Germanized\\StoreApi\\ProductsGaranLabel' => __DIR__ . '/../..' . '/src/StoreApi/ProductsGaranLabel.php',
+        'Vendidero\\Germanized\\StoreApi\\StoreApi' => __DIR__ . '/../..' . '/src/StoreApi/StoreApi.php',
         'Vendidero\\Germanized\\Utilities\\CartCheckout' => __DIR__ . '/../..' . '/src/Utilities/CartCheckout.php',
         'Vendidero\\Germanized\\Utilities\\NumberUtil' => __DIR__ . '/../..' . '/src/Utilities/NumberUtil.php',
         'Vendidero\\OrderWithdrawalButton\\Admin\\Admin' => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php',
@@ -530,9 +516,9 @@ class ComposerStaticInitdb081106c8490767ed9f6afed63cea8e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitdb081106c8490767ed9f6afed63cea8e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitdb081106c8490767ed9f6afed63cea8e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitdb081106c8490767ed9f6afed63cea8e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit35cabb0b7accb7f2ff031936f340b993::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit35cabb0b7accb7f2ff031936f340b993::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit35cabb0b7accb7f2ff031936f340b993::$classMap;
 
         }, null, ClassLoader::class);
     }
