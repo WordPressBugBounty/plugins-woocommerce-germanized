@@ -5,23 +5,29 @@ window.germanized = window.germanized || {};
 (function ($, germanized) {
   germanized.popover = {
     params: {},
+    hoverTimeout: null,
     init: function () {
       const isTouch = !!('ontouchstart' in window);
       if (!isTouch) {
         $(document).on('mouseenter', '.wc-gzd-popover-trigger', function (e) {
           let $popover = $(this).next('.wc-gzd-popover');
-          if ($popover.length <= 0) {
-            return;
-          }
-          const isOpen = $popover[0].matches(':popover-open');
-          if (false === isOpen) {
-            $popover.addClass('wc-gzd-popover-hover');
-            germanized.popover.showPopover($popover);
-          }
+          let $trigger = $(this);
+          germanized.popover.hoverTimeout = setTimeout(function () {
+            if ($popover.length <= 0 || !$trigger.data('e-hover')) {
+              return;
+            }
+            const isOpen = $popover[0].matches(':popover-open');
+            if (false === isOpen) {
+              $popover.addClass('wc-gzd-popover-hover');
+              germanized.popover.showPopover($popover);
+            }
+          }, 1000);
         });
         $(document).on('mouseleave', '.wc-gzd-popover-trigger', function (e) {
+          clearTimeout(germanized.popover.hoverTimeout);
           let $popover = $(this).next('.wc-gzd-popover');
-          if ($popover.length <= 0) {
+          let $trigger = $(this);
+          if ($popover.length <= 0 || !$trigger.data('e-hover')) {
             return;
           }
           if ($popover.hasClass('wc-gzd-popover-hover')) {

@@ -444,13 +444,16 @@ function wc_gzd_get_email_attachment_order( $legal_pages_only = false ) {
 	$available = wc_gzd_get_legal_pages( true );
 
 	if ( ! $legal_pages_only ) {
-		$available += array( 'warranties' => __( 'Product Warranties', 'woocommerce-germanized' ) );
-		$available += array( 'eu_guarantees' => __( 'EU Guarantee Labels', 'woocommerce-germanized' ) );
+		$available['warranties']    = __( 'Product Warranties', 'woocommerce-germanized' );
+		$available['eu_guarantees'] = __( 'EU Guarantee Labels', 'woocommerce-germanized' );
 	}
 
 	$current_order = explode( ',', get_option( 'woocommerce_gzd_mail_attach_order', wc_gzd_get_default_email_attachment_order() ) );
+
+	// Make sure that only available items exist in current order
+	$current_order = array_values( array_intersect( $current_order, array_keys( $available ) ) );
 	// Mare sure all default items exist within option order array
-	$current_order = array_replace( array_keys( $available ), $current_order );
+	$current_order = array_unique( array_merge( $current_order, array_diff( array_keys( $available ), $current_order ) ) );
 	$items         = array();
 
 	foreach ( $current_order as $key => $item ) {
@@ -1254,6 +1257,11 @@ function wc_gzd_get_legal_guarantee_location_hook( $location ) {
 				'priority' => 15,
 			);
 		}
+	} elseif ( 'cart' === $location ) {
+		$hook = array(
+			'hook'     => 'woocommerce_after_cart_totals',
+			'priority' => 15,
+		);
 	}
 
 	return apply_filters( 'woocommerce_gzd_legal_guarantee_location_hook', $hook, $location );
@@ -1309,10 +1317,11 @@ function wc_gzd_get_legal_guarantee_html( $variant = '', $lang = '', $location =
 		$popover_html = wc_get_template_html(
 			'global/popover.php',
 			array(
-				'popover_description'  => __( 'Your legal guarantee rights', 'woocommerce-germanized' ),
-				'popover_fallback_url' => wc_gzd_get_legal_guarantee_image_url( $lang ),
-				'popover_html'         => '<img class="wc-gzd-legal-guarantee-popover-image" src="' . esc_url( wc_gzd_get_legal_guarantee_image_url( $lang ) ) . '" alt="' . esc_attr( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '" /><p class="wc-gzd-popover-caption"><a href="' . esc_url( wc_gzd_get_legal_guarantee_url( $lang ) ) . '" target="_blank">' . esc_html( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '</a></p>',
-				'popover_trigger_html' => apply_filters( 'woocommerce_gzd_legal_guarantee_link_description', $trigger_html, $location ),
+				'popover_description'      => __( 'Your legal guarantee rights', 'woocommerce-germanized' ),
+				'popover_fallback_url'     => wc_gzd_get_legal_guarantee_image_url( $lang ),
+				'popover_enable_mouseover' => apply_filters( 'woocommerce_gzd_legal_guarantee_enable_mouseover', true, $variant, $location ),
+				'popover_html'             => '<img class="wc-gzd-legal-guarantee-popover-image" src="' . esc_url( wc_gzd_get_legal_guarantee_image_url( $lang ) ) . '" alt="' . esc_attr( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '" /><p class="wc-gzd-popover-caption"><a href="' . esc_url( wc_gzd_get_legal_guarantee_url( $lang ) ) . '" target="_blank">' . esc_html( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '</a></p>',
+				'popover_trigger_html'     => apply_filters( 'woocommerce_gzd_legal_guarantee_link_description', $trigger_html, $location ),
 			)
 		);
 
@@ -1321,10 +1330,11 @@ function wc_gzd_get_legal_guarantee_html( $variant = '', $lang = '', $location =
 		$popover_html = wc_get_template_html(
 			'global/popover.php',
 			array(
-				'popover_description'  => __( 'Your legal guarantee rights', 'woocommerce-germanized' ),
-				'popover_fallback_url' => wc_gzd_get_legal_guarantee_image_url( $lang ),
-				'popover_html'         => '<img class="wc-gzd-legal-guarantee-popover-image wc-gzd-popover-image" src="' . esc_url( wc_gzd_get_legal_guarantee_image_url( $lang ) ) . '" alt="' . esc_attr( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '" /><p class="wc-gzd-popover-caption"><a href="' . esc_url( wc_gzd_get_legal_guarantee_url( $lang ) ) . '" target="_blank">' . esc_html( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '</a></p>',
-				'popover_trigger_html' => '<img class="wc-gzd-legal-guarantee-image-preview" src="' . esc_url( wc_gzd_get_legal_guarantee_image_url( $lang ) ) . '" alt="' . esc_attr( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '" />',
+				'popover_description'      => __( 'Your legal guarantee rights', 'woocommerce-germanized' ),
+				'popover_fallback_url'     => wc_gzd_get_legal_guarantee_image_url( $lang ),
+				'popover_enable_mouseover' => apply_filters( 'woocommerce_gzd_legal_guarantee_enable_mouseover', true, $variant, $location ),
+				'popover_html'             => '<img class="wc-gzd-legal-guarantee-popover-image wc-gzd-popover-image" src="' . esc_url( wc_gzd_get_legal_guarantee_image_url( $lang ) ) . '" alt="' . esc_attr( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '" /><p class="wc-gzd-popover-caption"><a href="' . esc_url( wc_gzd_get_legal_guarantee_url( $lang ) ) . '" target="_blank">' . esc_html( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '</a></p>',
+				'popover_trigger_html'     => '<img class="wc-gzd-legal-guarantee-image-preview" src="' . esc_url( wc_gzd_get_legal_guarantee_image_url( $lang ) ) . '" alt="' . esc_attr( __( 'Your legal guarantee rights', 'woocommerce-germanized' ) ) . '" />',
 			)
 		);
 
@@ -2298,8 +2308,18 @@ function wc_gzd_kses_post_svg( $html ) {
 	);
 
 	$kses_post = array_merge( $kses_post, $svg_args );
-	$html      = wp_kses( $html, $kses_post );
-	$html      = str_replace( 'viewbox', 'viewBox', $html ); // Somehow WP does not handle viewBox attribute in the right way
+	/**
+	 * Add fallback support for WP < 6.9 for the popover attribute
+	 */
+	$kses_post['div'] = array_merge(
+		isset( $kses_post['div'] ) ? $kses_post['div'] : array(),
+		array(
+			'popover' => true,
+		)
+	);
+
+	$html = wp_kses( $html, $kses_post );
+	$html = str_replace( 'viewbox', 'viewBox', $html ); // Somehow WP does not handle viewBox attribute in the right way
 
 	return $html;
 }

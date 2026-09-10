@@ -1231,7 +1231,7 @@ return array(
 		'path'    => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php'
 	),
 	'Vendidero\\EUTaxHelper\\Helper' => array(
-		'version' => '2.1.0.0',
+		'version' => '2.1.1.0',
 		'path'    => $baseDir . '/packages/woocommerce-eu-tax-helper/src/Helper.php'
 	),
 	'Vendidero\\Germanized\\Autoloader' => array(
