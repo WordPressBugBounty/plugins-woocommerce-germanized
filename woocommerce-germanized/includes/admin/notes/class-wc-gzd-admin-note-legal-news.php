@@ -27,17 +27,17 @@ class WC_GZD_Admin_Note_Legal_News extends WC_GZD_Admin_Note {
 	}
 
 	public function get_title() {
-		return __( 'Attention: New Regulations', 'woocommerce-germanized' );
+		return __( 'Attention: EU guarantee labels', 'woocommerce-germanized' );
 	}
 
 	public function get_content() {
-		return __( 'You\'ve probably heard about the new requirement to provide a withdrawal button. Germanized is, of course, already prepared for this. Please check your settings and test the process.', 'woocommerce-germanized' );
+		return __( 'You\'ve probably heard about the new EU guarantee labels which will be mandatory starting September 27, 2026. Please make sure that the labels - if your store requires them - are activated and displayed on the front end.', 'woocommerce-germanized' );
 	}
 
 	public function get_actions() {
 		return array(
 			array(
-				'url'        => admin_url( 'admin.php?page=wc-settings&tab=germanized-general&section=withdrawal_button' ),
+				'url'        => admin_url( 'admin.php?page=wc-settings&tab=germanized-shopmarks&section=guarantee_labels' ),
 				'title'      => __( 'Review your settings', 'woocommerce-germanized' ),
 				'target'     => '_self',
 				'is_primary' => true,

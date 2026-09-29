@@ -25,17 +25,20 @@ p.wc-gzd-additional-info:empty, div.wc-gzd-additional-info:empty {
     display: inline-block;
 
     img.wc-gzd-legal-guarantee-image-preview {
-      max-width: 250px;
-      min-width: 200px;
+      max-width: 350px;
+      min-width: 250px;
     }
   }
 }
 
-.wc-gzd-popover.wc-gzd-popover-hover {
-  position-anchor: --wc-gzd-popover-anchor;
-  position: fixed;
-  position-area: bottom center;
-  position-try-fallbacks: top, bottom, right, left;
+@media ( max-width: 400px ) {
+  .wc-gzd-popover-wrapper {
+    .wc-gzd-popover-trigger {
+      img.wc-gzd-legal-guarantee-image-preview {
+        max-width: 98%;
+      }
+    }
+  }
 }
 
 .wc-gzd-garan-label-nested-svg, img.wc-gzd-garan-label-nested-image {
@@ -43,11 +46,19 @@ p.wc-gzd-additional-info:empty, div.wc-gzd-additional-info:empty {
   min-width: 200px;
 }
 
-img.wc-gzd-popover-image {
-  max-width: 100%;
-  min-width: 350px;
-  object-fit: contain;
-  width: 100%;
+.wc-gzd-popover-wrapper {
+  a.wc-gzd-popover-trigger {
+    img:hover {
+      cursor: zoom-in;
+    }
+  }
+
+  .wc-gzd-popover:not(.wc-gzd-popover-hover) {
+    &::backdrop {
+      background-color: #000;
+      opacity: .4;
+    }
+  }
 }
 
 .wc-gzd-legal-guarantee-footer {
@@ -62,6 +73,7 @@ img.wc-gzd-popover-image {
 }
 
 .wc-gzd-popover {
+  display: none;
   max-height: 100vh;
 
   .wc-gzd-popover-header {
@@ -77,19 +89,15 @@ img.wc-gzd-popover-image {
 
   .wc-gzd-popover-content {
     img {
-      max-height: 90vh;
-      width: auto;
+      max-height: 80vh;
       object-fit: contain;
+      max-width: 100%;
+      min-height: 350px;
+      width: 100% !important;
     }
   }
 
   &.wc-gzd-popover-hover {
-    .wc-gzd-popover-content {
-      img {
-        max-width: none;
-      }
-    }
-
     p.wc-gzd-popover-caption {
       display: none;
     }
@@ -103,14 +111,57 @@ img.wc-gzd-popover-image {
 }
 
 .wc-gzd-popover:popover-open {
+  display: block;
   border-color: transparent;
   border-radius: 1rem;
+}
+
+@supports selector(:popover-open) and (anchor-name: --wc-gzd-popover-anchor) and (anchor-scope: --wc-gzd-popover-anchor) and (position-area: bottom center) {
+  .wc-gzd-popover.wc-gzd-popover-hover {
+    position-anchor: --wc-gzd-popover-anchor;
+    position: fixed;
+    position-area: bottom center;
+    position-try-fallbacks: top, bottom, right, left;
+
+    .wc-gzd-popover-content img {
+      max-width: none;
+    }
+  }
+}
+
+@supports not (selector(:popover-open) and (anchor-name: --wc-gzd-popover-anchor) and (anchor-scope: --wc-gzd-popover-anchor) and (position-area: bottom center)) {
+  .wc-gzd-popover {
+    position: fixed;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    margin: 0;
+    padding: 1rem;
+    overflow: auto;
+    z-index: 100000;
+    color: #000;
+    background-color: #fff;
+    border: 0;
+    border-radius: 1rem;
+  }
 }
 
 .wc-gzd-legal-guarantee-global {
   img.wc-gzd-legal-guarantee-label-image {
     min-width: 250px;
     max-width: 300px;
+  }
+
+  .wc-gzd-legal-guarantee-label-full {
+    img.wc-gzd-legal-guarantee-label-image {
+      max-width: 500px;
+    }
   }
 }
 

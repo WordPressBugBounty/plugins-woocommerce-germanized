@@ -231,6 +231,20 @@ if ( ! class_exists( 'WC_GZD_Admin_Setup_Wizard' ) ) :
 						'type'    => 'gzd_toggle',
 					),
 					array(
+						'title'   => __( 'b2b exclusively?', 'woocommerce-germanized' ),
+						'desc'    => __( 'Are you selling b2b exclusively?', 'woocommerce-germanized' ) . '<div class="wc-gzd-additional-desc">' . __( 'Enable this option in case you are NOT selling to consumers. Enabling this option will disable placing the withdrawal button and EU legal guarantee labels.', 'woocommerce-germanized' ) . '</div>',
+						'id'      => 'woocommerce_gzd_b2b_exclusively',
+						'default' => 'no',
+						'type'    => 'gzd_toggle',
+					),
+					array(
+						'title'   => __( 'Virtual only?', 'woocommerce-germanized' ),
+						'desc'    => __( 'Are you selling virtual products only?', 'woocommerce-germanized' ) . '<div class="wc-gzd-additional-desc">' . __( 'Enable this option in case you are selling virtual products only. Enabling this option will disable EU legal guarantee labels.', 'woocommerce-germanized' ) . '</div>',
+						'id'      => 'woocommerce_gzd_virtual_only',
+						'default' => 'no',
+						'type'    => 'gzd_toggle',
+					),
+					array(
 						'type' => 'sectionend',
 						'id'   => 'setting_options',
 					),
@@ -667,6 +681,17 @@ if ( ! class_exists( 'WC_GZD_Admin_Setup_Wizard' ) ) :
 				WC_GZD_Admin::instance()->enable_small_business_options();
 			} elseif ( wc_gzd_is_small_business() ) {
 				WC_GZD_Admin::instance()->disable_small_business_options();
+			}
+
+			if ( isset( $_POST['woocommerce_gzd_b2b_exclusively'] ) && ! empty( $_POST['woocommerce_gzd_b2b_exclusively'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				update_option( 'eu_owb_woocommerce_enable_embed', 'no' );
+				update_option( 'woocommerce_gzd_legal_guarantee_enabled', 'no' );
+				update_option( 'woocommerce_gzd_garan_label_enabled', 'no' );
+			}
+
+			if ( isset( $_POST['woocommerce_gzd_virtual_only'] ) && ! empty( $_POST['woocommerce_gzd_virtual_only'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				update_option( 'woocommerce_gzd_legal_guarantee_enabled', 'no' );
+				update_option( 'woocommerce_gzd_garan_label_enabled', 'no' );
 			}
 
 			wp_safe_redirect( esc_url_raw( $redirect ) );
