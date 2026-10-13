@@ -15,7 +15,7 @@ return array(
 		'path'    => $vendorDir . '/symfony/polyfill-ctype/bootstrap.php'
 	),
 	'a4a119a56e50fbb293281d9a48007e0e' => array(
-		'version' => '1.37.0.0',
+		'version' => '1.43.0.0',
 		'path'    => $vendorDir . '/symfony/polyfill-php80/bootstrap.php'
 	),
 	'e39a8b23c42d4e1452234d762b03835a' => array(
