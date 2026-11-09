@@ -7,6 +7,10 @@ class WC_GZD_Product_Attribute_Helper {
 	protected static $_instance = null;
 
 	public static function instance() {
+		if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '10.6.0', '<' ) ) {
+			return WC_GZD_Deprecated_Product_Attribute_Helper::instance();
+		}
+
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
 		}
@@ -34,90 +38,92 @@ class WC_GZD_Product_Attribute_Helper {
 
 	public function __construct() {
 		// Make sure Woo uses our implementation when updating the attributes via AJAX
-		add_filter( 'woocommerce_admin_meta_boxes_prepare_attribute', array( $this, 'prepare_attributes_filter' ), 10, 3 );
+		add_filter( 'woocommerce_product_read_attribute', array( $this, 'read' ), 10, 2 );
+		add_filter( 'woocommerce_product_importer_read_attribute', array( $this, 'read' ), 10, 2 );
 
-		// Prevent losing data on saves
-		add_filter( 'update_post_metadata', array( $this, 'prevent_meta_data_override' ), 10, 5 );
+		// Save additional attribute data
+		add_filter( 'woocommerce_admin_meta_boxes_prepare_attribute', array( $this, 'save' ), 10, 3 );
 
-		// This is the only nice way to update attributes after Woo has updated product attributes
-		add_action( 'woocommerce_product_object_updated_props', array( $this, 'update_attributes' ), 10 );
+		// Woo REST API recreates attributes without extra data - preserve existing checkout visibility
+		add_filter( 'woocommerce_rest_pre_insert_product_object', array( $this, 'rest_preserve_checkout_visibility' ), 10, 3 );
 
 		// Adjust cart item data to include attributes visible during cart/checkout
 		add_filter( 'woocommerce_get_item_data', array( $this, 'cart_item_data_filter' ), 150, 2 );
 
 		if ( is_admin() ) {
-			add_action( 'woocommerce_after_product_attribute_settings', array( $this, 'attribute_visibility' ), 10, 2 );
+			add_action( 'woocommerce_after_product_attribute_settings', array( $this, 'edit' ), 10, 2 );
 		}
 	}
 
+	public function read( $attribute, $data ) {
+		$default_checkout_visible = apply_filters( 'woocommerce_gzd_product_attribute_checkout_visible_default_value', false );
+
+		$attribute->set_extra_data( 'checkout_visible', isset( $data['checkout_visible'] ) ? wc_string_to_bool( $data['checkout_visible'] ) : $default_checkout_visible );
+
+		return $attribute;
+	}
+
+	public function save( $attribute, $data, $i ) {
+		$attribute_checkout_visibility = isset( $data['attribute_checkout_visibility'][ $i ] ) ? wc_string_to_bool( $data['attribute_checkout_visibility'][ $i ] ) : false;
+
+		$attribute->set_extra_data( 'checkout_visible', $attribute_checkout_visibility );
+
+		return $attribute;
+	}
+
 	/**
-	 * Use this tweak to prevent overriding existing checkout_visibility in case
-	 * product data is being updated without visibility data.
+	 * The Woo REST API builds new WC_Product_Attribute objects (without extra data) in case
+	 * attributes are part of the request. Copy the checkout visibility from the currently stored
+	 * attributes to prevent resetting it on update.
 	 *
-	 * @param null|bool $result
-	 * @param $object_id
-	 * @param $meta_key
-	 * @param $meta_value
-	 * @param $prev_value
+	 * @param WC_Product      $product
+	 * @param WP_REST_Request $request
+	 * @param bool            $creating
 	 *
-	 * @return null|false
+	 * @return WC_Product
 	 */
-	public function prevent_meta_data_override( $result, $object_id, $meta_key, $meta_value, $prev_value ) {
-		if ( '_product_attributes' === $meta_key ) {
-			if ( is_array( $meta_value ) ) {
-				$tmp_result = null;
+	public function rest_preserve_checkout_visibility( $product, $request, $creating = false ) {
+		if ( $creating || ! is_a( $product, 'WC_Product' ) || ! $product->get_id() || ! isset( $request['attributes'] ) ) {
+			return $product;
+		}
 
-				/**
-				 * Check whether we need to update checkout_visible with
-				 * existing (prev) data.
-				 */
-				foreach ( $meta_value as $attribute_key => $value ) {
-					if ( ! isset( $value['checkout_visible'] ) ) {
-						$tmp_result = false;
-						break;
-					}
-				}
+		$stored_product = wc_get_product( $product->get_id() );
 
-				if ( false === $tmp_result ) {
-					foreach ( $meta_value as $attribute_key => $value ) {
-						if ( ! isset( $value['checkout_visible'] ) && is_array( $meta_value[ $attribute_key ] ) ) {
-							$attribute           = new WC_GZD_Product_Attribute();
-							$is_checkout_visible = $attribute->is_checkout_visible();
+		if ( ! $stored_product ) {
+			return $product;
+		}
 
-							if ( isset( $prev_value[ $attribute_key ] ) && $prev_value[ $attribute_key ]['checkout_visible'] ) {
-								$is_checkout_visible = $prev_value[ $attribute_key ]['checkout_visible'];
-							}
+		$stored_attributes = $stored_product->get_attributes();
+		$attributes        = $product->get_attributes();
+		$has_updated       = false;
 
-							$meta_value[ $attribute_key ]['checkout_visible'] = $is_checkout_visible;
-						}
-					}
+		foreach ( $attributes as $key => $attribute ) {
+			if ( ! is_a( $attribute, 'WC_Product_Attribute' ) || ! is_null( $attribute->get_extra_data( 'checkout_visible' ) ) ) {
+				continue;
+			}
 
-					update_post_meta( $object_id, $meta_key, $meta_value );
+			if ( isset( $stored_attributes[ $key ] ) && is_a( $stored_attributes[ $key ], 'WC_Product_Attribute' ) ) {
+				$stored_visible = $stored_attributes[ $key ]->get_extra_data( 'checkout_visible' );
 
-					return $tmp_result;
+				if ( ! is_null( $stored_visible ) ) {
+					$attribute->set_extra_data( 'checkout_visible', wc_string_to_bool( $stored_visible ) );
+					$has_updated = true;
 				}
 			}
 		}
 
-		return $result;
-	}
-
-	public function attribute_visibility( $attribute, $i ) {
-		global $product_object, $product;
-
-		if ( isset( $product_object ) ) {
-			$gzd_product = $product_object;
-		} elseif ( isset( $product ) ) {
-			$gzd_product = $product;
-		} else {
-			$gzd_product = null;
+		if ( $has_updated ) {
+			$product->set_attributes( $attributes );
 		}
 
-		$gzd_product_attribute = ( is_a( $attribute, 'WC_GZD_Product_Attribute' ) ? $attribute : $this->get_attribute( $attribute, $gzd_product ) );
+		return $product;
+	}
+
+	public function edit( $attribute, $i ) {
 		?>
 		<tr>
 			<td>
-				<label><input type="checkbox" class="checkbox" <?php checked( $gzd_product_attribute->is_checkout_visible(), true ); ?>name="attribute_checkout_visibility[<?php echo esc_attr( $i ); ?>]" value="1"/> <?php esc_html_e( 'Visible during checkout', 'woocommerce-germanized' ); ?></label>
+				<label><input type="checkbox" class="checkbox" <?php checked( $attribute->get_extra_data( 'checkout_visible' ), true ); ?>name="attribute_checkout_visibility[<?php echo esc_attr( $i ); ?>]" value="1"/> <?php esc_html_e( 'Visible during checkout', 'woocommerce-germanized' ); ?></label>
 			</td>
 		</tr>
 		<?php
@@ -153,34 +159,6 @@ class WC_GZD_Product_Attribute_Helper {
 		return false;
 	}
 
-	public function update_attributes( $product ) {
-		$attributes = $product->get_attributes();
-		$meta       = get_post_meta( $product->get_id(), '_product_attributes', true );
-
-		if ( $meta && is_array( $meta ) ) {
-			foreach ( $meta as $meta_key => $meta_attribute ) {
-				if ( isset( $attributes[ $meta_key ] ) ) {
-					$attribute = $attributes[ $meta_key ];
-
-					if ( is_a( $attribute, 'WC_GZD_Product_Attribute' ) ) {
-						$meta[ $meta_key ]['checkout_visible'] = $attribute->get_checkout_visible() ? 1 : 0;
-					}
-				}
-			}
-
-			update_post_meta( $product->get_id(), '_product_attributes', $meta );
-		}
-	}
-
-	public function prepare_attributes_filter( $attribute, $data, $i ) {
-		$attribute_checkout_visibility = isset( $data['attribute_checkout_visibility'] ) ? $data['attribute_checkout_visibility'] : array();
-
-		$attribute = new WC_GZD_Product_Attribute( $attribute );
-		$attribute->set_checkout_visible( isset( $attribute_checkout_visibility[ $i ] ) );
-
-		return $attribute;
-	}
-
 	protected function get_product_id( $maybe_product_id ) {
 		$product_id = false;
 
@@ -194,28 +172,7 @@ class WC_GZD_Product_Attribute_Helper {
 	}
 
 	public function get_attribute( $attribute, $product_id = false ) {
-		$new_attribute   = new WC_GZD_Product_Attribute( $attribute );
-		$product_id      = $this->get_product_id( $product_id );
-		$meta_attributes = $product_id ? get_post_meta( $product_id, '_product_attributes', true ) : array();
-		$meta_key        = sanitize_title( $new_attribute->get_name() );
-
-		if ( ! empty( $meta_attributes ) && is_array( $meta_attributes ) ) {
-			if ( isset( $meta_attributes[ $meta_key ] ) ) {
-				$meta_value = array_merge(
-					array(
-						/** This filter is documented in includes/class-wc-gzd-product-attribute.php */
-						'checkout_visible' => apply_filters( 'woocommerce_gzd_product_attribute_checkout_visible_default_value', false ),
-					),
-					(array) $meta_attributes[ $meta_key ]
-				);
-
-				if ( ! is_null( $meta_value['checkout_visible'] ) ) {
-					$new_attribute->set_checkout_visible( $meta_value['checkout_visible'] );
-				}
-			}
-		}
-
-		return $new_attribute;
+		return new WC_GZD_Product_Attribute( $attribute );
 	}
 }
 

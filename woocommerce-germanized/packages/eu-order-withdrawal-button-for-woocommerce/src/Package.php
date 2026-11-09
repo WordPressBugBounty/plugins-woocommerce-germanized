@@ -16,7 +16,7 @@ class Package {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.4.5';
+	const VERSION = '2.4.6';
 
 	protected static $localized_scripts = array();
 
@@ -233,12 +233,12 @@ class Package {
 	 * Prevent syncing shop_order_withdraw with legacy wp_posts table as this is currently not supported.
 	 *
 	 * @param $order_types
-	 * @param $for
+	 * @param $where
 	 *
 	 * @return array|mixed
 	 */
-	public static function disable_withdrawal_hpos_sync( $order_types, $for ) {
-		if ( 'cot-migration' === $for && self::is_hpos_enabled() ) {
+	public static function disable_withdrawal_hpos_sync( $order_types, $where ) {
+		if ( 'cot-migration' === $where && self::is_hpos_enabled() ) {
 			$order_types = array_diff( $order_types, array( 'shop_order_withdraw' ) );
 		}
 

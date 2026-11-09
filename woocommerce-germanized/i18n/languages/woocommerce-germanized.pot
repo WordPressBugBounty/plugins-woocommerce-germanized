@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Germanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Germanized for WooCommerce 4.1.5\n"
+"Project-Id-Version: Germanized for WooCommerce 4.1.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-germanized\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T07:49:25+00:00\n"
+"POT-Creation-Date: 2026-11-09T10:45:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -136,7 +136,9 @@ msgstr ""
 
 #. translators: %s: list of placeholders
 #: includes/emails/class-eu-owb-email-customer-withdrawal-request-received.php:250
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:259
 #: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-customer-withdrawal-request-received.php:250
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:259
 #, php-format
 msgctxt "owb"
 msgid "Available placeholders: %s"
@@ -253,45 +255,69 @@ msgid "Withdrawal request deleted: {order_number}"
 msgstr ""
 
 #: includes/emails/class-eu-owb-email-deleted-withdrawal-request.php:202
-#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:200
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:290
 #: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-deleted-withdrawal-request.php:202
-#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:200
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:290
 msgctxt "owb"
 msgid "Recipient(s)"
 msgstr ""
 
 #. translators: %s: WP admin email
 #: includes/emails/class-eu-owb-email-deleted-withdrawal-request.php:205
-#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:203
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:293
 #: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-deleted-withdrawal-request.php:205
-#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:203
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:293
 #, php-format
 msgctxt "owb"
 msgid "Enter recipients (comma separated) for this email. Defaults to %s."
 msgstr ""
 
-#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:37
-#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:37
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:44
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:44
 msgctxt "owb"
 msgid "New withdrawal request"
 msgstr ""
 
-#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:38
-#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:38
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:45
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:45
 msgctxt "owb"
 msgid "New withdrawal request emails are sent to chosen recipient(s) when a customer submits a withdrawal request."
-msgstr ""
-
-#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:66
-#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:66
-msgctxt "owb"
-msgid "[{site_title}]: New withdrawal request to {order_number}"
 msgstr ""
 
 #: includes/emails/class-eu-owb-email-new-withdrawal-request.php:75
 #: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:75
 msgctxt "owb"
+msgid "[{site_title}]: Updated withdrawal request to {order_number}"
+msgstr ""
+
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:77
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:77
+msgctxt "owb"
+msgid "[{site_title}]: New withdrawal request to {order_number}"
+msgstr ""
+
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:89
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:89
+msgctxt "owb"
+msgid "Updated withdrawal request: {order_number}"
+msgstr ""
+
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:91
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:91
+msgctxt "owb"
 msgid "New withdrawal request: {order_number}"
+msgstr ""
+
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:267
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:267
+msgctxt "owb"
+msgid "Updated withdrawal subject"
+msgstr ""
+
+#: includes/emails/class-eu-owb-email-new-withdrawal-request.php:276
+#: packages/eu-order-withdrawal-button-for-woocommerce/includes/emails/class-eu-owb-email-new-withdrawal-request.php:276
+msgctxt "owb"
+msgid "Updated withdrawal email heading"
 msgstr ""
 
 #: includes/eu-owb-core-functions.php:227
@@ -429,15 +455,15 @@ msgstr ""
 #: src/Admin/Admin.php:378
 #: src/Admin/Admin.php:744
 #: src/Admin/Privacy.php:172
-#: src/Package.php:668
-#: src/Package.php:804
+#: src/Package.php:686
+#: src/Package.php:822
 #: src/Settings.php:21
 #: includes/admin/settings/class-wc-gzd-settings-tab-general.php:58
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php:378
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php:744
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Privacy.php:172
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:668
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:804
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:686
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:822
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Settings.php:21
 msgctxt "owb"
 msgid "Withdrawals"
@@ -490,9 +516,9 @@ msgid "Delete withdrawal"
 msgstr ""
 
 #: src/Admin/Admin.php:529
-#: src/Package.php:150
+#: src/Package.php:152
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/Admin.php:529
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:150
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:152
 #, php-format
 msgctxt "owb"
 msgid "Withdrawn %1$sx"
@@ -977,20 +1003,20 @@ msgid "%1$s at %2$s"
 msgstr ""
 
 #: src/Admin/WithdrawalTable.php:1111
-#: templates/emails/email-withdrawal-details.php:74
+#: templates/emails/email-withdrawal-details.php:76
 #: templates/forms/order-withdrawal-request-item-select.php:66
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/WithdrawalTable.php:1111
-#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/email-withdrawal-details.php:74
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/email-withdrawal-details.php:76
 #: packages/eu-order-withdrawal-button-for-woocommerce/templates/forms/order-withdrawal-request-item-select.php:66
 msgctxt "owb"
 msgid "Product"
 msgstr ""
 
 #: src/Admin/WithdrawalTable.php:1112
-#: templates/emails/email-withdrawal-details.php:75
+#: templates/emails/email-withdrawal-details.php:77
 #: templates/forms/order-withdrawal-request-item-select.php:67
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Admin/WithdrawalTable.php:1112
-#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/email-withdrawal-details.php:75
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/email-withdrawal-details.php:77
 #: packages/eu-order-withdrawal-button-for-woocommerce/templates/forms/order-withdrawal-request-item-select.php:67
 msgctxt "owb"
 msgid "Quantity"
@@ -1003,9 +1029,9 @@ msgid "Sorry, no permission to view that order."
 msgstr ""
 
 #: src/Ajax.php:321
-#: src/Ajax.php:599
+#: src/Ajax.php:604
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:321
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:599
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:604
 msgctxt "owb"
 msgid "Thank you. We've received your withdrawal request. You'll receive a confirmation of your request by email."
 msgstr ""
@@ -1035,19 +1061,19 @@ msgid "Please check your email address."
 msgstr ""
 
 #: src/Ajax.php:354
-#: src/Ajax.php:451
-#: src/Ajax.php:467
-#: src/Ajax.php:493
-#: src/Ajax.php:499
-#: src/Ajax.php:505
-#: src/Ajax.php:534
+#: src/Ajax.php:450
+#: src/Ajax.php:466
+#: src/Ajax.php:492
+#: src/Ajax.php:498
+#: src/Ajax.php:504
+#: src/Ajax.php:533
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:354
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:451
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:467
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:493
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:499
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:505
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:534
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:450
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:466
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:492
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:498
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:504
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:533
 #, php-format
 msgctxt "owb"
 msgid "Sorry, we were unable to find an order based on the information you provided. Please try again - if the issue persists, please <a href=\"%s\">contact support</a> for help."
@@ -1077,23 +1103,23 @@ msgctxt "owb"
 msgid "Please enter additional information."
 msgstr ""
 
-#: src/Ajax.php:539
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:539
+#: src/Ajax.php:538
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:538
 #, php-format
 msgctxt "owb"
 msgid "Sorry, but this order cannot be withdrawn. <a href=\"%s\">Contact support</a> for help."
 msgstr ""
 
-#: src/Ajax.php:566
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:566
+#: src/Ajax.php:565
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:565
 msgctxt "owb"
 msgid "You've already submitted an identical withdrawal request for this order."
 msgstr ""
 
-#: src/Ajax.php:634
-#: src/Ajax.php:657
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:634
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:657
+#: src/Ajax.php:639
+#: src/Ajax.php:662
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:639
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Ajax.php:662
 #, php-format
 msgctxt "owb"
 msgid "You've submitted too many different unverified withdrawal requests. <a href=\"%s\">Contact support</a> for help."
@@ -1101,10 +1127,10 @@ msgstr ""
 
 #: src/DataStores/WithdrawalOrder.php:142
 #: src/DataStores/WithdrawalOrderCPT.php:95
-#: src/WithdrawalOrder.php:995
+#: src/WithdrawalOrder.php:1005
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrder.php:142
 #: packages/eu-order-withdrawal-button-for-woocommerce/src/DataStores/WithdrawalOrderCPT.php:95
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:995
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:1005
 #, php-format
 msgctxt "owb"
 msgid "Withdrawal status changed from %1$s to %2$s."
@@ -1140,100 +1166,100 @@ msgctxt "owb-page-title"
 msgid "Withdraw from contract"
 msgstr ""
 
-#: src/Package.php:107
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:107
+#: src/Package.php:109
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:109
 msgctxt "owb"
 msgid "Withdraw"
 msgstr ""
 
-#: src/Package.php:150
-#: src/Package.php:1036
-#: src/Package.php:1087
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:150
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1036
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1087
+#: src/Package.php:152
+#: src/Package.php:1054
+#: src/Package.php:1105
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:152
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1054
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1105
 msgctxt "owb"
 msgid "Withdrawn"
 msgstr ""
 
-#: src/Package.php:155
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:155
+#: src/Package.php:157
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:157
 msgctxt "owb"
 msgid "Withdrawal requested"
 msgstr ""
 
-#: src/Package.php:155
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:155
+#: src/Package.php:157
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:157
 #, php-format
 msgctxt "owb"
 msgid "Withdrawal requested %1$sx"
 msgstr ""
 
-#: src/Package.php:555
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:555
+#: src/Package.php:573
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:573
 msgctxt "owb-email-preview"
 msgid "John"
 msgstr ""
 
-#: src/Package.php:556
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:556
+#: src/Package.php:574
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:574
 msgctxt "owb-email-preview"
 msgid "Doe"
 msgstr ""
 
-#: src/Package.php:559
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:559
+#: src/Package.php:577
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:577
 msgctxt "owb-email-preview"
 msgid "An example rejection reason."
 msgstr ""
 
-#: src/Package.php:587
-#: src/Package.php:1048
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:587
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1048
+#: src/Package.php:605
+#: src/Package.php:1066
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:605
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1066
 msgctxt "owb"
 msgid "Requested"
 msgstr ""
 
-#: src/Package.php:588
-#: src/Package.php:1060
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:588
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1060
+#: src/Package.php:606
+#: src/Package.php:1078
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:606
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1078
 msgctxt "owb"
 msgid "Confirmed"
 msgstr ""
 
-#: src/Package.php:589
-#: src/Package.php:1072
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:589
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1072
+#: src/Package.php:607
+#: src/Package.php:1090
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:607
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1090
 msgctxt "owb"
 msgid "Rejected"
 msgstr ""
 
-#: src/Package.php:752
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:752
+#: src/Package.php:770
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:770
 #, php-format
 msgctxt "owb"
 msgid "Sorry, we've detected a technical issue while submitting your withdrawal. Please try again - if the issue persists, please <a href=\"%s\">contact support</a> for help."
 msgstr ""
 
-#: src/Package.php:803
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:803
+#: src/Package.php:821
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:821
 msgctxt "owb"
 msgid "Settings"
 msgstr ""
 
-#: src/Package.php:1024
-#: src/Package.php:1086
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1024
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1086
+#: src/Package.php:1042
+#: src/Package.php:1104
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1042
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1104
 msgctxt "owb"
 msgid "Pending withdrawal"
 msgstr ""
 
-#: src/Package.php:1029
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1029
+#: src/Package.php:1047
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1047
 #, php-format
 msgctxt "owb"
 msgid "Pending withdrawal (%s)"
@@ -1241,8 +1267,8 @@ msgid_plural "Pending withdrawals (%s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Package.php:1041
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1041
+#: src/Package.php:1059
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1059
 #, php-format
 msgctxt "owb"
 msgid "Withdrawn (%s)"
@@ -1250,8 +1276,8 @@ msgid_plural "Withdrawn (%s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Package.php:1053
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1053
+#: src/Package.php:1071
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1071
 #, php-format
 msgctxt "owb"
 msgid "Requested (%s)"
@@ -1259,8 +1285,8 @@ msgid_plural "Requested (%s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Package.php:1065
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1065
+#: src/Package.php:1083
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1083
 #, php-format
 msgctxt "owb"
 msgid "Confirmed (%s)"
@@ -1268,8 +1294,8 @@ msgid_plural "Confirmed (%s)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Package.php:1077
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1077
+#: src/Package.php:1095
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/Package.php:1095
 #, php-format
 msgctxt "owb"
 msgid "Rejected (%s)"
@@ -1559,24 +1585,24 @@ msgctxt "owb-order-number"
 msgid "Not specified"
 msgstr ""
 
-#: src/WithdrawalOrder.php:786
-#: src/WithdrawalOrder.php:787
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:786
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:787
+#: src/WithdrawalOrder.php:796
+#: src/WithdrawalOrder.php:797
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:796
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:797
 msgctxt "owb"
 msgid "WooCommerce"
 msgstr ""
 
-#: src/WithdrawalOrder.php:966
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:966
+#: src/WithdrawalOrder.php:976
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:976
 #, php-format
 msgctxt "owb"
 msgid "Parent order changed from %1$s to %2$s."
 msgstr ""
 
 #. translators: %s: new order status
-#: src/WithdrawalOrder.php:998
-#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:998
+#: src/WithdrawalOrder.php:1008
+#: packages/eu-order-withdrawal-button-for-woocommerce/src/WithdrawalOrder.php:1008
 #, php-format
 msgctxt "owb"
 msgid "Withdrawal status set to %s."
@@ -1590,10 +1616,18 @@ msgctxt "owb"
 msgid "A withdrawal request has been deleted:"
 msgstr ""
 
-#: templates/emails/admin-new-withdrawal-request.php:26
-#: templates/emails/plain/admin-new-withdrawal-request.php:24
-#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/admin-new-withdrawal-request.php:26
-#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/plain/admin-new-withdrawal-request.php:24
+#: templates/emails/admin-new-withdrawal-request.php:27
+#: templates/emails/plain/admin-new-withdrawal-request.php:25
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/admin-new-withdrawal-request.php:27
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/plain/admin-new-withdrawal-request.php:25
+msgctxt "owb"
+msgid "A withdrawal request has been updated:"
+msgstr ""
+
+#: templates/emails/admin-new-withdrawal-request.php:29
+#: templates/emails/plain/admin-new-withdrawal-request.php:27
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/admin-new-withdrawal-request.php:29
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/plain/admin-new-withdrawal-request.php:27
 msgctxt "owb"
 msgid "You’ve received a new withdrawal request:"
 msgstr ""
@@ -1715,6 +1749,14 @@ msgctxt "owb"
 msgid "As you requested, we have deleted your original withdrawal request to %1$s."
 msgstr ""
 
+#: templates/emails/email-withdrawal-details.php:68
+#: templates/emails/plain/email-withdrawal-details.php:55
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/email-withdrawal-details.php:68
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/plain/email-withdrawal-details.php:55
+msgctxt "owb"
+msgid "As you requested, we have edited your original withdrawal request."
+msgstr ""
+
 #: templates/emails/email-withdrawal-edit-link.php:23
 #: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/email-withdrawal-edit-link.php:23
 msgctxt "owb"
@@ -1768,8 +1810,8 @@ msgid "We could not find an order based on your criteria—please use the link b
 msgstr ""
 
 #. translators: %s: Order link.
-#: templates/emails/plain/email-withdrawal-details.php:76
-#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/plain/email-withdrawal-details.php:76
+#: templates/emails/plain/email-withdrawal-details.php:78
+#: packages/eu-order-withdrawal-button-for-woocommerce/templates/emails/plain/email-withdrawal-details.php:78
 #, php-format
 msgctxt "owb"
 msgid "View order: %s"
@@ -2015,9 +2057,9 @@ msgstr ""
 
 #: includes/abstracts/abstract-wc-gzd-product.php:1849
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-garan-label.php:10
-#: build/wc-gzd-blocks-product-elements.js:1724
-#: build/wc-gzd-blocks-product-elements-style.js:1273
-#: build/wc-gzd-blocks-product-elements.js:1273
+#: build/wc-gzd-blocks-product-elements.js:1317
+#: build/wc-gzd-blocks-product-elements-style.js:1080
+#: build/wc-gzd-blocks-product-elements.js:1080
 msgid "EU GARAN label"
 msgstr ""
 
@@ -2189,9 +2231,9 @@ msgstr ""
 #: includes/api/class-wc-gzd-rest-products-controller.php:603
 #: includes/class-wc-gzd-post-types.php:159
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-manufacturer.php:10
-#: build/wc-gzd-blocks-product-elements.js:2126
-#: build/wc-gzd-blocks-product-elements-style.js:1578
-#: build/wc-gzd-blocks-product-elements.js:1561
+#: build/wc-gzd-blocks-product-elements.js:1719
+#: build/wc-gzd-blocks-product-elements-style.js:1385
+#: build/wc-gzd-blocks-product-elements.js:1368
 msgid "Manufacturer"
 msgstr ""
 
@@ -2201,9 +2243,9 @@ msgid "<strong>Be aware!</strong> This update is not compatible with your curren
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin-order.php:103
-#: build/checkout.js:509
-#: build/checkout-style.js:653
-#: build/checkout.js:386
+#: build/checkout.js:367
+#: build/checkout-style.js:566
+#: build/checkout.js:313
 msgid "Checkboxes"
 msgstr ""
 
@@ -2231,7 +2273,7 @@ msgid "Germanize"
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin-setup-wizard.php:66
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:111
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:112
 #: includes/class-wc-gzd-ajax.php:100
 #, php-format
 msgid "There was an error while automatically installing %1$s. %2$s"
@@ -2246,8 +2288,8 @@ msgid "One Stop Shop"
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin-setup-wizard.php:71
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:174
-#: woocommerce-germanized.php:970
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:170
+#: woocommerce-germanized.php:971
 msgid "Settings"
 msgstr ""
 
@@ -2262,7 +2304,7 @@ msgid "Start tutorial"
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin-setup-wizard.php:93
-#: includes/admin/views/setup/encrypt.php:10
+#: includes/admin/views/setup/encrypt.php:11
 msgid "Encryption"
 msgstr ""
 
@@ -2271,14 +2313,13 @@ msgid "Insert key"
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin-setup-wizard.php:98
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:507
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:509
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:430
 msgid "Continue"
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin-setup-wizard.php:106
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:111
-#: includes/admin/views/setup/shiptastic.php:46
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:112
+#: includes/admin/views/setup/shiptastic.php:47
 #: src/PluginsHelper.php:639
 #: src/PluginsHelper.php:741
 msgid "Shiptastic"
@@ -2288,147 +2329,142 @@ msgstr ""
 msgid "Install & continue"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:120
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:122
 msgid "Shipping Provider"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:159
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:161
 msgid "Pages"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:160
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:162
 msgid "Create legal pages placeholders e.g. terms & conditions."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:175
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:171
 msgid "Germanize WooCommerce settings (e.g. currency, tax display)."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:179
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:175
 msgid "In case you've already adjusted your WooCommerce settings (tax display, currency, ship to countries etc) you should skip this option."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:183
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:179
 msgctxt "install"
 msgid "OSS status"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:184
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:180
 #, php-format
 msgid "I'm participating in the <a href=\"%s\" target=\"_blank\" rel=\"noopener\">One Stop Shop (OSS) procedure</a>."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:184
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:191
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:180
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:187
 msgid "Activating this option will automatically install the <a href=\"https://wordpress.org/plugins/one-stop-shop-woocommerce/\" target=\"_blank\">One Stop Shop Plugin</a> developed by us."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:190
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:186
 msgctxt "install"
 msgid "OSS observer"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:191
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:187
 msgid "Observe the OSS delivery threshold of the current year."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:191
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:187
 msgid "Get notified automatically when you are close to reaching the delivery threshold."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:200
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:196
 msgctxt "install"
 msgid "VAT"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:201
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:197
 msgid "Let Germanized insert EU VAT rates."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:220
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:206
 #: includes/admin/settings/class-wc-gzd-settings-tab-general.php:307
 #: includes/admin/views/html-page-status-germanized.php:51
 msgid "Small-Enterprise-Regulation"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:221
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:207
 #: includes/admin/settings/class-wc-gzd-settings-tab-general.php:308
 msgid "VAT based on &#167;19 UStG"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:221
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:207
 #: includes/admin/settings/class-wc-gzd-settings-tab-general.php:308
 #, php-format
 msgid "Enable this option if you have chosen to apply to <a href=\"%s\" target=\"_blank\">&#167;19 UStG</a>."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:227
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:213
 #: includes/admin/settings/class-wc-gzd-settings-tab-doi.php:21
 msgid "Double Opt In"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:228
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:214
 #: includes/admin/settings/class-wc-gzd-settings-tab-doi.php:42
 msgid "Enable customer double opt in during registration."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:228
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:214
 #, php-format
 msgid "Sends an email to the customer after registration to verify his account. <strong>By default unactivated customers will be deleted after 7 days</strong>. You may adjust your DOI <a href=\"%s\" target=\"_blank\">settings</a> accordingly."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:234
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:220
 msgid "b2b exclusively?"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:235
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:221
 msgid "Are you selling b2b exclusively?"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:235
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:221
 msgid "Enable this option in case you are NOT selling to consumers. Enabling this option will disable placing the withdrawal button and EU legal guarantee labels."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:241
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:227
 msgid "Virtual only?"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:242
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:228
 msgid "Are you selling virtual products only?"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:242
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:228
 msgid "Enable this option in case you are selling virtual products only. Enabling this option will disable EU legal guarantee labels."
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:277
-#, php-format
-msgid "Upgrade to %1$s to activate %2$s integration."
-msgstr ""
-
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:294
-#, php-format
-msgid "Install %s integration plugin"
-msgstr ""
-
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:294
-#, php-format
-msgid "Enable %s integration"
-msgstr ""
-
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:322
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:243
 msgid "Setup"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:429
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:352
 msgid "Germanized &rsaquo; Setup Wizard"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:503
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:368
+#: includes/admin/class-wc-gzd-admin.php:727
+#: includes/admin/settings/abstract-wc-gzd-settings-tab.php:169
+#: includes/admin/settings/class-wc-gzd-settings-germanized.php:21
+#: includes/admin/settings/class-wc-gzd-settings-tab-shiptastic.php:29
+#: includes/admin/settings/views/html-admin-settings-tabs.php:9
+#: includes/admin/views/html-page-status-germanized.php:36
+msgid "Germanized"
+msgstr ""
+
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:371
 msgid "Skip Step"
 msgstr ""
 
-#: includes/admin/class-wc-gzd-admin-setup-wizard.php:515
+#: includes/admin/class-wc-gzd-admin-setup-wizard.php:446
 msgid "Return to WP Admin"
 msgstr ""
 
@@ -2484,12 +2520,14 @@ msgstr ""
 #: includes/class-wc-gzd-coupon-helper.php:37
 #: includes/class-wc-gzd-customer-helper.php:23
 #: includes/class-wc-gzd-customer-helper.php:32
+#: includes/class-wc-gzd-deprecated-product-attribute-helper.php:32
+#: includes/class-wc-gzd-deprecated-product-attribute-helper.php:41
 #: includes/class-wc-gzd-hook-priorities.php:37
 #: includes/class-wc-gzd-hook-priorities.php:46
 #: includes/class-wc-gzd-order-helper.php:25
 #: includes/class-wc-gzd-order-helper.php:34
-#: includes/class-wc-gzd-product-attribute-helper.php:23
-#: includes/class-wc-gzd-product-attribute-helper.php:32
+#: includes/class-wc-gzd-product-attribute-helper.php:27
+#: includes/class-wc-gzd-product-attribute-helper.php:36
 #: includes/export/class-wc-gzd-product-export.php:27
 #: includes/export/class-wc-gzd-product-export.php:36
 #: includes/import/class-wc-gzd-product-import.php:25
@@ -2517,15 +2555,6 @@ msgstr ""
 
 #: includes/admin/class-wc-gzd-admin.php:717
 msgid "Send paid for order notification"
-msgstr ""
-
-#: includes/admin/class-wc-gzd-admin.php:727
-#: includes/admin/settings/abstract-wc-gzd-settings-tab.php:169
-#: includes/admin/settings/class-wc-gzd-settings-germanized.php:21
-#: includes/admin/settings/class-wc-gzd-settings-tab-shiptastic.php:29
-#: includes/admin/settings/views/html-admin-settings-tabs.php:9
-#: includes/admin/views/html-page-status-germanized.php:36
-msgid "Germanized"
 msgstr ""
 
 #: includes/admin/class-wc-gzd-admin.php:780
@@ -2573,9 +2602,9 @@ msgstr ""
 #: includes/api/class-wc-gzd-rest-products-controller.php:203
 #: includes/api/class-wc-gzd-rest-products-controller.php:709
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-unit-price.php:10
-#: build/wc-gzd-blocks-product-elements.js:3880
-#: build/wc-gzd-blocks-product-elements-style.js:2895
-#: build/wc-gzd-blocks-product-elements.js:2878
+#: build/wc-gzd-blocks-product-elements.js:3473
+#: build/wc-gzd-blocks-product-elements-style.js:2702
+#: build/wc-gzd-blocks-product-elements.js:2685
 msgid "Unit Price"
 msgstr ""
 
@@ -2597,9 +2626,9 @@ msgstr ""
 #: includes/api/class-wc-gzd-rest-products-controller.php:43
 #: includes/api/class-wc-gzd-rest-products-controller.php:528
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-delivery-time.php:10
-#: build/wc-gzd-blocks-product-elements.js:1162
-#: build/wc-gzd-blocks-product-elements-style.js:877
-#: build/wc-gzd-blocks-product-elements.js:877
+#: build/wc-gzd-blocks-product-elements.js:755
+#: build/wc-gzd-blocks-product-elements-style.js:684
+#: build/wc-gzd-blocks-product-elements.js:684
 msgid "Delivery Time"
 msgstr ""
 
@@ -2814,9 +2843,9 @@ msgstr ""
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-safety-instructions.php:10
 #: includes/wc-gzd-template-functions.php:968
 #: templates/single-product/safety-instructions.php:22
-#: build/wc-gzd-blocks-product-elements.js:2835
-#: build/wc-gzd-blocks-product-elements-style.js:2073
-#: build/wc-gzd-blocks-product-elements.js:2056
+#: build/wc-gzd-blocks-product-elements.js:2428
+#: build/wc-gzd-blocks-product-elements-style.js:1880
+#: build/wc-gzd-blocks-product-elements.js:1863
 msgid "Safety instructions"
 msgstr ""
 
@@ -2903,9 +2932,9 @@ msgstr ""
 #: includes/admin/settings/class-wc-gzd-settings-tab-shopmarks.php:327
 #: includes/api/class-wc-gzd-rest-products-controller.php:252
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-defect-description.php:10
-#: build/wc-gzd-blocks-product-elements.js:987
-#: build/wc-gzd-blocks-product-elements-style.js:754
-#: build/wc-gzd-blocks-product-elements.js:754
+#: build/wc-gzd-blocks-product-elements.js:580
+#: build/wc-gzd-blocks-product-elements-style.js:561
+#: build/wc-gzd-blocks-product-elements.js:561
 msgid "Defect Description"
 msgstr ""
 
@@ -2959,7 +2988,7 @@ msgstr ""
 #: includes/admin/settings/class-wc-gzd-settings-pointers.php:176
 #: includes/admin/settings/class-wc-gzd-settings-tab-invoices.php:70
 #: includes/admin/views/html-settings-pro.php:25
-#: includes/admin/views/setup/first-steps.php:30
+#: includes/admin/views/setup/first-steps.php:35
 #: includes/compatibility/elementor/widgets/abstact-class-wc-gzd-elementor-widget.php:69
 #: includes/gateways/invoice/class-wc-gzd-gateway-invoice.php:100
 msgid "Upgrade now"
@@ -3061,9 +3090,9 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-wc-germanized-meta-box-product-data.php:677
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-power-supply.php:10
-#: build/wc-gzd-blocks-product-elements.js:2479
-#: build/wc-gzd-blocks-product-elements-style.js:1825
-#: build/wc-gzd-blocks-product-elements.js:1808
+#: build/wc-gzd-blocks-product-elements.js:2072
+#: build/wc-gzd-blocks-product-elements-style.js:1632
+#: build/wc-gzd-blocks-product-elements.js:1615
 msgid "Power supply"
 msgstr ""
 
@@ -5096,16 +5125,16 @@ msgstr ""
 msgid "Register your license"
 msgstr ""
 
-#: includes/admin/settings/views/html-admin-settings-tabs.php:29
-msgid "Manage your license"
-msgstr ""
-
-#: includes/admin/settings/views/html-admin-settings-tabs.php:31
+#: includes/admin/settings/views/html-admin-settings-tabs.php:28
 msgid "License expired"
 msgstr ""
 
-#: includes/admin/settings/views/html-admin-settings-tabs.php:34
+#: includes/admin/settings/views/html-admin-settings-tabs.php:31
 msgid "License expires soon"
+msgstr ""
+
+#: includes/admin/settings/views/html-admin-settings-tabs.php:35
+msgid "Manage your license"
 msgstr ""
 
 #: includes/admin/settings/views/html-admin-settings-tabs.php:47
@@ -5157,7 +5186,7 @@ msgstr ""
 
 #: includes/admin/views/html-page-status-germanized.php:19
 #: includes/admin/views/html-page-status-germanized.php:28
-#: includes/admin/views/setup/encrypt.php:20
+#: includes/admin/views/setup/encrypt.php:22
 msgid "Copied!"
 msgstr ""
 
@@ -5418,54 +5447,54 @@ msgstr ""
 msgid "We've found out that you have been using DHL for WooCommerce already. We will automatically import your settings and you can start using our integration instead."
 msgstr ""
 
-#: includes/admin/views/setup/encrypt.php:24
+#: includes/admin/views/setup/encrypt.php:27
 #, php-format
 msgid "Germanized supports <a href=\"%s\" target=\"_blank\">encrypting sensitive data</a>, e.g. your DHL or Deutsche Post credentials."
 msgstr ""
 
-#: includes/admin/views/setup/encrypt.php:29
+#: includes/admin/views/setup/encrypt.php:35
 #, php-format
 msgid "Please paste the following line to your <a href=\"%s\" target=\"_blank\">wp-config.php</a> file or use the insert key button:"
 msgstr ""
 
-#: includes/admin/views/setup/encrypt.php:31
+#: includes/admin/views/setup/encrypt.php:37
 #, php-format
 msgid "Please paste the following line to your <a href=\"%s\" target=\"_blank\">wp-config.php</a> file:"
 msgstr ""
 
-#: includes/admin/views/setup/encrypt.php:35
+#: includes/admin/views/setup/encrypt.php:41
 msgid "Perfect! Your key has been placed and is working like a charm!"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:11
+#: includes/admin/views/setup/first-steps.php:13
 msgid "Congratulations! You are ready to go. You should now head over to the settings to configure Germanized in-deep."
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:15
+#: includes/admin/views/setup/first-steps.php:19
 msgid "Resources"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:18
+#: includes/admin/views/setup/first-steps.php:22
 msgid "Knowledge Base"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:19
+#: includes/admin/views/setup/first-steps.php:23
 msgid "Stay tuned"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:21
+#: includes/admin/views/setup/first-steps.php:24
 msgid "Learn how to use WordPress"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:23
+#: includes/admin/views/setup/first-steps.php:25
 msgid "Learn how to use WooCommerce"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:31
+#: includes/admin/views/setup/first-steps.php:36
 msgid "Want more features and professional support?"
 msgstr ""
 
-#: includes/admin/views/setup/first-steps.php:33
+#: includes/admin/views/setup/first-steps.php:41
 msgid "Discover professional version"
 msgstr ""
 
@@ -5473,11 +5502,11 @@ msgstr ""
 msgid "Germany"
 msgstr ""
 
-#: includes/admin/views/setup/germanize.php:18
+#: includes/admin/views/setup/germanize.php:19
 msgid "Germanize WooCommerce"
 msgstr ""
 
-#: includes/admin/views/setup/germanize.php:20
+#: includes/admin/views/setup/germanize.php:23
 #, php-format
 msgid "Let Germanized prepare your WooCommerce installation for %s."
 msgstr ""
@@ -5494,19 +5523,37 @@ msgstr ""
 msgid "We've found out that you have been using the Internetmarke standalone Plugin already. We will automatically import your settings and you can start using our integration instead."
 msgstr ""
 
-#: includes/admin/views/setup/provider.php:7
+#: includes/admin/views/setup/provider.php:17
 msgid "Choose integrations"
 msgstr ""
 
-#: includes/admin/views/setup/provider.php:8
+#: includes/admin/views/setup/provider.php:21
 msgid "Germanized & Shiptastic offer seamless integration with your favourite shipping provider."
 msgstr ""
 
-#: includes/admin/views/setup/settings.php:7
+#. translators: 1: pro badge link 2: provider title
+#: includes/admin/views/setup/provider.php:65
+#, php-format
+msgid "Upgrade to %1$s to activate %2$s integration."
+msgstr ""
+
+#. translators: %s: provider title
+#: includes/admin/views/setup/provider.php:77
+#, php-format
+msgid "Install %s integration plugin"
+msgstr ""
+
+#. translators: %s: provider title
+#: includes/admin/views/setup/provider.php:77
+#, php-format
+msgid "Enable %s integration"
+msgstr ""
+
+#: includes/admin/views/setup/settings.php:8
 msgid "Adjust Germanized"
 msgstr ""
 
-#: includes/admin/views/setup/settings.php:9
+#: includes/admin/views/setup/settings.php:12
 msgid "Configure Germanized to your needs. You can always adjust these settings later on."
 msgstr ""
 
@@ -5525,22 +5572,22 @@ msgctxt "shipments"
 msgid "UPS"
 msgstr ""
 
-#: includes/admin/views/setup/shiptastic.php:48
+#: includes/admin/views/setup/shiptastic.php:51
 msgid "Shiptastic is your all-in-one shipping solution for WooCommerce - seamlessly integrated with Germanized."
 msgstr ""
 
-#: includes/admin/views/setup/shiptastic.php:51
+#: includes/admin/views/setup/shiptastic.php:58
 msgctxt "shipments"
 msgid "Create (partial) shipments for orders – either automatically or by hand."
 msgstr ""
 
-#: includes/admin/views/setup/shiptastic.php:52
+#: includes/admin/views/setup/shiptastic.php:59
 #, php-format
 msgctxt "shipments"
 msgid "Use one of our built-in integrations for %s."
 msgstr ""
 
-#: includes/admin/views/setup/shiptastic.php:53
+#: includes/admin/views/setup/shiptastic.php:60
 msgctxt "shipments"
 msgid "Create complex shipping scenarios."
 msgstr ""
@@ -5626,8 +5673,8 @@ msgstr ""
 #: includes/gateways/direct-debit/class-wc-gzd-gateway-direct-debit.php:1181
 #: includes/gateways/direct-debit/class-wc-gzd-gateway-direct-debit.php:1307
 #: src/Blocks/Checkout.php:541
-#: build/wc-gzd-payment-method-direct-debit.js:1642
-#: build/wc-gzd-payment-method-direct-debit.js:1500
+#: build/wc-gzd-payment-method-direct-debit.js:1617
+#: build/wc-gzd-payment-method-direct-debit.js:1483
 msgid "IBAN"
 msgstr ""
 
@@ -5641,8 +5688,8 @@ msgstr ""
 #: includes/gateways/direct-debit/class-wc-gzd-gateway-direct-debit.php:1185
 #: includes/gateways/direct-debit/class-wc-gzd-gateway-direct-debit.php:1308
 #: src/Blocks/Checkout.php:547
-#: build/wc-gzd-payment-method-direct-debit.js:1650
-#: build/wc-gzd-payment-method-direct-debit.js:1509
+#: build/wc-gzd-payment-method-direct-debit.js:1625
+#: build/wc-gzd-payment-method-direct-debit.js:1492
 msgid "BIC/SWIFT"
 msgstr ""
 
@@ -5945,9 +5992,9 @@ msgid "Deposit quantity"
 msgstr ""
 
 #: includes/api/class-wc-gzd-rest-products-controller.php:410
-#: build/wc-gzd-blocks-product-elements.js:1518
-#: build/wc-gzd-blocks-product-elements-style.js:1125
-#: build/wc-gzd-blocks-product-elements.js:1125
+#: build/wc-gzd-blocks-product-elements.js:1111
+#: build/wc-gzd-blocks-product-elements-style.js:932
+#: build/wc-gzd-blocks-product-elements.js:932
 msgid "Deposit amount"
 msgstr ""
 
@@ -5958,9 +6005,9 @@ msgstr ""
 #: includes/api/class-wc-gzd-rest-products-controller.php:425
 #: includes/class-wc-gzd-food-helper.php:48
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-nutri-score.php:10
-#: build/wc-gzd-blocks-product-elements.js:2304
-#: build/wc-gzd-blocks-product-elements-style.js:1702
-#: build/wc-gzd-blocks-product-elements.js:1685
+#: build/wc-gzd-blocks-product-elements.js:1897
+#: build/wc-gzd-blocks-product-elements-style.js:1509
+#: build/wc-gzd-blocks-product-elements.js:1492
 msgid "Nutri-Score"
 msgstr ""
 
@@ -6030,6 +6077,10 @@ msgstr ""
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-ingredients.php:10
 #: includes/wc-gzd-template-functions.php:948
 msgid "Ingredients"
+msgstr ""
+
+#: includes/api/class-wc-gzd-rest-products-controller.php:771
+msgid "Define if the attribute is visible during cart/checkout."
 msgstr ""
 
 #: includes/class-wc-gzd-ajax.php:60
@@ -6102,7 +6153,7 @@ msgid "%1$d update functions completed. Database version is %2$s"
 msgstr ""
 
 #: includes/class-wc-gzd-coupon-helper.php:784
-#: woocommerce-germanized.php:1350
+#: woocommerce-germanized.php:1351
 #, php-format
 msgid "Voucher: %1$s"
 msgstr ""
@@ -6160,11 +6211,11 @@ msgstr ""
 
 #: includes/class-wc-gzd-customer-helper.php:969
 #: includes/class-wc-gzd-customer-helper.php:993
-#: includes/class-wc-gzd-customer-helper.php:1095
+#: includes/class-wc-gzd-customer-helper.php:1107
 msgid "Invalid activation key"
 msgstr ""
 
-#: includes/class-wc-gzd-customer-helper.php:1090
+#: includes/class-wc-gzd-customer-helper.php:1102
 msgid "Expired activation key"
 msgstr ""
 
@@ -6194,35 +6245,40 @@ msgctxt "deposit-tax-status"
 msgid "None"
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:570
+#: includes/class-wc-gzd-deprecated-product-attribute-helper.php:129
+#: includes/class-wc-gzd-product-attribute-helper.php:126
+msgid "Visible during checkout"
+msgstr ""
+
+#: includes/class-wc-gzd-emails.php:594
 msgid "BCC recipients"
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:572
+#: includes/class-wc-gzd-emails.php:596
 msgid "Enter blind-copy recipients (comma separated) for this email."
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:647
+#: includes/class-wc-gzd-emails.php:671
 msgid "Confirmation text"
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:648
+#: includes/class-wc-gzd-emails.php:672
 msgid "Your order has been received and is now being processed. Your order details are shown below for your reference:"
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:649
+#: includes/class-wc-gzd-emails.php:673
 msgid "This text will be inserted within the order confirmation email. Use {order_number}, {site_title} or {order_date} as placeholder."
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:827
+#: includes/class-wc-gzd-emails.php:851
 msgid "Your order has been received and is now being processed. Your order details are shown below for your reference."
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:876
+#: includes/class-wc-gzd-emails.php:900
 msgid "Someone requested a password reset for your account."
 msgstr ""
 
-#: includes/class-wc-gzd-emails.php:891
+#: includes/class-wc-gzd-emails.php:915
 #, php-format
 msgid "Thanks for creating an account on %s."
 msgstr ""
@@ -6725,7 +6781,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:531
 #: build/product-unit-price-frontend.js:531
 #: build/product-unit-product-frontend.js:531
-#: build/wc-gzd-blocks-product-elements.js:3178
+#: build/wc-gzd-blocks-product-elements.js:2771
 #: build/product-defect-description-frontend.js:520
 #: build/product-delivery-time-frontend.js:520
 #: build/product-deposit-frontend.js:520
@@ -6741,8 +6797,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:494
 #: build/product-unit-price-frontend.js:494
 #: build/product-unit-product-frontend.js:494
-#: build/wc-gzd-blocks-product-elements-style.js:2368
-#: build/wc-gzd-blocks-product-elements.js:2351
+#: build/wc-gzd-blocks-product-elements-style.js:2175
+#: build/wc-gzd-blocks-product-elements.js:2158
 msgid "Person responsible for the EU"
 msgstr ""
 
@@ -7060,10 +7116,6 @@ msgstr ""
 msgid "Mandate Email"
 msgstr ""
 
-#: includes/class-wc-gzd-product-attribute-helper.php:120
-msgid "Visible during checkout"
-msgstr ""
-
 #: includes/class-wc-gzd-secret-box-helper.php:22
 msgid "General purpose encryption, e.g. application password stored within settings"
 msgstr ""
@@ -7113,9 +7165,9 @@ msgid "Deposit Amount"
 msgstr ""
 
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-legal-guarantee.php:10
-#: build/wc-gzd-blocks-product-elements.js:1939
-#: build/wc-gzd-blocks-product-elements-style.js:1446
-#: build/wc-gzd-blocks-product-elements.js:1429
+#: build/wc-gzd-blocks-product-elements.js:1532
+#: build/wc-gzd-blocks-product-elements-style.js:1253
+#: build/wc-gzd-blocks-product-elements.js:1236
 msgid "EU Legal Guarantee"
 msgstr ""
 
@@ -7124,9 +7176,9 @@ msgid "Shipping Notice"
 msgstr ""
 
 #: includes/compatibility/elementor/widgets/class-wc-gzd-elementor-widget-product-tax-notice.php:10
-#: build/wc-gzd-blocks-product-elements.js:3705
-#: build/wc-gzd-blocks-product-elements-style.js:2771
-#: build/wc-gzd-blocks-product-elements.js:2754
+#: build/wc-gzd-blocks-product-elements.js:3298
+#: build/wc-gzd-blocks-product-elements-style.js:2578
+#: build/wc-gzd-blocks-product-elements.js:2561
 msgid "Tax Notice"
 msgstr ""
 
@@ -7795,8 +7847,8 @@ msgstr ""
 
 #: includes/gateways/invoice/class-wc-gzd-gateway-invoice.php:43
 #: includes/gateways/invoice/class-wc-gzd-gateway-invoice.php:129
-#: build/wc-gzd-payment-method-invoice.js:1528
-#: build/wc-gzd-payment-method-invoice.js:1427
+#: build/wc-gzd-payment-method-invoice.js:1503
+#: build/wc-gzd-payment-method-invoice.js:1410
 msgid "Pay by Invoice"
 msgstr ""
 
@@ -7968,8 +8020,8 @@ msgstr ""
 #: includes/wc-gzd-core-functions.php:1327
 #: includes/wc-gzd-core-functions.php:1337
 #: includes/wc-gzd-core-functions.php:1340
-#: build/cart.js:286
-#: build/checkout.js:640
+#: build/cart.js:207
+#: build/checkout.js:498
 #: build/product-defect-description-frontend.js:685
 #: build/product-delivery-time-frontend.js:685
 #: build/product-deposit-frontend.js:685
@@ -7985,11 +8037,11 @@ msgstr ""
 #: build/product-tax-info-frontend.js:623
 #: build/product-unit-price-frontend.js:623
 #: build/product-unit-product-frontend.js:623
-#: build/wc-gzd-blocks-product-elements.js:3270
-#: build/cart-style.js:245
-#: build/cart.js:186
-#: build/checkout-style.js:899
-#: build/checkout.js:479
+#: build/wc-gzd-blocks-product-elements.js:2863
+#: build/cart-style.js:200
+#: build/cart.js:141
+#: build/checkout-style.js:812
+#: build/checkout.js:406
 #: build/product-defect-description-frontend.js:587
 #: build/product-delivery-time-frontend.js:587
 #: build/product-deposit-frontend.js:587
@@ -8005,8 +8057,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:561
 #: build/product-unit-price-frontend.js:561
 #: build/product-unit-product-frontend.js:561
-#: build/wc-gzd-blocks-product-elements-style.js:2435
-#: build/wc-gzd-blocks-product-elements.js:2418
+#: build/wc-gzd-blocks-product-elements-style.js:2242
+#: build/wc-gzd-blocks-product-elements.js:2225
 msgid "Your legal guarantee rights"
 msgstr ""
 
@@ -8322,9 +8374,9 @@ msgid "The requested plugin %s could not be installed. Upgrader install failed."
 msgstr ""
 
 #: src/PluginsHelper.php:636
-#: build/wc-gzd-blocks-product-elements.js:2927
-#: build/wc-gzd-blocks-product-elements-style.js:2131
-#: build/wc-gzd-blocks-product-elements.js:2114
+#: build/wc-gzd-blocks-product-elements.js:2520
+#: build/wc-gzd-blocks-product-elements-style.js:1938
+#: build/wc-gzd-blocks-product-elements.js:1921
 msgid "WooCommerce"
 msgstr ""
 
@@ -8697,19 +8749,19 @@ msgid "Update totals"
 msgstr ""
 
 #: templates/checkout/photovoltaic-systems-notice.php:24
-#: build/checkout-frontend.js:870
-#: build/checkout.js:762
-#: build/checkout-frontend.js:689
-#: build/checkout-style.js:1008
-#: build/checkout-style.js:1044
-#: build/checkout.js:561
+#: build/checkout-frontend.js:759
+#: build/checkout.js:621
+#: build/checkout-frontend.js:630
+#: build/checkout-style.js:921
+#: build/checkout-style.js:957
+#: build/checkout.js:488
 msgid "Your shopping cart is eligible for VAT exemption"
 msgstr ""
 
 #: templates/checkout/photovoltaic-systems-notice.php:25
-#: build/checkout-frontend.js:869
-#: build/checkout-frontend.js:688
-#: build/checkout-style.js:1007
+#: build/checkout-frontend.js:758
+#: build/checkout-frontend.js:629
+#: build/checkout-style.js:920
 #, php-format,js-format
 msgid "To benefit from the tax exemption, please confirm the VAT exemption according to <a href=\"%1$s\" target=\"_blank\">%2$s</a> by activating the checkbox."
 msgstr ""
@@ -8846,40 +8898,40 @@ msgstr ""
 msgid "This version of the Corona Helper Plugin includes a bug which could lead to tax rates being added multiple times. Please <a href=\"%1$s\">deactivate</a> the plugin and check our <a href=\"%2$s\" target=\"_blank\">blog post</a>."
 msgstr ""
 
-#: woocommerce-germanized.php:1333
+#: woocommerce-germanized.php:1334
 msgid "Please wait while we are trying to redirect you to the payment provider."
 msgstr ""
 
-#: build/cart.js:304
-#: build/checkout.js:658
-#: build/wc-gzd-blocks-product-elements.js:1666
-#: build/wc-gzd-blocks-product-elements.js:1881
-#: build/cart-style.js:264
-#: build/cart.js:205
-#: build/checkout-style.js:918
-#: build/checkout.js:498
-#: build/wc-gzd-blocks-product-elements-style.js:1236
-#: build/wc-gzd-blocks-product-elements-style.js:1409
-#: build/wc-gzd-blocks-product-elements.js:1236
-#: build/wc-gzd-blocks-product-elements.js:1392
+#: build/cart.js:225
+#: build/checkout.js:516
+#: build/wc-gzd-blocks-product-elements.js:1259
+#: build/wc-gzd-blocks-product-elements.js:1474
+#: build/cart-style.js:219
+#: build/cart.js:160
+#: build/checkout-style.js:831
+#: build/checkout.js:425
+#: build/wc-gzd-blocks-product-elements-style.js:1043
+#: build/wc-gzd-blocks-product-elements-style.js:1216
+#: build/wc-gzd-blocks-product-elements.js:1043
+#: build/wc-gzd-blocks-product-elements.js:1199
 msgid "Variant"
 msgstr ""
 
-#: build/checkout.js:496
-#: build/checkout-style.js:639
-#: build/checkout.js:372
+#: build/checkout.js:354
+#: build/checkout-style.js:552
+#: build/checkout.js:299
 msgid "This is a label being printed next to your legal checkbox."
 msgstr ""
 
-#: build/checkout.js:512
-#: build/checkout-style.js:658
-#: build/checkout.js:391
+#: build/checkout.js:370
+#: build/checkout-style.js:571
+#: build/checkout.js:318
 msgid "Manage checkboxes"
 msgstr ""
 
-#: build/checkout.js:761
-#: build/checkout-style.js:1043
-#: build/checkout.js:560
+#: build/checkout.js:620
+#: build/checkout-style.js:956
+#: build/checkout.js:487
 msgid "To benefit from the tax exemption, please confirm the VAT exemption according to {legal_text} by activating the checkbox."
 msgstr ""
 
@@ -8898,7 +8950,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:489
 #: build/product-unit-price-frontend.js:489
 #: build/product-unit-product-frontend.js:489
-#: build/wc-gzd-blocks-product-elements.js:3136
+#: build/wc-gzd-blocks-product-elements.js:2729
 #: build/product-defect-description-frontend.js:481
 #: build/product-delivery-time-frontend.js:481
 #: build/product-deposit-frontend.js:481
@@ -8914,8 +8966,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:455
 #: build/product-unit-price-frontend.js:455
 #: build/product-unit-product-frontend.js:455
-#: build/wc-gzd-blocks-product-elements-style.js:2329
-#: build/wc-gzd-blocks-product-elements.js:2312
+#: build/wc-gzd-blocks-product-elements-style.js:2136
+#: build/wc-gzd-blocks-product-elements.js:2119
 msgctxt "unit"
 msgid "kg"
 msgstr ""
@@ -8935,7 +8987,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:493
 #: build/product-unit-price-frontend.js:493
 #: build/product-unit-product-frontend.js:493
-#: build/wc-gzd-blocks-product-elements.js:3140
+#: build/wc-gzd-blocks-product-elements.js:2733
 #: build/product-defect-description-frontend.js:485
 #: build/product-delivery-time-frontend.js:485
 #: build/product-deposit-frontend.js:485
@@ -8951,8 +9003,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:459
 #: build/product-unit-price-frontend.js:459
 #: build/product-unit-product-frontend.js:459
-#: build/wc-gzd-blocks-product-elements-style.js:2333
-#: build/wc-gzd-blocks-product-elements.js:2316
+#: build/wc-gzd-blocks-product-elements-style.js:2140
+#: build/wc-gzd-blocks-product-elements.js:2123
 msgctxt "preview"
 msgid "Delivery time: 2-3 days"
 msgstr ""
@@ -8972,7 +9024,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:495
 #: build/product-unit-price-frontend.js:495
 #: build/product-unit-product-frontend.js:495
-#: build/wc-gzd-blocks-product-elements.js:3142
+#: build/wc-gzd-blocks-product-elements.js:2735
 #: build/product-defect-description-frontend.js:487
 #: build/product-delivery-time-frontend.js:487
 #: build/product-deposit-frontend.js:487
@@ -8988,8 +9040,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:461
 #: build/product-unit-price-frontend.js:461
 #: build/product-unit-product-frontend.js:461
-#: build/wc-gzd-blocks-product-elements-style.js:2335
-#: build/wc-gzd-blocks-product-elements.js:2318
+#: build/wc-gzd-blocks-product-elements-style.js:2142
+#: build/wc-gzd-blocks-product-elements.js:2125
 msgctxt "preview"
 msgid "incl. 19 % VAT"
 msgstr ""
@@ -9009,7 +9061,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:497
 #: build/product-unit-price-frontend.js:497
 #: build/product-unit-product-frontend.js:497
-#: build/wc-gzd-blocks-product-elements.js:3144
+#: build/wc-gzd-blocks-product-elements.js:2737
 #: build/product-defect-description-frontend.js:489
 #: build/product-delivery-time-frontend.js:489
 #: build/product-deposit-frontend.js:489
@@ -9025,8 +9077,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:463
 #: build/product-unit-price-frontend.js:463
 #: build/product-unit-product-frontend.js:463
-#: build/wc-gzd-blocks-product-elements-style.js:2337
-#: build/wc-gzd-blocks-product-elements.js:2320
+#: build/wc-gzd-blocks-product-elements-style.js:2144
+#: build/wc-gzd-blocks-product-elements.js:2127
 msgctxt "preview"
 msgid "plus shipping costs"
 msgstr ""
@@ -9046,7 +9098,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:499
 #: build/product-unit-price-frontend.js:499
 #: build/product-unit-product-frontend.js:499
-#: build/wc-gzd-blocks-product-elements.js:3146
+#: build/wc-gzd-blocks-product-elements.js:2739
 #: build/product-defect-description-frontend.js:491
 #: build/product-delivery-time-frontend.js:491
 #: build/product-deposit-frontend.js:491
@@ -9062,8 +9114,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:465
 #: build/product-unit-price-frontend.js:465
 #: build/product-unit-product-frontend.js:465
-#: build/wc-gzd-blocks-product-elements-style.js:2339
-#: build/wc-gzd-blocks-product-elements.js:2322
+#: build/wc-gzd-blocks-product-elements-style.js:2146
+#: build/wc-gzd-blocks-product-elements.js:2129
 #, js-format
 msgctxt "preview"
 msgid "Product includes: %1$s kg"
@@ -9084,7 +9136,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:501
 #: build/product-unit-price-frontend.js:501
 #: build/product-unit-product-frontend.js:501
-#: build/wc-gzd-blocks-product-elements.js:3148
+#: build/wc-gzd-blocks-product-elements.js:2741
 #: build/product-defect-description-frontend.js:493
 #: build/product-delivery-time-frontend.js:493
 #: build/product-deposit-frontend.js:493
@@ -9100,8 +9152,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:467
 #: build/product-unit-price-frontend.js:467
 #: build/product-unit-product-frontend.js:467
-#: build/wc-gzd-blocks-product-elements-style.js:2341
-#: build/wc-gzd-blocks-product-elements.js:2324
+#: build/wc-gzd-blocks-product-elements-style.js:2148
+#: build/wc-gzd-blocks-product-elements.js:2131
 msgctxt "preview"
 msgid "This product has a serious defect."
 msgstr ""
@@ -9121,7 +9173,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:506
 #: build/product-unit-price-frontend.js:506
 #: build/product-unit-product-frontend.js:506
-#: build/wc-gzd-blocks-product-elements.js:3153
+#: build/wc-gzd-blocks-product-elements.js:2746
 #: build/product-defect-description-frontend.js:497
 #: build/product-delivery-time-frontend.js:497
 #: build/product-deposit-frontend.js:497
@@ -9137,8 +9189,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:471
 #: build/product-unit-price-frontend.js:471
 #: build/product-unit-product-frontend.js:471
-#: build/wc-gzd-blocks-product-elements-style.js:2345
-#: build/wc-gzd-blocks-product-elements.js:2328
+#: build/wc-gzd-blocks-product-elements-style.js:2152
+#: build/wc-gzd-blocks-product-elements.js:2135
 msgctxt "preview"
 msgid "Plus"
 msgstr ""
@@ -9158,7 +9210,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:512
 #: build/product-unit-price-frontend.js:512
 #: build/product-unit-product-frontend.js:512
-#: build/wc-gzd-blocks-product-elements.js:3159
+#: build/wc-gzd-blocks-product-elements.js:2752
 #: build/product-defect-description-frontend.js:500
 #: build/product-delivery-time-frontend.js:500
 #: build/product-deposit-frontend.js:500
@@ -9174,8 +9226,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:474
 #: build/product-unit-price-frontend.js:474
 #: build/product-unit-product-frontend.js:474
-#: build/wc-gzd-blocks-product-elements-style.js:2348
-#: build/wc-gzd-blocks-product-elements.js:2331
+#: build/wc-gzd-blocks-product-elements-style.js:2155
+#: build/wc-gzd-blocks-product-elements.js:2138
 msgctxt "preview"
 msgid "deposit"
 msgstr ""
@@ -9195,7 +9247,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:516
 #: build/product-unit-price-frontend.js:516
 #: build/product-unit-product-frontend.js:516
-#: build/wc-gzd-blocks-product-elements.js:3163
+#: build/wc-gzd-blocks-product-elements.js:2756
 #: build/product-defect-description-frontend.js:504
 #: build/product-delivery-time-frontend.js:504
 #: build/product-deposit-frontend.js:504
@@ -9211,8 +9263,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:478
 #: build/product-unit-price-frontend.js:478
 #: build/product-unit-product-frontend.js:478
-#: build/wc-gzd-blocks-product-elements-style.js:2352
-#: build/wc-gzd-blocks-product-elements.js:2335
+#: build/wc-gzd-blocks-product-elements-style.js:2159
+#: build/wc-gzd-blocks-product-elements.js:2142
 msgctxt "preview"
 msgid "Disposable"
 msgstr ""
@@ -9247,8 +9299,8 @@ msgstr ""
 #: build/product-unit-price-frontend.js:534
 #: build/product-unit-product-frontend.js:528
 #: build/product-unit-product-frontend.js:534
-#: build/wc-gzd-blocks-product-elements.js:3175
-#: build/wc-gzd-blocks-product-elements.js:3181
+#: build/wc-gzd-blocks-product-elements.js:2768
+#: build/wc-gzd-blocks-product-elements.js:2774
 #: build/product-defect-description-frontend.js:515
 #: build/product-defect-description-frontend.js:522
 #: build/product-delivery-time-frontend.js:515
@@ -9279,10 +9331,10 @@ msgstr ""
 #: build/product-unit-price-frontend.js:496
 #: build/product-unit-product-frontend.js:489
 #: build/product-unit-product-frontend.js:496
-#: build/wc-gzd-blocks-product-elements-style.js:2363
-#: build/wc-gzd-blocks-product-elements-style.js:2370
-#: build/wc-gzd-blocks-product-elements.js:2346
-#: build/wc-gzd-blocks-product-elements.js:2353
+#: build/wc-gzd-blocks-product-elements-style.js:2170
+#: build/wc-gzd-blocks-product-elements-style.js:2177
+#: build/wc-gzd-blocks-product-elements.js:2153
+#: build/wc-gzd-blocks-product-elements.js:2160
 msgctxt "preview"
 msgid "Sample company name"
 msgstr ""
@@ -9317,8 +9369,8 @@ msgstr ""
 #: build/product-unit-price-frontend.js:535
 #: build/product-unit-product-frontend.js:529
 #: build/product-unit-product-frontend.js:535
-#: build/wc-gzd-blocks-product-elements.js:3176
-#: build/wc-gzd-blocks-product-elements.js:3182
+#: build/wc-gzd-blocks-product-elements.js:2769
+#: build/wc-gzd-blocks-product-elements.js:2775
 #: build/product-defect-description-frontend.js:516
 #: build/product-defect-description-frontend.js:523
 #: build/product-delivery-time-frontend.js:516
@@ -9349,10 +9401,10 @@ msgstr ""
 #: build/product-unit-price-frontend.js:497
 #: build/product-unit-product-frontend.js:490
 #: build/product-unit-product-frontend.js:497
-#: build/wc-gzd-blocks-product-elements-style.js:2364
-#: build/wc-gzd-blocks-product-elements-style.js:2371
-#: build/wc-gzd-blocks-product-elements.js:2347
-#: build/wc-gzd-blocks-product-elements.js:2354
+#: build/wc-gzd-blocks-product-elements-style.js:2171
+#: build/wc-gzd-blocks-product-elements-style.js:2178
+#: build/wc-gzd-blocks-product-elements.js:2154
+#: build/wc-gzd-blocks-product-elements.js:2161
 msgctxt "preview"
 msgid "Sample address"
 msgstr ""
@@ -9387,8 +9439,8 @@ msgstr ""
 #: build/product-unit-price-frontend.js:535
 #: build/product-unit-product-frontend.js:529
 #: build/product-unit-product-frontend.js:535
-#: build/wc-gzd-blocks-product-elements.js:3176
-#: build/wc-gzd-blocks-product-elements.js:3182
+#: build/wc-gzd-blocks-product-elements.js:2769
+#: build/wc-gzd-blocks-product-elements.js:2775
 #: build/product-defect-description-frontend.js:517
 #: build/product-defect-description-frontend.js:524
 #: build/product-delivery-time-frontend.js:517
@@ -9419,10 +9471,10 @@ msgstr ""
 #: build/product-unit-price-frontend.js:498
 #: build/product-unit-product-frontend.js:491
 #: build/product-unit-product-frontend.js:498
-#: build/wc-gzd-blocks-product-elements-style.js:2365
-#: build/wc-gzd-blocks-product-elements-style.js:2372
-#: build/wc-gzd-blocks-product-elements.js:2348
-#: build/wc-gzd-blocks-product-elements.js:2355
+#: build/wc-gzd-blocks-product-elements-style.js:2172
+#: build/wc-gzd-blocks-product-elements-style.js:2179
+#: build/wc-gzd-blocks-product-elements.js:2155
+#: build/wc-gzd-blocks-product-elements.js:2162
 msgctxt "preview"
 msgid "12345 Berlin"
 msgstr ""
@@ -9457,8 +9509,8 @@ msgstr ""
 #: build/product-unit-price-frontend.js:535
 #: build/product-unit-product-frontend.js:529
 #: build/product-unit-product-frontend.js:535
-#: build/wc-gzd-blocks-product-elements.js:3176
-#: build/wc-gzd-blocks-product-elements.js:3182
+#: build/wc-gzd-blocks-product-elements.js:2769
+#: build/wc-gzd-blocks-product-elements.js:2775
 #: build/product-defect-description-frontend.js:518
 #: build/product-defect-description-frontend.js:525
 #: build/product-delivery-time-frontend.js:518
@@ -9489,10 +9541,10 @@ msgstr ""
 #: build/product-unit-price-frontend.js:499
 #: build/product-unit-product-frontend.js:492
 #: build/product-unit-product-frontend.js:499
-#: build/wc-gzd-blocks-product-elements-style.js:2366
-#: build/wc-gzd-blocks-product-elements-style.js:2373
-#: build/wc-gzd-blocks-product-elements.js:2349
-#: build/wc-gzd-blocks-product-elements.js:2356
+#: build/wc-gzd-blocks-product-elements-style.js:2173
+#: build/wc-gzd-blocks-product-elements-style.js:2180
+#: build/wc-gzd-blocks-product-elements.js:2156
+#: build/wc-gzd-blocks-product-elements.js:2163
 msgctxt "preview"
 msgid "sample@sample.com"
 msgstr ""
@@ -9512,7 +9564,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:544
 #: build/product-unit-price-frontend.js:544
 #: build/product-unit-product-frontend.js:544
-#: build/wc-gzd-blocks-product-elements.js:3191
+#: build/wc-gzd-blocks-product-elements.js:2784
 #: build/product-defect-description-frontend.js:533
 #: build/product-delivery-time-frontend.js:533
 #: build/product-deposit-frontend.js:533
@@ -9528,8 +9580,8 @@ msgstr ""
 #: build/product-tax-info-frontend.js:507
 #: build/product-unit-price-frontend.js:507
 #: build/product-unit-product-frontend.js:507
-#: build/wc-gzd-blocks-product-elements-style.js:2381
-#: build/wc-gzd-blocks-product-elements.js:2364
+#: build/wc-gzd-blocks-product-elements-style.js:2188
+#: build/wc-gzd-blocks-product-elements.js:2171
 msgctxt "sample"
 msgid "sample-filename.pdf"
 msgstr ""
@@ -9549,7 +9601,7 @@ msgstr ""
 #: build/product-tax-info-frontend.js:552
 #: build/product-unit-price-frontend.js:552
 #: build/product-unit-product-frontend.js:552
-#: build/wc-gzd-blocks-product-elements.js:3199
+#: build/wc-gzd-blocks-product-elements.js:2792
 #: build/product-defect-description-frontend.js:541
 #: build/product-delivery-time-frontend.js:541
 #: build/product-deposit-frontend.js:541
@@ -9565,143 +9617,143 @@ msgstr ""
 #: build/product-tax-info-frontend.js:515
 #: build/product-unit-price-frontend.js:515
 #: build/product-unit-product-frontend.js:515
-#: build/wc-gzd-blocks-product-elements-style.js:2389
-#: build/wc-gzd-blocks-product-elements.js:2372
+#: build/wc-gzd-blocks-product-elements-style.js:2196
+#: build/wc-gzd-blocks-product-elements.js:2179
 msgctxt "preview"
 msgid "Sample safety instructions for a certain product."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:988
-#: build/wc-gzd-blocks-product-elements-style.js:755
-#: build/wc-gzd-blocks-product-elements.js:755
+#: build/wc-gzd-blocks-product-elements.js:581
+#: build/wc-gzd-blocks-product-elements-style.js:562
+#: build/wc-gzd-blocks-product-elements.js:562
 msgid "Inserts the product's defect description."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:1163
-#: build/wc-gzd-blocks-product-elements-style.js:878
-#: build/wc-gzd-blocks-product-elements.js:878
+#: build/wc-gzd-blocks-product-elements.js:756
+#: build/wc-gzd-blocks-product-elements-style.js:685
+#: build/wc-gzd-blocks-product-elements.js:685
 msgid "Inserts the product's delivery time."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:1340
-#: build/wc-gzd-blocks-product-elements-style.js:1001
-#: build/wc-gzd-blocks-product-elements.js:1001
+#: build/wc-gzd-blocks-product-elements.js:933
+#: build/wc-gzd-blocks-product-elements-style.js:808
+#: build/wc-gzd-blocks-product-elements.js:808
 msgid "Deposit packaging type"
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:1341
-#: build/wc-gzd-blocks-product-elements-style.js:1002
-#: build/wc-gzd-blocks-product-elements.js:1002
+#: build/wc-gzd-blocks-product-elements.js:934
+#: build/wc-gzd-blocks-product-elements-style.js:809
+#: build/wc-gzd-blocks-product-elements.js:809
 msgid "Inserts the product's deposit packaging type."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:1519
-#: build/wc-gzd-blocks-product-elements-style.js:1126
-#: build/wc-gzd-blocks-product-elements.js:1126
+#: build/wc-gzd-blocks-product-elements.js:1112
+#: build/wc-gzd-blocks-product-elements-style.js:933
+#: build/wc-gzd-blocks-product-elements.js:933
 msgid "Inserts the product's deposit amount."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:1725
-#: build/wc-gzd-blocks-product-elements-style.js:1274
-#: build/wc-gzd-blocks-product-elements.js:1274
+#: build/wc-gzd-blocks-product-elements.js:1318
+#: build/wc-gzd-blocks-product-elements-style.js:1081
+#: build/wc-gzd-blocks-product-elements.js:1081
 msgid "Inserts the EU GARAN label for the product in case available."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:1940
-#: build/wc-gzd-blocks-product-elements-style.js:1447
-#: build/wc-gzd-blocks-product-elements.js:1430
+#: build/wc-gzd-blocks-product-elements.js:1533
+#: build/wc-gzd-blocks-product-elements-style.js:1254
+#: build/wc-gzd-blocks-product-elements.js:1237
 msgid "Inserts the legal guarantee label for the product in case available."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:2127
-#: build/wc-gzd-blocks-product-elements-style.js:1579
-#: build/wc-gzd-blocks-product-elements.js:1562
+#: build/wc-gzd-blocks-product-elements.js:1720
+#: build/wc-gzd-blocks-product-elements-style.js:1386
+#: build/wc-gzd-blocks-product-elements.js:1369
 msgid "Inserts the product's manufacturer information."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:2305
-#: build/wc-gzd-blocks-product-elements-style.js:1703
-#: build/wc-gzd-blocks-product-elements.js:1686
+#: build/wc-gzd-blocks-product-elements.js:1898
+#: build/wc-gzd-blocks-product-elements-style.js:1510
+#: build/wc-gzd-blocks-product-elements.js:1493
 msgid "Inserts the product's Nutri-Score."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:2480
-#: build/wc-gzd-blocks-product-elements-style.js:1826
-#: build/wc-gzd-blocks-product-elements.js:1809
+#: build/wc-gzd-blocks-product-elements.js:2073
+#: build/wc-gzd-blocks-product-elements-style.js:1633
+#: build/wc-gzd-blocks-product-elements.js:1616
 msgid "Inserts information on power supply for wireless electronic devices."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:2657
-#: build/wc-gzd-blocks-product-elements-style.js:1949
-#: build/wc-gzd-blocks-product-elements.js:1932
+#: build/wc-gzd-blocks-product-elements.js:2250
+#: build/wc-gzd-blocks-product-elements-style.js:1756
+#: build/wc-gzd-blocks-product-elements.js:1739
 msgid "Product safety attachments"
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:2658
-#: build/wc-gzd-blocks-product-elements-style.js:1950
-#: build/wc-gzd-blocks-product-elements.js:1933
+#: build/wc-gzd-blocks-product-elements.js:2251
+#: build/wc-gzd-blocks-product-elements-style.js:1757
+#: build/wc-gzd-blocks-product-elements.js:1740
 msgid "Inserts the product's safety attachments list."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:2836
-#: build/wc-gzd-blocks-product-elements-style.js:2074
-#: build/wc-gzd-blocks-product-elements.js:2057
+#: build/wc-gzd-blocks-product-elements.js:2429
+#: build/wc-gzd-blocks-product-elements-style.js:1881
+#: build/wc-gzd-blocks-product-elements.js:1864
 msgid "Inserts the product's safety instructions."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:3530
-#: build/wc-gzd-blocks-product-elements-style.js:2648
-#: build/wc-gzd-blocks-product-elements.js:2631
+#: build/wc-gzd-blocks-product-elements.js:3123
+#: build/wc-gzd-blocks-product-elements-style.js:2455
+#: build/wc-gzd-blocks-product-elements.js:2438
 msgid "Shipping Costs Notice"
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:3531
-#: build/wc-gzd-blocks-product-elements-style.js:2649
-#: build/wc-gzd-blocks-product-elements.js:2632
+#: build/wc-gzd-blocks-product-elements.js:3124
+#: build/wc-gzd-blocks-product-elements-style.js:2456
+#: build/wc-gzd-blocks-product-elements.js:2439
 msgid "Inserts the product's shipping costs notice."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:3706
-#: build/wc-gzd-blocks-product-elements-style.js:2772
-#: build/wc-gzd-blocks-product-elements.js:2755
+#: build/wc-gzd-blocks-product-elements.js:3299
+#: build/wc-gzd-blocks-product-elements-style.js:2579
+#: build/wc-gzd-blocks-product-elements.js:2562
 msgid "Inserts the product's tax notice."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:3881
-#: build/wc-gzd-blocks-product-elements-style.js:2896
-#: build/wc-gzd-blocks-product-elements.js:2879
+#: build/wc-gzd-blocks-product-elements.js:3474
+#: build/wc-gzd-blocks-product-elements-style.js:2703
+#: build/wc-gzd-blocks-product-elements.js:2686
 msgid "Inserts the product's price per unit."
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:4055
-#: build/wc-gzd-blocks-product-elements-style.js:3018
-#: build/wc-gzd-blocks-product-elements.js:3001
+#: build/wc-gzd-blocks-product-elements.js:3648
+#: build/wc-gzd-blocks-product-elements-style.js:2825
+#: build/wc-gzd-blocks-product-elements.js:2808
 msgid "Unit products"
 msgstr ""
 
-#: build/wc-gzd-blocks-product-elements.js:4056
-#: build/wc-gzd-blocks-product-elements-style.js:3019
-#: build/wc-gzd-blocks-product-elements.js:3002
+#: build/wc-gzd-blocks-product-elements.js:3649
+#: build/wc-gzd-blocks-product-elements-style.js:2826
+#: build/wc-gzd-blocks-product-elements.js:2809
 msgid "Inserts the product's units."
 msgstr ""
 
-#: build/wc-gzd-payment-method-direct-debit.js:1580
-#: build/wc-gzd-payment-method-direct-debit.js:1438
+#: build/wc-gzd-payment-method-direct-debit.js:1555
+#: build/wc-gzd-payment-method-direct-debit.js:1421
 msgid "Direct debit"
 msgstr ""
 
-#: build/wc-gzd-payment-method-direct-debit.js:1634
-#: build/wc-gzd-payment-method-direct-debit.js:1491
+#: build/wc-gzd-payment-method-direct-debit.js:1609
+#: build/wc-gzd-payment-method-direct-debit.js:1474
 msgid "Account holder"
 msgstr ""
 
-#: build/wc-gzd-payment-method-direct-debit.js:1697
-#: build/wc-gzd-payment-method-direct-debit.js:1569
+#: build/wc-gzd-payment-method-direct-debit.js:1672
+#: build/wc-gzd-payment-method-direct-debit.js:1552
 msgid "Please enter a valid BIC/SWIFT"
 msgstr ""
 
-#: build/wc-gzd-payment-method-direct-debit.js:1790
-#: build/wc-gzd-payment-method-direct-debit.js:1613
+#: build/wc-gzd-payment-method-direct-debit.js:1765
+#: build/wc-gzd-payment-method-direct-debit.js:1596
 msgid "Please enter a valid IBAN"
 msgstr ""
 

@@ -15,7 +15,7 @@ class Helper {
 	 *
 	 * @var string
 	 */
-	const VERSION = '2.2.0';
+	const VERSION = '2.2.1';
 
 	public static function get_version() {
 		return self::VERSION;
@@ -1321,7 +1321,7 @@ class Helper {
 	public static function import_rates( $rates, $tax_class = '', $tax_class_type = '', $clean = true ) {
 		$eu_countries = self::get_eu_vat_countries();
 
-		if ( '' === $tax_class && 'standard' !== $tax_class_type ) {
+		if ( ( false === $tax_class || '' === $tax_class ) && 'standard' !== $tax_class_type ) {
 			self::log( sprintf( 'Skip importing rates as tax class (%1$s) does not match tax class type (%2$s).', $tax_class, $tax_class_type ) );
 			return;
 		}
