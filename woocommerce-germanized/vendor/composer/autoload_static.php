@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit9852bed99d2157f82fb66340e99ddf03
+class ComposerStaticInita21d76e398e689ab63fd6fb3521f3695
 {
     public static $files = array (
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
@@ -16,87 +16,87 @@ class ComposerStaticInit9852bed99d2157f82fb66340e99ddf03
     );
 
     public static $prefixLengthsPsr4 = array (
-        'V' => 
+        'V' =>
         array (
             'Vendidero\\OrderWithdrawalButton\\' => 32,
             'Vendidero\\Germanized\\' => 21,
             'Vendidero\\EUTaxHelper\\' => 22,
         ),
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Ctype\\' => 23,
         ),
-        'R' => 
+        'R' =>
         array (
             'Ramsey\\Uuid\\' => 12,
             'Ramsey\\Collection\\' => 18,
         ),
-        'D' => 
+        'D' =>
         array (
             'Digitick\\Sepa\\' => 14,
         ),
-        'C' => 
+        'C' =>
         array (
             'Composer\\Installers\\' => 20,
         ),
-        'B' => 
+        'B' =>
         array (
             'Brick\\Math\\' => 11,
         ),
-        'A' => 
+        'A' =>
         array (
             'Automattic\\Jetpack\\Autoloader\\' => 30,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Vendidero\\OrderWithdrawalButton\\' => 
+        'Vendidero\\OrderWithdrawalButton\\' =>
         array (
             0 => __DIR__ . '/../..' . '/packages/eu-order-withdrawal-button-for-woocommerce/src',
         ),
-        'Vendidero\\Germanized\\' => 
+        'Vendidero\\Germanized\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
-        'Vendidero\\EUTaxHelper\\' => 
+        'Vendidero\\EUTaxHelper\\' =>
         array (
             0 => __DIR__ . '/../..' . '/packages/woocommerce-eu-tax-helper/src',
         ),
-        'Symfony\\Polyfill\\Php81\\' => 
+        'Symfony\\Polyfill\\Php81\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
+        'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Ctype\\' => 
+        'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Ramsey\\Uuid\\' => 
+        'Ramsey\\Uuid\\' =>
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
         ),
-        'Ramsey\\Collection\\' => 
+        'Ramsey\\Collection\\' =>
         array (
             0 => __DIR__ . '/..' . '/ramsey/collection/src',
         ),
-        'Digitick\\Sepa\\' => 
+        'Digitick\\Sepa\\' =>
         array (
             0 => __DIR__ . '/..' . '/digitick/sepa-xml/src',
         ),
-        'Composer\\Installers\\' => 
+        'Composer\\Installers\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
-        'Brick\\Math\\' => 
+        'Brick\\Math\\' =>
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
         ),
-        'Automattic\\Jetpack\\Autoloader\\' => 
+        'Automattic\\Jetpack\\Autoloader\\' =>
         array (
             0 => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src',
         ),
@@ -516,9 +516,9 @@ class ComposerStaticInit9852bed99d2157f82fb66340e99ddf03
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit9852bed99d2157f82fb66340e99ddf03::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit9852bed99d2157f82fb66340e99ddf03::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit9852bed99d2157f82fb66340e99ddf03::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita21d76e398e689ab63fd6fb3521f3695::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita21d76e398e689ab63fd6fb3521f3695::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInita21d76e398e689ab63fd6fb3521f3695::$classMap;
 
         }, null, ClassLoader::class);
     }
