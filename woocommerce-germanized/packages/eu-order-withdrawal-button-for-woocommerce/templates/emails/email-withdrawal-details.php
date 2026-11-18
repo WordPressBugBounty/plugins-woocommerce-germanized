@@ -11,7 +11,7 @@
  * the readme will list any important changes.
  *
  * @package Vendidero/OrderWithdrawalButton/Templates
- * @version 2.4.6
+ * @version 2.4.8
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -41,14 +41,14 @@ do_action( 'eu_owb_woocommerce_withdrawal_before_order_table', $order, $sent_to_
 <ul style="margin-bottom: <?php echo $email_improvements_enabled ? '24px' : '40px'; ?>;">
 	<li><strong><?php echo wp_kses_post( _x( 'Contract Identification', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo wp_kses_post( $formatted_contract_identification ); ?></span></li>
 	<li><strong><?php echo wp_kses_post( _x( 'Received on', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo esc_html( sprintf( _x( '%1$s at %2$s', 'owb-datetime', 'woocommerce-germanized' ), wc_format_datetime( $withdrawal->get_date_received() ), wc_format_datetime( $withdrawal->get_date_received(), wc_time_format() ) ) ); ?></span></li>
-	<li><strong><?php echo wp_kses_post( _x( 'Email', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo wp_kses_post( $withdrawal->get_email() ) . ( $sent_to_admin ? ' (' . esc_html( $verified_notice ) . ')' : '' ); ?></span></li>
-	<li><strong><?php echo wp_kses_post( _x( 'Full name', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo wp_kses_post( $withdrawal->get_formatted_full_name( true, 'email' ) ); ?></span></li>
+	<li><strong><?php echo wp_kses_post( _x( 'Email', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo esc_html( $withdrawal->get_email() ) . ( $sent_to_admin ? ' (' . esc_html( $verified_notice ) . ')' : '' ); ?></span></li>
+	<li><strong><?php echo wp_kses_post( _x( 'Full name', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo esc_html( $withdrawal->get_formatted_full_name( true, 'email' ) ); ?></span></li>
 	<?php if ( apply_filters( 'eu_order_woocommerce_withdrawal_email_show_verification_code', true, $withdrawal, $email, $sent_to_admin ) ) : ?>
-		<li><strong><?php echo wp_kses_post( _x( 'Verification code', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo wp_kses_post( $withdrawal->get_verification_code() ); ?></span></li>
+		<li><strong><?php echo wp_kses_post( _x( 'Verification code', 'owb', 'woocommerce-germanized' ) ); ?>:</strong> <span class="text"><?php echo esc_html( $withdrawal->get_verification_code() ); ?></span></li>
 	<?php endif; ?>
 </ul>
 
-<?php if ( $withdrawal->get_additional_information() ) : ?>
+<?php if ( empty( $hide_additional_information ) && $withdrawal->get_additional_information() ) : ?>
 	<?php if ( $display_section_divider ) : ?>
 		<hr style="border: 0; border-top: 1px solid #1E1E1E; border-top-color: rgba(30, 30, 30, 0.2); margin: 20px 0;">
 	<?php endif; ?>

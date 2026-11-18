@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'vendidero/woocommerce-germanized',
-        'pretty_version' => 'dev-release/4.1.8',
-        'version' => 'dev-release/4.1.8',
-        'reference' => 'fdbbf6cb6b42d28da16e412d2a574937916af472',
+        'pretty_version' => 'dev-release/4.1.9',
+        'version' => 'dev-release/4.1.9',
+        'reference' => 'ca2849915ac236179bcf925d8409128f09a71ac0',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -119,9 +119,9 @@
             'dev_requirement' => false,
         ),
         'vendidero/eu-order-withdrawal-button-for-woocommerce' => array(
-            'pretty_version' => '2.4.7',
-            'version' => '2.4.7.0',
-            'reference' => '6a8ce715e0ee242ea8fab65d63ca2308a2a52712',
+            'pretty_version' => '2.4.8',
+            'version' => '2.4.8.0',
+            'reference' => '253074e717d16b5a732f60c73c39ac1fc55fa7b6',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../packages/eu-order-withdrawal-button-for-woocommerce',
             'aliases' => array(),
@@ -137,9 +137,9 @@
             'dev_requirement' => false,
         ),
         'vendidero/woocommerce-germanized' => array(
-            'pretty_version' => 'dev-release/4.1.8',
-            'version' => 'dev-release/4.1.8',
-            'reference' => 'fdbbf6cb6b42d28da16e412d2a574937916af472',
+            'pretty_version' => 'dev-release/4.1.9',
+            'version' => 'dev-release/4.1.9',
+            'reference' => 'ca2849915ac236179bcf925d8409128f09a71ac0',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
