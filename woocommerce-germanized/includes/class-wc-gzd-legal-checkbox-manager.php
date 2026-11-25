@@ -870,7 +870,10 @@ class WC_GZD_Legal_Checkbox_Manager {
 
 	public function get_options( $force_refresh = false ) {
 		if ( is_null( $this->options ) || ! is_array( $this->options ) || $force_refresh ) {
-			wp_cache_delete( 'woocommerce_gzd_legal_checkboxes_settings', 'options' );
+			if ( $force_refresh ) {
+				wp_cache_delete( 'woocommerce_gzd_legal_checkboxes_settings', 'options' );
+			}
+
 			$this->options = get_option( 'woocommerce_gzd_legal_checkboxes_settings', array() );
 		}
 
@@ -878,7 +881,7 @@ class WC_GZD_Legal_Checkbox_Manager {
 	}
 
 	public function update_options( $options ) {
-		$result        = update_option( 'woocommerce_gzd_legal_checkboxes_settings', $options, false );
+		$result        = update_option( 'woocommerce_gzd_legal_checkboxes_settings', $options, true );
 		$this->options = $options;
 
 		return $result;
@@ -1420,7 +1423,7 @@ class WC_GZD_Legal_Checkbox_Manager {
 	 * @return string[]
 	 */
 	public function get_loggable_checkboxes( $location ) {
-		$checkboxes = apply_filters( 'woocommerce_gzd_loggable_checkboxes', array( 'parcel_delivery', 'photovoltaic_systems', 'review_reminder' ), $location );
+		$checkboxes = apply_filters( 'woocommerce_gzd_loggable_checkboxes', array( 'parcel_delivery', 'photovoltaic_systems', 'review_reminder', 'download', 'service' ), $location );
 
 		return $checkboxes;
 	}

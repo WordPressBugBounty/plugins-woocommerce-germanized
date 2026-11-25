@@ -62,6 +62,21 @@ class WC_GZD_Compatibility_WooCommerce_PayPal_Payments extends WC_GZD_Compatibil
 		);
 
 		/**
+		 * PayPal Payments sends the checkout form as JSON (not as post_data) when creating the PayPal order.
+		 * Provide the form to Germanized so that cart (re-)calculations during this request (e.g. triggered by third-party plugins)
+		 * respect checkout-dependent data such as the photovoltaic systems VAT exemption checkbox.
+		 */
+		add_action( 'woocommerce_paypal_payments_create_order_request_started', array( $this, 'set_checkout_data_from_request' ), 1 );
+
+		/**
+		 * PayPal Payments AJAX requests (e.g. express buttons on product/cart pages, wallets, order approval) may lead to
+		 * a payment/order without passing the checkout. Exemptions which need to be confirmed during checkout
+		 * (e.g. photovoltaic systems) must not apply implicitly.
+		 */
+		add_filter( 'woocommerce_gzd_is_express_checkout_request', array( $this, 'is_express_checkout_request' ), 10 );
+		add_action( 'woocommerce_paypal_payments_create_order_request_started', array( $this, 'maybe_recalculate_express_cart' ), 5 );
+
+		/**
 		 * When PayPal > Settings > Pay Now Experience is enabled (skip order review page), PayPal Payments
 		 * manually creates a WC_Order (withount setting created_via) via ppc-approve-order endpoint.
 		 * This order will include shipping net prices - make sure Germanized does not handle those prices as gross instead.
@@ -131,6 +146,64 @@ class WC_GZD_Compatibility_WooCommerce_PayPal_Payments extends WC_GZD_Compatibil
 				return $gateways_disabled;
 			}
 		);
+	}
+
+	/**
+	 * @param array $data The parsed PayPal Payments request data (form_encoded is parsed into form).
+	 *
+	 * @return void
+	 */
+	public function set_checkout_data_from_request( $data ) {
+		if ( ! is_array( $data ) || ! isset( $data['context'] ) || 'checkout' !== $data['context'] ) {
+			return;
+		}
+
+		if ( ! empty( $data['form'] ) && is_array( $data['form'] ) ) {
+			WC_GZD_Checkout::instance()->set_checkout_data( $data['form'] );
+		}
+	}
+
+	/**
+	 * Whether the current request is a PayPal Payments (WC) AJAX request, e.g. ppc-create-order.
+	 *
+	 * @return bool
+	 */
+	public static function is_paypal_payments_ajax_request() {
+		$action = isset( $_GET['wc-ajax'] ) ? wc_clean( wp_unslash( $_GET['wc-ajax'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		return is_string( $action ) && 'ppc-' === substr( $action, 0, 4 );
+	}
+
+	/**
+	 * @param bool $is_express
+	 *
+	 * @return bool
+	 */
+	public function is_express_checkout_request( $is_express ) {
+		if ( ! $is_express && self::is_paypal_payments_ajax_request() ) {
+			$is_express = true;
+		}
+
+		return $is_express;
+	}
+
+	/**
+	 * Express orders (e.g. buttons on product or cart pages) are created from the totals stored within the session
+	 * which might have been calculated outside an exemption context (e.g. zero-taxed photovoltaic systems shown within the cart).
+	 * Recalculate the cart before PayPal Payments builds the purchase unit.
+	 *
+	 * @param array $data
+	 *
+	 * @return void
+	 */
+	public function maybe_recalculate_express_cart( $data ) {
+		if ( ! is_array( $data ) || ! isset( $data['context'] ) || in_array( $data['context'], array( 'checkout', 'pay-now' ), true ) ) {
+			return;
+		}
+
+		if ( WC()->cart && wc_gzd_cart_contains_photovoltaic_system( WC()->cart->get_cart() ) ) {
+			WC()->cart->calculate_totals();
+		}
 	}
 
 	public function move_paypal_payment_button( $filter ) {
