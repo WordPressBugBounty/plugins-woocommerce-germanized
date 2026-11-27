@@ -21,7 +21,7 @@ window.germanized = window.germanized || {};
       $('input[name=woocommerce_gzd_dispute_resolution_type]:checked').trigger('change');
       this.initMailSortable();
       $(document.body).on('init_tooltips', function () {
-        self.initTipTips();
+        self.initTipTip();
       });
       self.initTipTip();
     },

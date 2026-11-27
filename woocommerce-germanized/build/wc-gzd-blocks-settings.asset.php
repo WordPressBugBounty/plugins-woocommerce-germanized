@@ -2,5 +2,5 @@
 	'dependencies' => array(
 		'wc-settings'
 	),
-	'version' => '1a52eaa1491d269c0434'
+	'version' => 'b2ec271f432f7784b4b7'
 );
